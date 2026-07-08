@@ -48,6 +48,20 @@ try {
     )
   `);
   console.log("events table ready.");
+
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS kit_orders (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      email TEXT,
+      answers JSONB NOT NULL,
+      stripe_session_id TEXT UNIQUE,
+      status TEXT NOT NULL DEFAULT 'pending',
+      src TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      fulfilled_at TIMESTAMPTZ
+    )
+  `);
+  console.log("kit_orders table ready.");
 } catch (error) {
   console.error("Migration failed:", error.message);
   process.exitCode = 1;
