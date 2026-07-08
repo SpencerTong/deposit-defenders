@@ -11,7 +11,8 @@
     "test:watch": "vitest",
     "type-check": "tsc --noEmit",
     "db:migrate": "node --env-file=.env.local scripts/migrate.mjs",
-    "db:seed-test-rows": "node --env-file=.env.local scripts/seed-test-rows.mjs"
+    "db:seed-test-rows": "node --env-file=.env.local scripts/seed-test-rows.mjs",
+    "funnel": "node --env-file=.env.local scripts/funnel-report.mjs"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.5.1",
