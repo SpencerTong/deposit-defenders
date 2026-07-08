@@ -4,6 +4,11 @@ export interface GuideSection {
   list?: string[];
 }
 
+export interface GuideFaq {
+  question: string;
+  answer: string;
+}
+
 export interface GuideArticle {
   slug: string;
   title: string;
@@ -11,6 +16,9 @@ export interface GuideArticle {
   updated: string;
   intro: string;
   sections: GuideSection[];
+  faq?: GuideFaq[];
+  /** Slugs of related guides, rendered as "Keep reading" links. */
+  related?: string[];
   ctaHeading: string;
   ctaBody: string;
   ctaHref: string;

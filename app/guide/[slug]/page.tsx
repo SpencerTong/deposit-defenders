@@ -36,8 +36,47 @@ export default function GuideArticlePage({ params }: { params: { slug: string } 
   const article = getGuideArticle(params.slug);
   if (!article) notFound();
 
+  const articleLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: article.title,
+    description: article.metaDescription,
+    dateModified: article.updated,
+    mainEntityOfPage: `${SITE_URL}/guide/${article.slug}`,
+    author: { "@type": "Organization", name: "Deposit Defenders" },
+  };
+
+  const faqLd = article.faq?.length
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: article.faq.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: { "@type": "Answer", text: item.answer },
+        })),
+      }
+    : null;
+
+  const relatedArticles = (article.related ?? [])
+    .map((slug) => getGuideArticle(slug))
+    .filter((a): a is NonNullable<typeof a> => Boolean(a));
+
   return (
     <main className="mx-auto max-w-xl px-6 py-10">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }}
+      />
+      {faqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+        />
+      )}
+      <Link href="/guide" className="mb-2 inline-block text-sm text-accent underline">
+        ← All guides
+      </Link>
       <p className="mb-2 text-sm font-medium uppercase tracking-wide text-accent">Guide</p>
       <h1 className="mb-4 font-serif text-3xl font-bold leading-tight text-gray-900">
         {article.title}
@@ -63,6 +102,35 @@ export default function GuideArticlePage({ params }: { params: { slug: string } 
           )}
         </section>
       ))}
+
+      {article.faq && article.faq.length > 0 && (
+        <section className="mb-8">
+          <h2 className="mb-3 text-xl font-semibold text-gray-900">Frequently asked questions</h2>
+          {article.faq.map((item, i) => (
+            <details key={i} className="mb-2 rounded-lg border border-gray-200 bg-white p-4">
+              <summary className="cursor-pointer font-medium text-gray-900">
+                {item.question}
+              </summary>
+              <p className="mt-2 text-gray-700">{item.answer}</p>
+            </details>
+          ))}
+        </section>
+      )}
+
+      {relatedArticles.length > 0 && (
+        <section className="mb-8">
+          <h2 className="mb-3 text-xl font-semibold text-gray-900">Keep reading</h2>
+          <ul className="space-y-2">
+            {relatedArticles.map((related) => (
+              <li key={related.slug}>
+                <Link href={`/guide/${related.slug}`} className="text-accent underline">
+                  {related.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <div className="mb-8 rounded-2xl bg-accent px-6 py-8 text-center text-white shadow-lg">
         <h2 className="mb-2 font-serif text-2xl font-bold">{article.ctaHeading}</h2>
