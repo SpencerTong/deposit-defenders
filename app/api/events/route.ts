@@ -9,25 +9,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
 
-  const { name, src, properties, path } = (body ?? {}) as {
-    name?: unknown;
-    src?: unknown;
-    properties?: unknown;
-    path?: unknown;
-  };
+  const { name, src } = (body ?? {}) as { name?: unknown; src?: unknown };
 
   if (typeof name !== "string" || name.length === 0) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
 
   await recordEvent({
-    name,
+    eventName: name,
     src: typeof src === "string" ? src : null,
-    path: typeof path === "string" ? path : null,
-    properties:
-      properties && typeof properties === "object"
-        ? (properties as Record<string, unknown>)
-        : {},
   });
 
   return NextResponse.json({ ok: true });

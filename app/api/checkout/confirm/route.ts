@@ -14,12 +14,7 @@ export async function GET(req: NextRequest) {
   }
 
   if (status.paid) {
-    await recordEvent({
-      name: "purchased",
-      src: status.src,
-      path: "/kit",
-      properties: { amountTotal: status.amountTotal, sessionId },
-    });
+    await recordEvent({ eventName: "purchased", src: status.src });
   }
 
   return NextResponse.json({ ok: true, paid: status.paid });

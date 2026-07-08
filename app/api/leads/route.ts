@@ -39,8 +39,14 @@ export async function POST(req: NextRequest) {
   const pdf = await renderDemandLetterPdf(letter);
 
   const resolvedSrc = typeof src === "string" ? src : null;
+  const rulesFired = analysis.rules.filter((rule) => rule.triggered).map((rule) => rule.id);
 
-  await recordLead({ email, src: resolvedSrc, maxExposure: analysis.exposure.maxExposure });
+  await recordLead({
+    email,
+    src: resolvedSrc,
+    depositAmount: tenancy.depositAmount,
+    rulesFired,
+  });
   const { sent } = await sendLetterEmail({ to: email, pdfBytes: pdf });
 
   return NextResponse.json({ ok: true, sent });

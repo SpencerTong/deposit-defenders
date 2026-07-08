@@ -9,13 +9,15 @@
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "db:migrate": "node --env-file=.env.local scripts/migrate.mjs",
+    "db:seed-test-rows": "node --env-file=.env.local scripts/seed-test-rows.mjs"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^0.10.1",
     "@react-pdf/renderer": "^4.5.1",
     "@vercel/analytics": "^1.3.1",
     "next": "^14.2.5",
+    "pg": "^8.22.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "resend": "^6.17.1",
@@ -23,6 +25,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.14.0",
+    "@types/pg": "^8.20.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.19",
