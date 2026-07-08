@@ -13,6 +13,7 @@ function getClient(): Stripe | null {
 
 export interface CreateCheckoutSessionInput {
   src: string | null;
+  kitOrderId: string;
   successUrl: string;
   cancelUrl: string;
 }
@@ -24,7 +25,7 @@ export interface CreateCheckoutSessionInput {
  */
 export async function createCheckoutSession(
   input: CreateCheckoutSessionInput
-): Promise<{ url: string } | null> {
+): Promise<{ url: string; sessionId: string } | null> {
   const stripe = getClient();
   if (!stripe) {
     console.log("[stripe] STRIPE_SECRET_KEY not configured, cannot create checkout session");
@@ -43,13 +44,16 @@ export async function createCheckoutSession(
         },
       },
     ],
-    metadata: input.src ? { src: input.src } : undefined,
+    metadata: {
+      kit_order_id: input.kitOrderId,
+      ...(input.src ? { src: input.src } : {}),
+    },
     success_url: input.successUrl,
     cancel_url: input.cancelUrl,
   });
 
   if (!session.url) return null;
-  return { url: session.url };
+  return { url: session.url, sessionId: session.id };
 }
 
 export interface CheckoutSessionStatus {
