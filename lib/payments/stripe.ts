@@ -56,6 +56,26 @@ export async function createCheckoutSession(
   return { url: session.url, sessionId: session.id };
 }
 
+/**
+ * Verifies a Stripe webhook signature and parses the event. Returns null when
+ * Stripe/webhook secret isn't configured or the signature is invalid — the
+ * caller must treat null as "reject".
+ */
+export function constructWebhookEvent(payload: string, signature: string): Stripe.Event | null {
+  const stripe = getClient();
+  const secret = process.env.STRIPE_WEBHOOK_SECRET;
+  if (!stripe || !secret) {
+    console.log("[stripe] webhook secret not configured, rejecting webhook");
+    return null;
+  }
+  try {
+    return stripe.webhooks.constructEvent(payload, signature, secret);
+  } catch (error) {
+    console.error("[stripe] webhook signature verification failed", error);
+    return null;
+  }
+}
+
 export interface CheckoutSessionStatus {
   paid: boolean;
   src: string | null;
