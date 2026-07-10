@@ -27,6 +27,10 @@ export function getPool(): Pool | null {
     pool = new Pool({
       connectionString: withoutSslMode(process.env.POSTGRES_URL),
       ssl: { rejectUnauthorized: false },
+      // Fail fast when the DB is unreachable rather than hanging the request.
+      // Our db modules catch the resulting error and degrade gracefully, so a
+      // network block should surface as a logged failure, not a stuck endpoint.
+      connectionTimeoutMillis: 5000,
     });
   }
   return pool;
