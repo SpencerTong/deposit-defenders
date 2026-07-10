@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { buildResultsEmail } from "./results";
 
 const DEFAULT_FROM = "Deposit Defenders <letters@deposit-defenders.com>";
 
@@ -101,6 +102,44 @@ export async function sendKitEmail(input: SendKitEmailInput): Promise<{ sent: bo
 
   if (error) {
     console.error("[email] failed to send kit email", error);
+    return { sent: false };
+  }
+  return { sent: true };
+}
+
+export interface SendResultsEmailInput {
+  to: string;
+  maxExposure: number;
+  violationCount: number;
+}
+
+/**
+ * Emails the lightweight analysis results (no letter attached — the letter is
+ * paid). Same graceful-degradation contract as sendLetterEmail.
+ */
+export async function sendResultsEmail(
+  input: SendResultsEmailInput
+): Promise<{ sent: boolean }> {
+  const resend = getClient();
+  if (!resend) {
+    console.log(`[email] RESEND_API_KEY not configured, would send results email to ${input.to}`);
+    return { sent: false };
+  }
+
+  const content = buildResultsEmail({
+    maxExposure: input.maxExposure,
+    violationCount: input.violationCount,
+  });
+
+  const { error } = await resend.emails.send({
+    from: process.env.RESEND_FROM_EMAIL ?? DEFAULT_FROM,
+    to: input.to,
+    subject: content.subject,
+    html: content.html,
+  });
+
+  if (error) {
+    console.error("[email] failed to send results email", error);
     return { sent: false };
   }
   return { sent: true };
