@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 
-const DEFAULT_FROM = "Deposit Defenders <letters@depositdefenders.com>";
+const DEFAULT_FROM = "Deposit Defenders <letters@deposit-defenders.com>";
 
 let client: Resend | null = null;
 
