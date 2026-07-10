@@ -2,12 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { analyzeTenancy } from "@/lib/statute/ma";
 import { toTenancyInputs } from "@/lib/flow/toTenancyInputs";
 import type { FlowAnswers } from "@/lib/flow/types";
-import { buildDemandLetter } from "@/lib/letter/template";
-import { renderDemandLetterPdf } from "@/lib/letter/pdf";
-import { sendLetterEmail } from "@/lib/email/resend";
+import { sendResultsEmail } from "@/lib/email/resend";
 import { recordLead } from "@/lib/db/leads";
 
-// @react-pdf/renderer needs Node APIs (fontkit, etc.), not available on the edge runtime.
 export const runtime = "nodejs";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -35,11 +32,14 @@ export async function POST(req: NextRequest) {
 
   const tenancy = toTenancyInputs(answers as FlowAnswers);
   const analysis = analyzeTenancy(tenancy);
-  const letter = buildDemandLetter(tenancy, analysis);
-  const pdf = await renderDemandLetterPdf(letter);
 
   const resolvedSrc = typeof src === "string" ? src : null;
   const rulesFired = analysis.rules.filter((rule) => rule.triggered).map((rule) => rule.id);
+  // R5 is an informational wear-and-tear flag, not a violation — matches the
+  // on-screen count in AnalysisResult.
+  const violationCount = analysis.rules.filter(
+    (rule) => rule.triggered && rule.id !== "R5_WEAR_AND_TEAR_FLAGS"
+  ).length;
 
   await recordLead({
     email,
@@ -47,7 +47,11 @@ export async function POST(req: NextRequest) {
     depositAmount: tenancy.depositAmount,
     rulesFired,
   });
-  const { sent } = await sendLetterEmail({ to: email, pdfBytes: pdf });
+  const { sent } = await sendResultsEmail({
+    to: email,
+    maxExposure: analysis.exposure.maxExposure,
+    violationCount,
+  });
 
   return NextResponse.json({ ok: true, sent });
 }
