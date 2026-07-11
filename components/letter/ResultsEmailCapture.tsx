@@ -46,7 +46,7 @@ export function ResultsEmailCapture({ answers }: { answers: FlowAnswers }) {
     <div className="mt-6 rounded-lg border border-gray-200 bg-white p-5">
       <p className="mb-1 font-medium text-gray-900">Email me my results</p>
       <p className="mb-4 text-sm text-gray-600">
-        Optional — get your analysis summary and next steps in your inbox.
+        Optional. Keep a copy of your analysis and next steps in your inbox.
       </p>
       <form onSubmit={handleSubmit} className="space-y-2">
         <label htmlFor="lead-email" className="sr-only">
