@@ -65,15 +65,15 @@ export default function HomePage() {
           Your landlord kept your deposit? Massachusetts law may owe you triple.
         </h1>
         <p className="mb-8 text-lg text-gray-600">
-          Answer six quick questions about your security deposit. See instantly — and free —
-          what Massachusetts law says you may be owed.
+          Answer six quick questions about your security deposit. See what Massachusetts law
+          says you may be owed, instantly and for free.
         </p>
         <button
           type="button"
           onClick={handleStart}
           className="w-full rounded-lg bg-accent px-6 py-4 text-lg font-semibold text-white shadow-sm transition-colors hover:bg-accent-dark sm:w-auto sm:px-10"
         >
-          Check my deposit — it&apos;s free
+          Check my deposit for free
         </button>
         <p className="mt-4 text-sm text-gray-600">Takes about 2 minutes. No account needed.</p>
       </section>
@@ -83,9 +83,9 @@ export default function HomePage() {
           Losing your deposit is common. Letting it go is optional.
         </h2>
         <div className="grid gap-3 sm:grid-cols-3">
-          <Stat value="26%" label="of renters have lost a security deposit" />
-          <Stat value="41%" label="is all who expect to get their full deposit back" />
-          <Stat value="36%" label="who lost one got no explanation from the landlord" />
+          <Stat value="1 in 4" label="renters has lost a security deposit to their landlord" />
+          <Stat value="Most" label="renters do not expect to get their full deposit back" />
+          <Stat value="1 in 3" label="renters who lost a deposit never got an explanation" />
         </div>
         <div className="mt-4 rounded-lg border-l-4 border-accent bg-gray-50 p-4">
           <p className="text-gray-800">
@@ -109,13 +109,13 @@ export default function HomePage() {
           />
           <HowStep
             number={2}
-            title="See what the law says you may be owed — free"
+            title="See what the law says you may be owed, free"
             detail="An instant analysis of your situation under the Massachusetts security deposit law, with each potential violation cited to the statute."
           />
           <HowStep
             number={3}
-            title="For $49, we generate your ready-to-send demand letter and small-claims kit"
-            detail="A formal demand letter citing your specific violations, plus certified-mail instructions, an evidence checklist, and a deadline tracker."
+            title="For $49, we write your demand letter and send it certified mail"
+            detail="A formal letter citing your exact violations, sent to your landlord by certified mail for you. If they still do not pay, you get a small claims plan with your numbers already filled in."
           />
         </ol>
       </section>
@@ -126,7 +126,7 @@ export default function HomePage() {
           onClick={handleStart}
           className="w-full rounded-lg bg-accent px-6 py-4 text-lg font-semibold text-white shadow-sm transition-colors hover:bg-accent-dark sm:w-auto sm:px-10"
         >
-          Check my deposit — it&apos;s free
+          Check my deposit for free
         </button>
       </section>
     </main>
