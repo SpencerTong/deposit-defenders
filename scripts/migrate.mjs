@@ -1,4 +1,4 @@
-// Creates/updates the leads and events tables. Idempotent — safe to rerun.
+// Creates/updates the leads and events tables. Idempotent, safe to rerun.
 // Uses POSTGRES_URL_NON_POOLING (direct connection) since DDL over a
 // transaction-mode pooler (Supavisor) can be unreliable.
 //
@@ -9,7 +9,7 @@ import { Client } from "pg";
 const rawConnectionString = process.env.POSTGRES_URL_NON_POOLING;
 
 if (!rawConnectionString) {
-  console.error("POSTGRES_URL_NON_POOLING is not set in .env.local — nothing to do.");
+  console.error("POSTGRES_URL_NON_POOLING is not set in .env.local, nothing to do.");
   process.exit(1);
 }
 

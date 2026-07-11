@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     src: typeof src === "string" ? src : null,
   });
   if (!order) {
-    // No stored snapshot means an unfulfillable order — refuse payment.
+    // No stored snapshot means an unfulfillable order, so refuse payment.
     return NextResponse.json({ ok: false, error: "kit_unavailable" }, { status: 503 });
   }
 

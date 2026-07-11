@@ -15,7 +15,7 @@ const FUNNEL_STEPS = [
 
 const rawConnectionString = process.env.POSTGRES_URL_NON_POOLING;
 if (!rawConnectionString) {
-  console.error("POSTGRES_URL_NON_POOLING is not set in .env.local — nothing to do.");
+  console.error("POSTGRES_URL_NON_POOLING is not set in .env.local, nothing to do.");
   process.exit(1);
 }
 

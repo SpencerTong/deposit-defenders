@@ -1,6 +1,6 @@
 // One-off: inserts a single test row into leads and events so you can
 // confirm the tables in the Supabase Table Editor. Safe to run more than
-// once (just adds more test rows) — delete them from the Table Editor
+// once (just adds more test rows); delete them from the Table Editor
 // whenever you're done confirming.
 //
 // Usage: node --env-file=.env.local scripts/seed-test-rows.mjs
@@ -10,7 +10,7 @@ import { Client } from "pg";
 const rawConnectionString = process.env.POSTGRES_URL;
 
 if (!rawConnectionString) {
-  console.error("POSTGRES_URL is not set in .env.local — nothing to do.");
+  console.error("POSTGRES_URL is not set in .env.local, nothing to do.");
   process.exit(1);
 }
 

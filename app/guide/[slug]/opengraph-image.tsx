@@ -31,7 +31,7 @@ export default function Image({ params }: { params: { slug: string } }) {
             marginBottom: 28,
           }}
         >
-          Deposit Defenders — MA Renter&apos;s Guide
+          Deposit Defenders | MA Renter&apos;s Guide
         </div>
         <div style={{ display: "flex", fontSize: 54, fontWeight: 700, lineHeight: 1.25 }}>
           {title}

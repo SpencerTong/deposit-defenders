@@ -58,7 +58,7 @@ export async function createCheckoutSession(
 
 /**
  * Verifies a Stripe webhook signature and parses the event. Returns null when
- * Stripe/webhook secret isn't configured or the signature is invalid — the
+ * Stripe/webhook secret isn't configured or the signature is invalid; the
  * caller must treat null as "reject".
  */
 export function constructWebhookEvent(payload: string, signature: string): Stripe.Event | null {

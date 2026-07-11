@@ -4,7 +4,7 @@ import { guideArticles } from "@/lib/guide/articles";
 import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Massachusetts Security Deposit Guides — Deposit Defenders",
+  title: "Massachusetts Security Deposit Guides | Deposit Defenders",
   description:
     "Plain-English guides to Massachusetts security deposit law: deadlines, deductions, interest, demand letters, and small claims court under M.G.L. c. 186 §15B.",
   alternates: { canonical: `${SITE_URL}/guide` },
@@ -18,7 +18,7 @@ export default function GuideIndexPage() {
         Massachusetts security deposit guides
       </h1>
       <p className="mb-8 text-lg text-gray-600">
-        What M.G.L. c. 186, §15B actually requires of your landlord — and what to do when those
+        What M.G.L. c. 186, §15B actually requires of your landlord, and what to do when those
         requirements aren&apos;t met.
       </p>
 
@@ -46,7 +46,7 @@ export default function GuideIndexPage() {
           href="/"
           className="inline-block rounded-lg bg-white px-6 py-3 font-semibold text-accent transition-colors hover:bg-gray-100"
         >
-          Check my deposit — it&apos;s free
+          Check my deposit for free
         </Link>
       </div>
 

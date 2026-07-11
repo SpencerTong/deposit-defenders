@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
 
   const resolvedSrc = typeof src === "string" ? src : null;
   const rulesFired = analysis.rules.filter((rule) => rule.triggered).map((rule) => rule.id);
-  // R5 is an informational wear-and-tear flag, not a violation — matches the
+  // R5 is an informational wear-and-tear flag, not a violation; matches the
   // on-screen count in AnalysisResult.
   const violationCount = analysis.rules.filter(
     (rule) => rule.triggered && rule.id !== "R5_WEAR_AND_TEAR_FLAGS"

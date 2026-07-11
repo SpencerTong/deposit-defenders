@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
 
   const kitOrderId = session.metadata?.kit_order_id;
   if (!kitOrderId) {
-    // Not one of ours (or created before order tracking) — acknowledge so
+    // Not one of ours (or created before order tracking); acknowledge so
     // Stripe doesn't retry forever.
     console.error("[webhook] checkout.session.completed without kit_order_id", session.id);
     return NextResponse.json({ ok: true, ignored: "no_kit_order_id" });
