@@ -1,6 +1,8 @@
 # HANDOFF — read this first
 
-**Updated:** 2026-07-10
+**Updated:** 2026-07-11
+
+> **DO NOT MERGE PR #1 TO `main` (production) until Project 2's certified mailing is live.** The marketing copy on `revenue-buildout` now promises "we send your letter by certified mail for you" (settled launch decision 2026-07-11: no customer release before Project 2). Shipping this copy without working mailing would be false advertising. The kit PDF content (`lib/kit/content.ts`) intentionally still describes self-mailing because it is the delivered product for any test purchases.
 
 Orientation for a fresh session picking up Deposit Defenders (MA security-deposit demand-letter tool). Read `CLAUDE.md` first (legal-safety rules are non-negotiable), then this file.
 
