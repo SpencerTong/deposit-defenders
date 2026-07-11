@@ -25,7 +25,7 @@ describe("buildResultsEmail", () => {
   it("handles the no-violation case without claiming money is owed", () => {
     const { subject, html } = buildResultsEmail({ maxExposure: 0, violationCount: 0 });
     expect(subject).not.toContain("$");
-    expect(html).toContain("didn’t find a clear violation");
+    expect(html).toContain("didn't find a clear violation");
     expect(html).toContain("not legal advice");
   });
 });

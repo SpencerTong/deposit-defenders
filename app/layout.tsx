@@ -10,8 +10,8 @@ const DEFAULT_DESCRIPTION =
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Deposit Defenders — MA Security Deposit Demand Letters",
-    template: "%s — Deposit Defenders",
+    default: "Deposit Defenders: Massachusetts Security Deposit Help",
+    template: "%s | Deposit Defenders",
   },
   description: DEFAULT_DESCRIPTION,
   openGraph: {

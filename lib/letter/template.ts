@@ -100,7 +100,7 @@ export function buildDemandLetter(
     landlordName,
     landlordAddress,
     propertyAddress,
-    subject: `Re: Security Deposit Demand — ${propertyAddress}`,
+    subject: `Re: Security deposit demand for ${propertyAddress}`,
     salutation: `Dear ${landlordName},`,
     paragraphs: [introParagraph, ...violationParagraphs, demandParagraph, deadlineParagraph],
     closing: "Sincerely,",

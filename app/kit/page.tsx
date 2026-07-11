@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { BuyKitButton } from "@/components/kit/BuyKitButton";
 
 export const metadata: Metadata = {
-  title: "Dispute Kit — Deposit Defenders",
+  title: "Dispute Kit | Deposit Defenders",
   description:
     "Everything you need to back up your Massachusetts security deposit demand letter and take it to small claims court if your landlord doesn't pay.",
 };
@@ -35,15 +35,15 @@ export default function KitPage() {
     <main className="mx-auto max-w-xl px-6 py-10">
       <div className="mb-10 rounded-2xl bg-accent px-6 py-8 text-center text-white shadow-lg">
         <p className="mb-2 text-sm uppercase tracking-wide text-white/70">
-          Back up your demand letter
+          Turn your analysis into action
         </p>
         <h1 className="mb-3 font-serif text-3xl font-bold sm:text-4xl">
           The Security Deposit Dispute Kit
         </h1>
         <p className="mb-6 text-white/90">
-          A one-time $49 packet to help you document your claim, send it the right way, track
-          your deadlines, and file in Massachusetts small claims court if your landlord doesn&apos;t
-          pay.
+          For a one-time $49, we write your formal demand letter citing each violation the law
+          check found, send it to your landlord by certified mail for you, and give you the
+          complete plan for small claims court if they still do not pay.
         </p>
         <BuyKitButton className="w-full rounded-lg bg-white px-6 py-4 text-lg font-semibold text-accent shadow-sm transition-colors hover:bg-gray-100 sm:w-auto sm:px-10" />
       </div>
@@ -66,17 +66,17 @@ export default function KitPage() {
       </section>
 
       <section className="mb-10">
-        <h2 className="mb-3 text-lg font-semibold text-gray-900">Certified mail instructions</h2>
+        <h2 className="mb-3 text-lg font-semibold text-gray-900">We send it certified mail, for you</h2>
         <p className="mb-4 text-sm text-gray-600">
-          Sending your demand letter by certified mail with return receipt creates a paper trail
-          showing your landlord actually received it — useful evidence if the case goes to court.
-          The kit walks you through:
+          A demand letter carries the most weight when it arrives by certified mail: it creates
+          dated proof your landlord received it, which is exactly the evidence a court wants to
+          see. You skip the post office entirely. We handle the mailing and you keep the paper
+          trail:
         </p>
         <ul className="space-y-2">
-          <ChecklistItem>Using USPS Certified Mail® with Return Receipt at the post office</ChecklistItem>
-          <ChecklistItem>Keeping your mailing receipt and tracking number</ChecklistItem>
-          <ChecklistItem>Requesting the signed return receipt (the green card) back once delivered</ChecklistItem>
-          <ChecklistItem>Keeping a dated copy of exactly what you sent</ChecklistItem>
+          <ChecklistItem>Your letter is sent to your landlord by USPS Certified Mail with tracking</ChecklistItem>
+          <ChecklistItem>You get a dated copy of exactly what was sent, for your records</ChecklistItem>
+          <ChecklistItem>You get the tracking number and delivery confirmation as proof of receipt</ChecklistItem>
         </ul>
       </section>
 
@@ -85,7 +85,7 @@ export default function KitPage() {
         <p className="text-sm text-gray-600">
           A simple sheet to track the dates that matter most: when you sent your demand letter,
           your landlord&apos;s 10-business-day response window, and the key statutory deadlines from
-          your analysis — so nothing slips while you decide on next steps.
+          your analysis, so nothing slips while you decide on next steps.
         </p>
       </section>
 
@@ -95,7 +95,7 @@ export default function KitPage() {
         </h2>
         <p className="mb-4 text-sm text-gray-600">
           If your landlord doesn&apos;t pay after your demand letter, small claims court is designed
-          for cases like this — no lawyer required. The kit walks you through:
+          for cases like this, and no lawyer is required. The kit walks you through:
         </p>
         <ol className="space-y-3">
           <Step number={1} title="Confirm your claim fits small claims court">
@@ -113,7 +113,7 @@ export default function KitPage() {
             filled-out example based on your answers.
           </Step>
           <Step number={4} title="Pay the filing fee">
-            Filing fees are tiered by claim amount (roughly $40–$150 as of this writing) and are set
+            Filing fees are tiered by claim amount (roughly $40 to $150 as of this writing) and are set
             by the court, so double-check the current amount when you file.
           </Step>
           <Step number={5} title="Prepare for the hearing">
@@ -129,7 +129,7 @@ export default function KitPage() {
 
       <p className="text-sm text-gray-500">
         This tool provides general legal information, not legal advice, and does not create an
-        attorney-client relationship. Court rules, fees, and dollar limits can change — for advice
+        attorney-client relationship. Court rules, fees, and dollar limits can change. For advice
         about your situation, consult a licensed Massachusetts attorney.
       </p>
     </main>

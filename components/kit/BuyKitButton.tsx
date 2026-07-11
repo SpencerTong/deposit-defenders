@@ -51,11 +51,11 @@ export function BuyKitButton({ className }: { className?: string }) {
           "w-full rounded-lg bg-accent px-6 py-4 text-lg font-semibold text-white shadow-sm transition-colors hover:bg-accent-dark disabled:opacity-60 sm:w-auto sm:px-10"
         }
       >
-        {status === "submitting" ? "Redirecting to checkout…" : "Get the Dispute Kit — $49"}
+        {status === "submitting" ? "Redirecting to checkout…" : "Get my letter written and sent for $49"}
       </button>
       {status === "needs_answers" && (
         <p className="mt-2 text-sm text-gray-600">
-          Your kit is personalized from the free deposit check — answer those questions first.
+          Your kit is personalized from the free deposit check, so answer those questions first.
           Taking you there now…
         </p>
       )}

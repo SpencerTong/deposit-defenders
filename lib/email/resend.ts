@@ -83,8 +83,8 @@ export async function sendKitEmail(input: SendKitEmailInput): Promise<{ sent: bo
     subject: "Your Massachusetts Security Deposit Dispute Kit",
     html:
       "<p>Thank you for your purchase. Your Dispute Kit is attached:</p>" +
-      "<ul><li><strong>Demand letter</strong> — print, sign, fill in any [bracketed] fields, and send by certified mail.</li>" +
-      "<li><strong>Dispute Kit</strong> — certified-mail steps, evidence checklist, your escalation timeline, and the small-claims walkthrough.</li></ul>" +
+      "<ul><li><strong>Demand letter</strong>: print, sign, fill in any [bracketed] fields, and send by certified mail.</li>" +
+      "<li><strong>Dispute Kit</strong>: certified-mail steps, evidence checklist, your escalation timeline, and the small-claims walkthrough.</li></ul>" +
       "<p>This is general legal information, not legal advice, and does not create an " +
       "attorney-client relationship. For advice about your situation, consult a licensed " +
       "Massachusetts attorney.</p>",
@@ -114,7 +114,7 @@ export interface SendResultsEmailInput {
 }
 
 /**
- * Emails the lightweight analysis results (no letter attached — the letter is
+ * Emails the lightweight analysis results (no letter attached; the letter is
  * paid). Same graceful-degradation contract as sendLetterEmail.
  */
 export async function sendResultsEmail(

@@ -68,7 +68,7 @@ describe("buildKitContent", () => {
 
   it("mentions the correct filing fee tier for this claim", () => {
     // outstanding balance here is $1,800 (forfeited deductions: $3,000 − $1,200
-    // returned), which lands in the $500.01–$2,000 → $50 tier.
+    // returned), which lands in the $500.01 to $2,000 tier (a $50 fee).
     const smallClaims = kit.sections.find((s) =>
       s.heading.toLowerCase().includes("small claims")
     )!;

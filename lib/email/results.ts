@@ -25,7 +25,7 @@ function formatCurrency(amount: number): string {
 
 /**
  * The lightweight "your results" email sent on lead capture: the potential
- * claim + the $49 kit link. Deliberately NOT the demand letter — the letter
+ * claim + the $49 kit link. Deliberately NOT the demand letter; the letter
  * is part of the paid kit.
  */
 export function buildResultsEmail(input: ResultsEmailInput): ResultsEmailContent {
@@ -35,7 +35,7 @@ export function buildResultsEmail(input: ResultsEmailInput): ResultsEmailContent
     return {
       subject: "Your Massachusetts security deposit analysis",
       html:
-        "<p>Based on your answers, we didn’t find a clear violation of the Massachusetts " +
+        "<p>Based on your answers, we didn't find a clear violation of the Massachusetts " +
         "security deposit law (M.G.L. c. 186 §15B). You may still want to review your " +
         "paperwork carefully.</p>" +
         DISCLAIMER,
@@ -51,13 +51,14 @@ export function buildResultsEmail(input: ResultsEmailInput): ResultsEmailContent
   return {
     subject: `Your deposit analysis: up to ${amount} may be owed`,
     html:
-      `<p>Based on your answers, your landlord’s handling of your security deposit shows ` +
+      `<p>Based on your answers, your landlord's handling of your security deposit shows ` +
       `<strong>${violations}</strong> of the Massachusetts security deposit law ` +
       `(M.G.L. c. 186 §15B), which may entitle you to <strong>up to ${amount}</strong> ` +
       `including treble damages where the law provides for them.</p>` +
-      `<p>When you’re ready to act, we can generate your ready-to-send formal demand ` +
-      `letter and small-claims kit for $49:</p>` +
-      `<p><a href="${kitUrl}">Get my demand letter and dispute kit — $49</a></p>` +
+      `<p>Ready to collect? For a one-time $49, we write your formal demand letter citing ` +
+      `each violation, send it to your landlord by certified mail for you, and include the ` +
+      `complete small claims plan with your numbers if they still do not pay.</p>` +
+      `<p><a href="${kitUrl}">Get my letter written and sent for $49</a></p>` +
       DISCLAIMER,
   };
 }
