@@ -80,7 +80,10 @@ export function MailPanel({ sessionId, details, mailStatus, mailTracking, onMail
           className="mt-1"
         />
         <span>
-          I reviewed the letter preview and both addresses above, and they are correct.
+          I reviewed the letter preview and both addresses above and they are correct. I
+          understand this is a self-help document prepared from my answers and sent at my
+          direction, that Deposit Defenders is not a law firm, and that no outcome is
+          guaranteed.
         </span>
       </label>
       <button

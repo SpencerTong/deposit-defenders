@@ -199,6 +199,11 @@ export function KitSuccessClient() {
 
       <section className="mb-10">
         <StepHeading number={2} title="Review your letter" />
+        <p className="mb-3 text-xs text-gray-500">
+          This letter is a self-help document prepared from your answers. Review every fact
+          carefully before sending; you are responsible for its accuracy. It states your claims
+          in your name.
+        </p>
         {letter ? (
           <div className="max-h-96 space-y-3 overflow-y-auto rounded-lg border border-gray-200 bg-white p-5 text-sm leading-relaxed text-gray-800">
             <p>{letter.date}</p>
