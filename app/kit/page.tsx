@@ -4,14 +4,17 @@ import { BuyKitButton } from "@/components/kit/BuyKitButton";
 export const metadata: Metadata = {
   title: "Dispute Kit | Deposit Defenders",
   description:
-    "Everything you need to back up your Massachusetts security deposit demand letter and take it to small claims court if your landlord doesn't pay.",
+    "For $49 we write your Massachusetts security deposit demand letter, send it certified mail for you, and prepare your small claims paperwork.",
 };
 
-function ChecklistItem({ children }: { children: React.ReactNode }) {
+function Deliverable({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <li className="flex gap-3 rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-700">
-      <span className="mt-0.5 text-accent">✓</span>
-      <span>{children}</span>
+    <li className="rounded-lg border border-gray-200 bg-white p-4">
+      <p className="mb-1 flex gap-2 font-medium text-gray-900">
+        <span className="text-accent">&#10003;</span>
+        {title}
+      </p>
+      <p className="pl-6 text-sm text-gray-700">{children}</p>
     </li>
   );
 }
@@ -42,85 +45,66 @@ export default function KitPage() {
         </h1>
         <p className="mb-6 text-white/90">
           For a one-time $49, we write your formal demand letter citing each violation the law
-          check found, send it to your landlord by certified mail for you, and give you the
-          complete plan for small claims court if they still do not pay.
+          check found, send it to your landlord by certified mail for you, and prepare your
+          small claims paperwork in case they still do not pay.
         </p>
         <BuyKitButton className="w-full rounded-lg bg-white px-6 py-4 text-lg font-semibold text-accent shadow-sm transition-colors hover:bg-gray-100 sm:w-auto sm:px-10" />
       </div>
 
       <section className="mb-10">
-        <h2 className="mb-3 text-lg font-semibold text-gray-900">Evidence packet checklist</h2>
-        <p className="mb-4 text-sm text-gray-600">
-          A landlord who doesn&apos;t return a deposit properly can be hard to win against without
-          organized evidence. The kit includes a checklist for gathering:
-        </p>
-        <ul className="space-y-2">
-          <ChecklistItem>Move-in and move-out photos or video, dated if possible</ChecklistItem>
-          <ChecklistItem>A copy of your lease and any statement of condition</ChecklistItem>
-          <ChecklistItem>
-            All written communication with your landlord about the deposit (texts, emails, letters)
-          </ChecklistItem>
-          <ChecklistItem>Receipts or records related to anything you&apos;re being blamed for</ChecklistItem>
-          <ChecklistItem>Your demand letter and proof that it was sent and received</ChecklistItem>
-        </ul>
-      </section>
-
-      <section className="mb-10">
-        <h2 className="mb-3 text-lg font-semibold text-gray-900">We send it certified mail, for you</h2>
-        <p className="mb-4 text-sm text-gray-600">
-          A demand letter carries the most weight when it arrives by certified mail: it creates
-          dated proof your landlord received it, which is exactly the evidence a court wants to
-          see. You skip the post office entirely. We handle the mailing and you keep the paper
-          trail:
-        </p>
-        <ul className="space-y-2">
-          <ChecklistItem>Your letter is sent to your landlord by USPS Certified Mail with tracking</ChecklistItem>
-          <ChecklistItem>You get a dated copy of exactly what was sent, for your records</ChecklistItem>
-          <ChecklistItem>You get the tracking number and delivery confirmation as proof of receipt</ChecklistItem>
-        </ul>
-      </section>
-
-      <section className="mb-10">
-        <h2 className="mb-3 text-lg font-semibold text-gray-900">Deadline tracker sheet</h2>
-        <p className="text-sm text-gray-600">
-          A simple sheet to track the dates that matter most: when you sent your demand letter,
-          your landlord&apos;s 10-business-day response window, and the key statutory deadlines from
-          your analysis, so nothing slips while you decide on next steps.
-        </p>
-      </section>
-
-      <section className="mb-10">
         <h2 className="mb-3 text-lg font-semibold text-gray-900">
-          Massachusetts small claims filing walkthrough
+          Everything is built from your answers
         </h2>
         <p className="mb-4 text-sm text-gray-600">
-          If your landlord doesn&apos;t pay after your demand letter, small claims court is designed
-          for cases like this, and no lawyer is required. The kit walks you through:
+          Nothing generic. Your letter cites your violations, your deadlines are computed from
+          your dates, and your court paperwork carries your names and amounts.
         </p>
+        <ul className="space-y-2">
+          <Deliverable title="Your formal demand letter, written and strengthened">
+            Cites each violation with the exact statute. Where the law allows, it is upgraded to
+            a Consumer Protection Act (Chapter 93A) demand, the version attorneys send. Delivered
+            as a print-ready PDF and an editable Word document.
+          </Deliverable>
+          <Deliverable title="Sent by certified mail, for you">
+            We mail it to your landlord by USPS Certified Mail with return receipt. You skip the
+            post office and keep the tracking number and delivery confirmation as proof.
+          </Deliverable>
+          <Deliverable title="Your small claim form, pre-filled">
+            A completed draft of the Massachusetts Statement of Small Claim with your parties,
+            your claim amount, your claim description, and the current filing fee for a claim
+            your size, ready to copy onto the court&apos;s official form.
+          </Deliverable>
+          <Deliverable title="Your evidence plan and deadline tracker">
+            A personalized packet: what evidence to gather for your specific violations, your
+            landlord&apos;s exact response deadline, and the full walkthrough for filing and
+            winning in small claims court if the deadline passes.
+          </Deliverable>
+        </ul>
+      </section>
+
+      <section className="mb-10">
+        <h2 className="mb-3 text-lg font-semibold text-gray-900">How it works after you pay</h2>
         <ol className="space-y-3">
-          <Step number={1} title="Confirm your claim fits small claims court">
-            Massachusetts small claims court generally handles claims of $7,000 or less. Most
-            security deposit disputes fall well within this limit.
+          <Step number={1} title="Your kit arrives instantly">
+            The letter and packet land in your inbox, and your private letter workspace opens.
           </Step>
-          <Step number={2} title="Pick where to file">
-            You can generally file in the District Court, Boston Municipal Court, or Housing Court
-            location where you live or work, where your landlord lives or does business, or where
-            the rental property is located.
+          <Step number={2} title="You review and personalize">
+            Add your names and addresses, make any edits, and see the final letter exactly as
+            your landlord will.
           </Step>
-          <Step number={3} title="Complete the Statement of Small Claim">
-            Massachusetts courts use a &quot;Statement of Small Claim and Notice&quot; form, available
-            by mail or through the court&apos;s online small-claims filing tool. The kit includes a
-            filled-out example based on your answers.
-          </Step>
-          <Step number={4} title="Pay the filing fee">
-            Filing fees are tiered by claim amount (roughly $40 to $150 as of this writing) and are set
-            by the court, so double-check the current amount when you file.
-          </Step>
-          <Step number={5} title="Prepare for the hearing">
-            Bring your evidence packet, your demand letter and proof of mailing, and a clear,
-            written summary of what you&apos;re owed and why.
+          <Step number={3} title="One click sends it certified">
+            We print and mail it with return receipt. Your tracking number appears in your
+            workspace the moment it ships.
           </Step>
         </ol>
+      </section>
+
+      <section className="mb-10 rounded-lg border-l-4 border-accent bg-gray-50 p-4">
+        <p className="text-sm text-gray-800">
+          For perspective: a single consult with a landlord-tenant attorney commonly starts
+          around $150, and certified mail with return receipt alone runs about $10 at the post
+          office. The kit is $49, once, with everything prepared for you.
+        </p>
       </section>
 
       <div className="mb-10 text-center">
