@@ -62,6 +62,16 @@ try {
     )
   `);
   console.log("kit_orders table ready.");
+
+  await client.query(`
+    ALTER TABLE kit_orders
+      ADD COLUMN IF NOT EXISTS letter_details JSONB,
+      ADD COLUMN IF NOT EXISTS mail_status TEXT NOT NULL DEFAULT 'unsent',
+      ADD COLUMN IF NOT EXISTS lob_id TEXT,
+      ADD COLUMN IF NOT EXISTS mail_tracking TEXT,
+      ADD COLUMN IF NOT EXISTS mailed_at TIMESTAMPTZ
+  `);
+  console.log("kit_orders mailing columns ready.");
 } catch (error) {
   console.error("Migration failed:", error.message);
   process.exitCode = 1;

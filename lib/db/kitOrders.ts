@@ -2,6 +2,25 @@ import { getPool } from "./client";
 
 export type KitOrderStatus = "pending" | "paid" | "fulfilled";
 
+export type MailStatus = "unsent" | "sending" | "sent";
+
+export interface MailAddress {
+  line1: string;
+  line2?: string;
+  city: string;
+  state: string;
+  zip: string;
+}
+
+export interface LetterDetails {
+  tenantName: string;
+  tenantAddress: MailAddress;
+  landlordName: string;
+  landlordAddress: MailAddress;
+  ownerOccupied: boolean;
+  customNote?: string;
+}
+
 export interface KitOrder {
   id: string;
   email: string | null;
@@ -9,6 +28,9 @@ export interface KitOrder {
   stripeSessionId: string | null;
   status: KitOrderStatus;
   src: string | null;
+  letterDetails: LetterDetails | null;
+  mailStatus: MailStatus;
+  mailTracking: string | null;
 }
 
 interface KitOrderRow {
@@ -18,7 +40,13 @@ interface KitOrderRow {
   stripe_session_id: string | null;
   status: KitOrderStatus;
   src: string | null;
+  letter_details: LetterDetails | null;
+  mail_status: MailStatus;
+  mail_tracking: string | null;
 }
+
+const ORDER_COLUMNS =
+  "id, email, answers, stripe_session_id, status, src, letter_details, mail_status, mail_tracking";
 
 function toKitOrder(row: KitOrderRow): KitOrder {
   return {
@@ -28,6 +56,9 @@ function toKitOrder(row: KitOrderRow): KitOrder {
     stripeSessionId: row.stripe_session_id,
     status: row.status,
     src: row.src,
+    letterDetails: row.letter_details,
+    mailStatus: row.mail_status ?? "unsent",
+    mailTracking: row.mail_tracking,
   };
 }
 
@@ -79,7 +110,7 @@ export async function getKitOrderById(id: string): Promise<KitOrder | null> {
   const pool = getPool();
   if (!pool) return null;
   const result = await pool.query<KitOrderRow>(
-    "SELECT id, email, answers, stripe_session_id, status, src FROM kit_orders WHERE id = $1",
+    `SELECT ${ORDER_COLUMNS} FROM kit_orders WHERE id = $1`,
     [id]
   );
   return result.rows[0] ? toKitOrder(result.rows[0]) : null;
@@ -89,7 +120,7 @@ export async function getKitOrderBySessionId(stripeSessionId: string): Promise<K
   const pool = getPool();
   if (!pool) return null;
   const result = await pool.query<KitOrderRow>(
-    "SELECT id, email, answers, stripe_session_id, status, src FROM kit_orders WHERE stripe_session_id = $1",
+    `SELECT ${ORDER_COLUMNS} FROM kit_orders WHERE stripe_session_id = $1`,
     [stripeSessionId]
   );
   return result.rows[0] ? toKitOrder(result.rows[0]) : null;
@@ -117,4 +148,52 @@ export async function revertKitOrderToPaid(id: string): Promise<void> {
   await pool.query("UPDATE kit_orders SET status = 'paid', fulfilled_at = NULL WHERE id = $1", [
     id,
   ]);
+}
+
+export async function setKitOrderLetterDetails(
+  id: string,
+  details: LetterDetails
+): Promise<void> {
+  const pool = getPool();
+  if (!pool) return;
+  await pool.query("UPDATE kit_orders SET letter_details = $2 WHERE id = $1", [
+    id,
+    JSON.stringify(details),
+  ]);
+}
+
+/**
+ * Atomically claims an order for certified mailing. Only one caller ever gets
+ * `true` per order: the physical letter must never be sent twice.
+ */
+export async function claimKitOrderForMailing(id: string): Promise<boolean> {
+  const pool = getPool();
+  if (!pool) return false;
+  const result = await pool.query(
+    "UPDATE kit_orders SET mail_status = 'sending' WHERE id = $1 AND mail_status = 'unsent' RETURNING id",
+    [id]
+  );
+  return (result.rowCount ?? 0) > 0;
+}
+
+export async function setKitOrderMailResult(
+  id: string,
+  result: { lobId: string; tracking: string | null }
+): Promise<void> {
+  const pool = getPool();
+  if (!pool) return;
+  await pool.query(
+    "UPDATE kit_orders SET mail_status = 'sent', lob_id = $2, mail_tracking = $3, mailed_at = now() WHERE id = $1",
+    [id, result.lobId, result.tracking]
+  );
+}
+
+/** Undoes a mailing claim after a failed Lob call so the buyer can retry. */
+export async function revertKitOrderMailToUnsent(id: string): Promise<void> {
+  const pool = getPool();
+  if (!pool) return;
+  await pool.query(
+    "UPDATE kit_orders SET mail_status = 'unsent' WHERE id = $1 AND mail_status = 'sending'",
+    [id]
+  );
 }
