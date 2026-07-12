@@ -10,6 +10,7 @@ vi.mock("@/lib/db/kitOrders", () => ({
 }));
 vi.mock("@/lib/mail/lob", () => ({
   mailCertifiedLetter: vi.fn(),
+  isMailFailure: (o: unknown) => o !== null && typeof o === "object" && "failure" in o,
 }));
 vi.mock("@/lib/letter/pdf", () => ({
   renderDemandLetterPdf: vi.fn().mockResolvedValue(Buffer.from("%PDF-1.4 fake")),
@@ -110,10 +111,19 @@ describe("POST /api/kit/mail", () => {
   });
 
   it("reverts the claim when Lob fails so the buyer can retry", async () => {
-    vi.mocked(mailCertifiedLetter).mockResolvedValue(null);
+    vi.mocked(mailCertifiedLetter).mockResolvedValue({ failure: "provider_error" });
     const res = await POST(request({ sessionId: "cs_test_1" }));
     expect(res.status).toBe(502);
     expect(revertKitOrderMailToUnsent).toHaveBeenCalledWith("o1");
     expect(setKitOrderMailResult).not.toHaveBeenCalled();
+  });
+
+  it("returns a fixable 400 when the landlord address fails deliverability", async () => {
+    vi.mocked(mailCertifiedLetter).mockResolvedValue({ failure: "undeliverable_address" });
+    const res = await POST(request({ sessionId: "cs_test_1" }));
+    const json = (await res.json()) as { ok: boolean; error: string };
+    expect(res.status).toBe(400);
+    expect(json.error).toBe("address_unverified");
+    expect(revertKitOrderMailToUnsent).toHaveBeenCalledWith("o1");
   });
 });

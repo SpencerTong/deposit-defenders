@@ -112,6 +112,12 @@ export default function KitPage() {
 
       <div className="mb-6 text-center">
         <BuyKitButton />
+        <p className="mt-4 text-sm text-gray-600">
+          Still deciding?{" "}
+          <a href="/faq" className="font-medium text-accent underline">
+            Read the common questions
+          </a>
+        </p>
       </div>
     </main>
   );

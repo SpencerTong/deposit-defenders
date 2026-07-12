@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { LetterDetails } from "@/lib/db/kitOrders";
 
-type Status = "idle" | "mailing" | "error" | "already";
+type Status = "idle" | "mailing" | "error" | "bad_address" | "already";
 
 interface MailPanelProps {
   sessionId: string;
@@ -33,7 +33,11 @@ export function MailPanel({ sessionId, details, mailStatus, mailTracking, onMail
         onMailed();
         return;
       }
-      const data = (await res.json()) as { ok: boolean; tracking?: string | null };
+      const data = (await res.json()) as { ok: boolean; error?: string; tracking?: string | null };
+      if (!data.ok && data.error === "address_unverified") {
+        setStatus("bad_address");
+        return;
+      }
       if (!data.ok) throw new Error("mail failed");
       setTracking(data.tracking ?? null);
       setStatus("idle");
@@ -97,6 +101,13 @@ export function MailPanel({ sessionId, details, mailStatus, mailTracking, onMail
       {status === "error" && (
         <p className="mt-2 text-sm text-red-600">
           The mailing did not go through. Nothing was sent. Please try again in a moment.
+        </p>
+      )}
+      {status === "bad_address" && (
+        <p className="mt-2 text-sm text-red-600">
+          The postal service could not verify one of the addresses as deliverable, so nothing
+          was sent. Use &quot;Edit details&quot; in step 1 to double-check the street number,
+          spelling, city, state, and ZIP, then try again.
         </p>
       )}
     </div>

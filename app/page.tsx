@@ -110,7 +110,7 @@ export default function HomePage() {
           <HowStep
             number={2}
             title="See what the law says you may be owed, free"
-            detail="An instant analysis of your situation under the Massachusetts security deposit law, with each potential violation cited to the statute."
+            detail="An instant analysis citing each potential violation to the statute. The number can be bigger than the deposit itself: up to 3 times the amount wrongfully held, plus 5% interest, court costs, and attorney's fees."
           />
           <HowStep
             number={3}

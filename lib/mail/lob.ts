@@ -14,6 +14,17 @@ export interface MailLetterResult {
   trackingNumber: string | null;
 }
 
+export interface MailLetterFailure {
+  failure: "undeliverable_address" | "provider_error";
+}
+
+/** Success, a distinguishable failure, or null when Lob isn't configured. */
+export type MailLetterOutcome = MailLetterResult | MailLetterFailure | null;
+
+export function isMailFailure(o: MailLetterOutcome): o is MailLetterFailure {
+  return o !== null && "failure" in o;
+}
+
 function appendAddress(form: FormData, prefix: "to" | "from", name: string, a: MailAddress): void {
   form.append(`${prefix}[name]`, name);
   form.append(`${prefix}[address_line1]`, a.line1);
@@ -30,9 +41,7 @@ function appendAddress(form: FormData, prefix: "to" | "from", name: string, a: M
  * the caller decides how to surface the failure. Test keys (test_*) create
  * test letters that are never physically mailed.
  */
-export async function mailCertifiedLetter(
-  input: MailLetterInput
-): Promise<MailLetterResult | null> {
+export async function mailCertifiedLetter(input: MailLetterInput): Promise<MailLetterOutcome> {
   const apiKey = process.env.LOB_API_KEY;
   if (!apiKey) {
     console.log(
@@ -62,14 +71,20 @@ export async function mailCertifiedLetter(
     });
 
     if (!res.ok) {
-      console.error(`[lob] letter create failed (${res.status})`, await res.text());
-      return null;
+      const body = await res.text();
+      console.error(`[lob] letter create failed (${res.status})`, body);
+      // Lob verifies deliverability even in test mode; a rejected address is
+      // the buyer's to fix, not a system error.
+      if (res.status === 422 && body.includes("deliverability")) {
+        return { failure: "undeliverable_address" };
+      }
+      return { failure: "provider_error" };
     }
 
     const data = (await res.json()) as { id: string; tracking_number?: string | null };
     return { id: data.id, trackingNumber: data.tracking_number ?? null };
   } catch (error) {
     console.error("[lob] letter create request failed", error);
-    return null;
+    return { failure: "provider_error" };
   }
 }
