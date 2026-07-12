@@ -270,13 +270,7 @@ export function KitSuccessClient() {
         )}
       </section>
 
-      <p className="text-sm text-gray-500">
-        This tool provides general legal information, not legal advice, and does not create an
-        attorney-client relationship. For advice about your situation, consult a licensed
-        Massachusetts attorney.
-      </p>
-
-      <Link href="/" className="mt-6 inline-block text-sm text-accent underline">
+      <Link href="/" className="inline-block text-sm text-accent underline">
         Back to Deposit Defenders
       </Link>
     </main>

@@ -45,6 +45,8 @@ export interface RuleResult {
   triggered: boolean;
   title: string;
   explanation: string;
+  /** One-sentence plain-English restatement of the explanation, no citations. */
+  plainTerms: string;
   citation: string;
   severity: Severity;
 }
@@ -157,6 +159,9 @@ export function analyzeTenancy(
     explanation: r1Triggered
       ? "The deposit collected is more than one month's rent, which §15B(1)(b)(iii) does not allow. The excess amount can be recovered, though this violation alone does not carry the statute's treble-damages remedy."
       : "The deposit collected does not exceed one month's rent.",
+    plainTerms: r1Triggered
+      ? "In plain terms: a Massachusetts landlord cannot collect a deposit bigger than one month's rent, so the extra amount may be owed back to you."
+      : "Your deposit was within the legal limit.",
     citation: "M.G.L. c. 186, §15B(1)(b)(iii)",
     severity: r1Triggered ? "medium" : "info",
   });
@@ -170,6 +175,9 @@ export function analyzeTenancy(
     explanation: r2Triggered
       ? "The landlord did not, to the tenant's knowledge, provide a receipt naming the bank and account number holding the deposit within 30 days of receiving it, as §15B(3)(a) requires. This can forfeit the landlord's right to retain any part of the deposit and can expose the landlord to treble damages under §15B(6)(a) and §15B(7)."
       : "The landlord provided a timely receipt naming the bank and account number for the escrowed deposit.",
+    plainTerms: r2Triggered
+      ? "In plain terms: without proof your deposit went into a proper bank account, your landlord may have lost the right to keep any of it, and a court can order up to three times the amount."
+      : "Your landlord documented the deposit's bank account as required.",
     citation: "M.G.L. c. 186, §15B(3)(a), §15B(6)(a), §15B(7)",
     severity: r2Triggered ? "high" : "info",
   });
@@ -192,6 +200,9 @@ export function analyzeTenancy(
     explanation: r3Triggered
       ? "§15B(4) requires an itemized list of damages, sworn under pains and penalties of perjury, within 30 days of move-out. Failing to meet this forfeits the landlord's right to keep any deductions under §15B(6)(b). Treble damages under §15B(7) apply only if the resulting balance owed is not returned within 30 days (see the late-return rule)."
       : "The itemized list of damages (if any deductions were claimed) was timely and properly sworn.",
+    plainTerms: r3Triggered
+      ? "In plain terms: because the damage list was missing, late, or not properly sworn, your landlord may not be allowed to keep anything for repairs, no matter what the damage was."
+      : "The damage paperwork was handled properly.",
     citation: "M.G.L. c. 186, §15B(4), §15B(6)(b)",
     severity: r3Triggered ? "high" : "info",
   });
@@ -212,6 +223,10 @@ export function analyzeTenancy(
       contestableCount > 0
         ? `${contestableCount} of ${deductionFlags.length} claimed deduction(s) use language commonly associated with ordinary wear and tear, which §15B(4)(iii) excludes from deductions. These are informational flags based on keyword matching, not legal conclusions about any specific deduction.`
         : "None of the claimed deductions match common ordinary-wear-and-tear language. This is an informational flag based on keyword matching, not a legal conclusion.",
+    plainTerms:
+      contestableCount > 0
+        ? "In plain terms: charges like routine cleaning or repainting are often just normal wear from living there, which cannot be taken out of a deposit."
+        : "No claimed deductions matched common wear-and-tear language.",
     citation: "M.G.L. c. 186, §15B(4)(iii)",
     severity: "info",
   });
@@ -239,6 +254,9 @@ export function analyzeTenancy(
     explanation: r4Triggered
       ? "More than 30 days have passed since the tenancy ended and the balance the tenant is entitled to has not been returned, violating §15B(4) and §15B(6)(e). This exposes the landlord to treble damages under §15B(7)."
       : "The deposit balance was returned within 30 days of move-out, or the 30-day window has not yet passed.",
+    plainTerms: r4Triggered
+      ? "In plain terms: your money is past due. When a deposit comes back late, a court can order up to three times the amount owed, plus your court costs and attorney's fees."
+      : "The deposit was returned on time, or the deadline has not passed yet.",
     citation: "M.G.L. c. 186, §15B(4), §15B(6)(e), §15B(7)",
     severity: r4Triggered ? "high" : "info",
   });
@@ -253,6 +271,9 @@ export function analyzeTenancy(
     explanation: r6Triggered
       ? "The deposit was held for a year or more and the required 5% annual interest was not paid, violating §15B(3)(b). This violation alone does not carry the statute's treble-damages remedy unless the unpaid interest is also part of a balance not returned within 30 days of termination."
       : "Either the deposit was held less than a year (no interest yet due) or annual interest was paid as required.",
+    plainTerms: r6Triggered
+      ? "In plain terms: a deposit held a year or more earns 5% interest every year, and that unpaid interest is extra money you can add to your demand."
+      : "No interest issue was found.",
     citation: "M.G.L. c. 186, §15B(3)(b)",
     severity: r6Triggered ? "medium" : "info",
   });

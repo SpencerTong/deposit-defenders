@@ -48,7 +48,10 @@ export default function KitPage() {
           check found, send it to your landlord by certified mail for you, and prepare your
           small claims paperwork in case they still do not pay.
         </p>
-        <BuyKitButton className="w-full rounded-lg bg-white px-6 py-4 text-lg font-semibold text-accent shadow-sm transition-colors hover:bg-gray-100 sm:w-auto sm:px-10" />
+        <BuyKitButton
+          className="w-full rounded-xl bg-white px-6 py-4 text-lg font-semibold text-accent shadow-md transition-all hover:-translate-y-0.5 hover:bg-gray-100 hover:shadow-lg sm:w-auto sm:px-10"
+          trustClassName="mt-2 text-xs text-white/70"
+        />
       </div>
 
       <section className="mb-10">
@@ -107,15 +110,9 @@ export default function KitPage() {
         </p>
       </section>
 
-      <div className="mb-10 text-center">
+      <div className="mb-6 text-center">
         <BuyKitButton />
       </div>
-
-      <p className="text-sm text-gray-500">
-        This tool provides general legal information, not legal advice, and does not create an
-        attorney-client relationship. Court rules, fees, and dollar limits can change. For advice
-        about your situation, consult a licensed Massachusetts attorney.
-      </p>
     </main>
   );
 }

@@ -309,3 +309,27 @@ describe("R5 wear-and-tear keyword flags", () => {
     expect(rule.explanation.toLowerCase()).toContain("informational");
   });
 });
+
+describe("plain-terms summaries", () => {
+  it("every triggered rule carries a plain-English summary free of statute citations", () => {
+    const result = analyzeTenancy(
+      baseInputs({
+        depositAmount: 3000,
+        monthlyRent: 1500,
+        receivedBankReceipt: "no",
+        receivedItemizedList: false,
+        deductionsClaimed: [{ description: "Repainting", amount: 300 }],
+        amountReturned: 0,
+        interestPaidAnnually: "no",
+      }),
+      new Date("2024-03-01")
+    );
+    const triggered = result.rules.filter((r) => r.triggered && r.id !== "R5_WEAR_AND_TEAR_FLAGS");
+    expect(triggered.length).toBeGreaterThanOrEqual(4);
+    for (const rule of triggered) {
+      expect(rule.plainTerms.length).toBeGreaterThan(20);
+      expect(rule.plainTerms).not.toContain("§");
+      expect(rule.plainTerms.toLowerCase()).not.toContain("guaranteed");
+    }
+  });
+});
