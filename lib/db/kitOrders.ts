@@ -17,6 +17,8 @@ export interface LetterDetails {
   tenantAddress: MailAddress;
   landlordName: string;
   landlordAddress: MailAddress;
+  /** The rental unit the deposit was for; the tenant may live elsewhere now. */
+  propertyAddress: string;
   ownerOccupied: boolean;
   customNote?: string;
 }

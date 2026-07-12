@@ -12,5 +12,11 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "order_not_found" }, { status: 404 });
   }
 
-  return NextResponse.json({ ok: true, status: order.status });
+  return NextResponse.json({
+    ok: true,
+    status: order.status,
+    letterDetails: order.letterDetails,
+    mailStatus: order.mailStatus,
+    mailTracking: order.mailTracking,
+  });
 }
