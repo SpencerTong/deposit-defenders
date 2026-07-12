@@ -14,6 +14,7 @@ import {
 } from "@/lib/db/kitOrders";
 import { sendKitEmail } from "@/lib/email/resend";
 import { recordEvent } from "@/lib/db/events";
+import { SITE_URL } from "@/lib/site";
 
 export interface FulfillDeps {
   getOrder: (id: string) => Promise<KitOrder | null>;
@@ -24,6 +25,7 @@ export interface FulfillDeps {
     to: string;
     letterPdf: Uint8Array;
     kitPdf: Uint8Array;
+    workspaceUrl: string | null;
   }) => Promise<{ sent: boolean }>;
   recordPurchase: (src: string | null) => Promise<void>;
 }
@@ -71,7 +73,10 @@ export async function fulfillKitOrder(
     const letterPdf = await renderDemandLetterPdf(letter);
     const kitPdf = await renderKitPdf(buildKitContent(tenancy, analysis));
 
-    const { sent } = await deps.sendEmail({ to: deliverTo, letterPdf, kitPdf });
+    const workspaceUrl = order.stripeSessionId
+      ? `${SITE_URL}/kit/success?session_id=${encodeURIComponent(order.stripeSessionId)}`
+      : null;
+    const { sent } = await deps.sendEmail({ to: deliverTo, letterPdf, kitPdf, workspaceUrl });
     if (!sent) {
       await deps.revertOrder(kitOrderId);
       return "retry";

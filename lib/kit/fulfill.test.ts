@@ -42,6 +42,7 @@ describe("fulfillKitOrder", () => {
     expect(sendArgs.to).toBe("buyer@example.com");
     expect(sendArgs.letterPdf.byteLength).toBeGreaterThan(0);
     expect(sendArgs.kitPdf.byteLength).toBeGreaterThan(0);
+    expect(sendArgs.workspaceUrl).toContain("/kit/success?session_id=cs_123");
     expect(deps.recordPurchase).toHaveBeenCalledWith("reddit");
   });
 
