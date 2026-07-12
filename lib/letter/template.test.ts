@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { analyzeTenancy, type TenancyInputs } from "../statute/ma";
-import { buildDemandLetter } from "./template";
+import { buildCombinedDemandLetter, buildDemandLetter } from "./template";
+
+const TODAY = new Date("2026-07-11");
 
 function violatingTenancy(): TenancyInputs {
   return {
@@ -119,5 +121,35 @@ describe("buildDemandLetter", () => {
     const letter = buildDemandLetter(cleanTenancy(), analysis);
     expect(letter.paragraphs.length).toBeGreaterThan(0);
     expect(letter.paragraphs.some((p) => /did not (identify|find)/i.test(p))).toBe(true);
+  });
+});
+
+describe("buildCombinedDemandLetter", () => {
+  it("delegates to the plain §15B letter when the landlord is owner-occupied", () => {
+    const t = violatingTenancy();
+    const a = analyzeTenancy(t);
+    const combined = buildCombinedDemandLetter(t, a, {}, { ownerOccupied: true, today: TODAY });
+    const plain = buildDemandLetter(t, a, {}, TODAY);
+    expect(combined).toEqual(plain);
+  });
+
+  it("produces a combined §15B + 93A demand with a 30-day deadline", () => {
+    const t = violatingTenancy();
+    const a = analyzeTenancy(t);
+    const letter = buildCombinedDemandLetter(t, a, {}, { ownerOccupied: false, today: TODAY });
+    const body = letter.paragraphs.join(" ");
+    expect(letter.subject).toContain("93A");
+    expect(body).toContain("M.G.L. c. 93A, §9");
+    expect(body).toContain("940 CMR 3.17(4)");
+    expect(body).toContain("30 days");
+    expect(body).not.toContain("10 business days");
+    expect(body.toLowerCase()).not.toContain("guaranteed");
+  });
+
+  it("keeps the §15B letter unchanged for a clean analysis even when not owner-occupied", () => {
+    const t = cleanTenancy();
+    const a = analyzeTenancy(t);
+    const combined = buildCombinedDemandLetter(t, a, {}, { ownerOccupied: false, today: TODAY });
+    expect(combined.paragraphs.join(" ")).not.toContain("93A");
   });
 });

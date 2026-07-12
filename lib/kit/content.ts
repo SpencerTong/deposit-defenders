@@ -32,6 +32,19 @@ function formatDate(date: Date): string {
   return date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 }
 
+export function addCalendarDays(start: Date, days: number): Date {
+  const result = new Date(start);
+  result.setDate(result.getDate() + days);
+  return result;
+}
+
+export interface ResponseWindow {
+  days: number;
+  business: boolean;
+}
+
+const DEFAULT_WINDOW: ResponseWindow = { days: 10, business: true };
+
 export function addBusinessDays(start: Date, days: number): Date {
   const result = new Date(start);
   let remaining = days;
@@ -46,10 +59,15 @@ export function addBusinessDays(start: Date, days: number): Date {
 export function buildKitContent(
   tenancy: TenancyInputs,
   analysis: AnalysisResult,
-  today: Date = new Date()
+  today: Date = new Date(),
+  opts: { responseWindow?: ResponseWindow } = {}
 ): KitContent {
+  const window = opts.responseWindow ?? DEFAULT_WINDOW;
+  const windowLabel = window.business ? `${window.days} business days` : `${window.days} days`;
   const demandAmount = formatCurrency(analysis.exposure.maxExposure);
-  const responseDeadline = addBusinessDays(today, 10);
+  const responseDeadline = window.business
+    ? addBusinessDays(today, window.days)
+    : addCalendarDays(today, window.days);
   const responseDeadlineDate = formatDate(responseDeadline);
   const trebleApplies = analysis.exposure.trebleApplies;
   const triggered = analysis.rules.filter(
@@ -81,7 +99,7 @@ export function buildKitContent(
         "At any post office, send it via USPS Certified Mail® and add Return Receipt (the green card, or electronic return receipt).",
         "Keep the mailing receipt with the tracking number, and keep a dated copy of exactly what you sent.",
         "When the signed return receipt comes back, file it with your records. It proves delivery.",
-        `Mark your calendar: the letter gives your landlord 10 business days to respond (${responseDeadlineDate} if you mail it today).`,
+        `Mark your calendar: the letter gives your landlord ${windowLabel} to respond (${responseDeadlineDate} if you mail it today).`,
       ],
     },
     {
@@ -103,7 +121,7 @@ export function buildKitContent(
       paragraphs: ["Three dates matter from the day you mail the letter:"],
       list: [
         `Day 0 (${formatDate(today)}): mail the demand letter by certified mail and start your evidence packet.`,
-        `Day 10 business days (${responseDeadlineDate}): the response deadline stated in your letter. If you've received full payment, you're done. Partial offers are your call. The statute's remedies don't disappear if you decline.`,
+        `Response deadline (${responseDeadlineDate}, ${windowLabel} out): the deadline stated in your letter. If you've received full payment, you're done. Partial offers are your call. The statute's remedies don't disappear if you decline.`,
         "If the deadline passes without payment: you can file in small claims court (Step 3). Many tenants also send one short follow-up note first saying they're proceeding to court. Sometimes that alone prompts payment.",
       ],
     },

@@ -94,3 +94,26 @@ describe("buildKitContent", () => {
     expect(kit.disclaimer).toContain("not legal advice");
   });
 });
+
+describe("buildKitContent response window option", () => {
+  it("uses a 30 calendar day window when the combined 93A letter applies", () => {
+    const tenancy = violatingTenancy();
+    const analysis = analyzeTenancy(tenancy);
+    const content = buildKitContent(tenancy, analysis, new Date("2026-07-11T12:00:00"), {
+      responseWindow: { days: 30, business: false },
+    });
+    const text = JSON.stringify(content.sections);
+    expect(text).toContain("30 days");
+    expect(text).not.toContain("10 business days");
+    // 2026-07-11 + 30 calendar days = 2026-08-10
+    expect(content.responseDeadlineDate).toBe("August 10, 2026");
+  });
+
+  it("defaults to the 10 business day window", () => {
+    const tenancy = violatingTenancy();
+    const analysis = analyzeTenancy(tenancy);
+    const content = buildKitContent(tenancy, analysis, new Date("2026-07-08T12:00:00"));
+    expect(JSON.stringify(content.sections)).toContain("10 business days");
+    expect(content.responseDeadlineDate).toBe("July 22, 2026");
+  });
+});
