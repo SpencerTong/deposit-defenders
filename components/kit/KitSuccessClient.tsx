@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import type { LetterDetails, MailStatus } from "@/lib/db/kitOrders";
 import type { DemandLetterContent } from "@/lib/letter/template";
+import { FAQ_ITEMS } from "@/lib/faq/content";
+import { FaqAccordion } from "@/components/faq/FaqAccordion";
 import { LetterDetailsForm } from "./LetterDetailsForm";
 import { MailPanel } from "./MailPanel";
 
@@ -276,6 +278,11 @@ export function KitSuccessClient() {
         ) : (
           <p className="text-sm text-gray-500">Save your letter details first (step 1).</p>
         )}
+      </section>
+
+      <section className="mb-10">
+        <h2 className="mb-3 text-lg font-semibold text-gray-900">Common questions</h2>
+        <FaqAccordion items={FAQ_ITEMS} />
       </section>
 
       <Link href="/" className="inline-block text-sm text-accent underline">

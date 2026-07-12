@@ -63,16 +63,38 @@ describe("mailCertifiedLetter", () => {
     expect(form.get("file")).toBeInstanceOf(Blob);
   });
 
-  it("returns null when Lob rejects the request", async () => {
+  it("reports an undeliverable address distinctly so the buyer can fix it", async () => {
     process.env.LOB_API_KEY = "test_abc123";
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue(
-        new Response(JSON.stringify({ error: { message: "invalid address" } }), { status: 422 })
+        new Response(
+          JSON.stringify({
+            error: {
+              message: "The 'to' address does not meet your minimum deliverability strictness.",
+              status_code: 422,
+              code: "failed_deliverability_strictness",
+            },
+          }),
+          { status: 422 }
+        )
       )
     );
 
     const result = await mailCertifiedLetter(input());
-    expect(result).toBeNull();
+    expect(result).toEqual({ failure: "undeliverable_address" });
+  });
+
+  it("returns a provider failure for other Lob rejections", async () => {
+    process.env.LOB_API_KEY = "test_abc123";
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response(JSON.stringify({ error: { message: "internal" } }), { status: 500 })
+      )
+    );
+
+    const result = await mailCertifiedLetter(input());
+    expect(result).toEqual({ failure: "provider_error" });
   });
 });

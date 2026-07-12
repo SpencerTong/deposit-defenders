@@ -7,7 +7,7 @@ import {
 import { loadPaidOrder } from "@/lib/kit/orderAccess";
 import { buildLetterForOrder } from "@/lib/letter/fromOrder";
 import { renderDemandLetterPdf } from "@/lib/letter/pdf";
-import { mailCertifiedLetter } from "@/lib/mail/lob";
+import { isMailFailure, mailCertifiedLetter } from "@/lib/mail/lob";
 
 export const runtime = "nodejs";
 
@@ -47,8 +47,11 @@ export async function POST(req: NextRequest) {
       pdf: Buffer.from(pdf),
     });
 
-    if (!result) {
+    if (!result || isMailFailure(result)) {
       await revertKitOrderMailToUnsent(order.id);
+      if (result && result.failure === "undeliverable_address") {
+        return NextResponse.json({ ok: false, error: "address_unverified" }, { status: 400 });
+      }
       return NextResponse.json({ ok: false, error: "mail_failed" }, { status: 502 });
     }
 
