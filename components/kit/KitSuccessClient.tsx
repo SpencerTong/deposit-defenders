@@ -86,24 +86,25 @@ export function KitSuccessClient() {
     let cancelled = false;
     let attempts = 0;
 
-    // The webhook fulfills within seconds; poll briefly so the buyer usually
-    // lands straight in the workspace.
+    // The workspace opens on payment; the email is a courtesy copy, never the
+    // gate. "paid" comes from the webhook or from the order route's direct
+    // Stripe fallback, so an email or webhook outage cannot lock a buyer out.
     async function check() {
       const info = await refreshOrder(id!);
       if (cancelled) return;
-      if (info && info.status === "fulfilled") {
+      if (info && (info.status === "fulfilled" || info.status === "paid")) {
         setState("workspace");
         void refreshLetter(id!);
         return;
       }
-      if (info && (info.status === "paid" || info.status === "pending")) {
+      if (info && info.status === "pending") {
         setState("paid");
       } else if (!info) {
         setState("unconfirmed");
         return;
       }
       attempts += 1;
-      if (attempts < 5) setTimeout(check, 2000);
+      if (attempts < 10) setTimeout(check, 2000);
     }
 
     void check();
@@ -122,8 +123,8 @@ export function KitSuccessClient() {
             <p className="mb-2 text-sm uppercase tracking-wide text-white/70">Thank you</p>
             <h1 className="mb-3 font-serif text-2xl font-bold sm:text-3xl">You&apos;re all set</h1>
             <p className="text-white/90">
-              Your kit is being prepared. This page becomes your letter workspace in a few
-              seconds; your kit also arrives by email.
+              Confirming your payment. This page becomes your letter workspace in a few seconds;
+              if it doesn&apos;t, refresh the page. Your kit also arrives by email.
             </p>
           </div>
         )}
@@ -160,6 +161,13 @@ export function KitSuccessClient() {
           Bookmark this page; it stays available.
         </p>
       </div>
+
+      {order?.status === "paid" && (
+        <div className="mb-8 rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700">
+          Payment confirmed. Your email copy of the kit is on its way; everything is also
+          available right here.
+        </div>
+      )}
 
       <section className="mb-10">
         <StepHeading number={1} title="Letter details" />

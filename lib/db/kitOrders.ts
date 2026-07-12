@@ -143,6 +143,19 @@ export async function claimKitOrderForFulfillment(id: string): Promise<boolean> 
   return (result.rowCount ?? 0) > 0;
 }
 
+/**
+ * Marks a pending order paid after payment is confirmed directly with Stripe
+ * (the fallback path when the webhook hasn't arrived). Never downgrades a
+ * fulfilled order.
+ */
+export async function markKitOrderPaid(id: string): Promise<void> {
+  const pool = getPool();
+  if (!pool) return;
+  await pool.query("UPDATE kit_orders SET status = 'paid' WHERE id = $1 AND status = 'pending'", [
+    id,
+  ]);
+}
+
 /** Undoes a fulfillment claim after a failed delivery so Stripe's retry can refulfill. */
 export async function revertKitOrderToPaid(id: string): Promise<void> {
   const pool = getPool();
