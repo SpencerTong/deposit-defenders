@@ -2,7 +2,7 @@
 
 ## What this is
 
-A single-purpose validation MVP: a free web tool where Massachusetts renters answer ~6 questions about their security deposit situation, see an analysis of their legal leverage under M.G.L. c. 186 §15B, and generate a formal demand letter as a PDF (delivered via email capture). After the free letter, a paid "$49 Dispute Kit" upsell tests willingness to pay (fake-door / concierge fulfillment).
+A single-purpose validation MVP: a free web tool where Massachusetts renters answer ~6 questions about their security deposit situation, see an analysis of their legal leverage under M.G.L. c. 186 §15B, and generate a formal demand letter as a PDF (delivered via email capture). After the free letter, a paid "$49 Dispute Kit" upsell tests willingness to pay (automated digital fulfillment: personalized kit PDF + demand letter emailed via Resend on payment).
 
 This is NOT the full product. It is a two-week market validation experiment. Optimize for: speed to deploy, conversion measurement, shareability, and SEO. Do not build accounts, auth, dashboards, or multi-state support yet.
 
@@ -19,7 +19,7 @@ This is NOT the full product. It is a two-week market validation experiment. Opt
 - PDF generation: @react-pdf/renderer (or server-side with pdf-lib — pick one, justify briefly)
 - Email capture + PDF delivery: Resend (free tier) — send the PDF as attachment; store the email
 - Data storage: Vercel Postgres or a simple Vercel KV/Upstash store for leads + funnel events (keep it minimal; a `leads` table and an `events` table is enough)
-- Payments: Stripe Checkout (one-time $49 payment link is fine for v1)
+- Payments: Stripe Checkout (one-time $49) + `checkout.session.completed` webhook for fulfillment. Env: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`.
 - Analytics: Vercel Analytics + a tiny custom event logger (funnel steps: landed, started, completed_questions, viewed_analysis, submitted_email, clicked_kit, purchased). Support `?src=` UTM-style attribution on the landing URL.
 
 ## Architecture

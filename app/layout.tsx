@@ -10,8 +10,8 @@ const DEFAULT_DESCRIPTION =
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Deposit Defenders — MA Security Deposit Demand Letters",
-    template: "%s — Deposit Defenders",
+    default: "Deposit Defenders: Massachusetts Security Deposit Help",
+    template: "%s | Deposit Defenders",
   },
   description: DEFAULT_DESCRIPTION,
   openGraph: {
@@ -33,7 +33,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <footer className="border-t border-gray-200 px-6 py-6 text-center text-xs text-gray-600">
           This tool provides general legal information, not legal advice, and does not create an
           attorney-client relationship. For advice about your situation, consult a licensed
-          Massachusetts attorney.
+          Massachusetts attorney.{" "}
+          <a href="/terms" className="underline">
+            Terms and disclaimer
+          </a>
         </footer>
         <Analytics />
       </body>

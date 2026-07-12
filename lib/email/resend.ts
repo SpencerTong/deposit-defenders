@@ -1,6 +1,7 @@
 import { Resend } from "resend";
+import { buildResultsEmail } from "./results";
 
-const DEFAULT_FROM = "Deposit Defenders <letters@depositdefenders.com>";
+const DEFAULT_FROM = "Deposit Defenders <letters@deposit-defenders.com>";
 
 let client: Resend | null = null;
 
@@ -56,5 +57,98 @@ export async function sendLetterEmail(input: SendLetterEmailInput): Promise<Send
     return { sent: false };
   }
 
+  return { sent: true };
+}
+
+export interface SendKitEmailInput {
+  to: string;
+  letterPdf: Uint8Array;
+  kitPdf: Uint8Array;
+  workspaceUrl?: string | null;
+}
+
+/**
+ * Emails the purchased Dispute Kit: the demand letter plus the kit packet.
+ * Same graceful-degradation contract as sendLetterEmail.
+ */
+export async function sendKitEmail(input: SendKitEmailInput): Promise<{ sent: boolean }> {
+  const resend = getClient();
+  if (!resend) {
+    console.log(`[email] RESEND_API_KEY not configured, would send kit to ${input.to}`);
+    return { sent: false };
+  }
+
+  const { error } = await resend.emails.send({
+    from: process.env.RESEND_FROM_EMAIL ?? DEFAULT_FROM,
+    to: input.to,
+    subject: "Your Massachusetts Security Deposit Dispute Kit",
+    html:
+      "<p>Thank you for your purchase. Your Dispute Kit is attached:</p>" +
+      "<ul><li><strong>Demand letter</strong>: your starting version, ready to personalize.</li>" +
+      "<li><strong>Dispute Kit</strong>: evidence checklist, your escalation timeline, and the small-claims walkthrough.</li></ul>" +
+      (input.workspaceUrl
+        ? `<p><strong>Finish your letter in your workspace:</strong> add your addresses, ` +
+          `strengthen it under Chapter 93A where it applies, download an editable copy, and ` +
+          `have us send it by certified mail for you. ` +
+          `<a href="${input.workspaceUrl}">Open your kit workspace</a>. Keep this link; it is ` +
+          `your access to the workspace.</p>`
+        : "") +
+      "<p>This is general legal information, not legal advice, and does not create an " +
+      "attorney-client relationship. For advice about your situation, consult a licensed " +
+      "Massachusetts attorney.</p>",
+    attachments: [
+      {
+        filename: "security-deposit-demand-letter.pdf",
+        content: Buffer.from(input.letterPdf),
+      },
+      {
+        filename: "security-deposit-dispute-kit.pdf",
+        content: Buffer.from(input.kitPdf),
+      },
+    ],
+  });
+
+  if (error) {
+    console.error("[email] failed to send kit email", error);
+    return { sent: false };
+  }
+  return { sent: true };
+}
+
+export interface SendResultsEmailInput {
+  to: string;
+  maxExposure: number;
+  violationCount: number;
+}
+
+/**
+ * Emails the lightweight analysis results (no letter attached; the letter is
+ * paid). Same graceful-degradation contract as sendLetterEmail.
+ */
+export async function sendResultsEmail(
+  input: SendResultsEmailInput
+): Promise<{ sent: boolean }> {
+  const resend = getClient();
+  if (!resend) {
+    console.log(`[email] RESEND_API_KEY not configured, would send results email to ${input.to}`);
+    return { sent: false };
+  }
+
+  const content = buildResultsEmail({
+    maxExposure: input.maxExposure,
+    violationCount: input.violationCount,
+  });
+
+  const { error } = await resend.emails.send({
+    from: process.env.RESEND_FROM_EMAIL ?? DEFAULT_FROM,
+    to: input.to,
+    subject: content.subject,
+    html: content.html,
+  });
+
+  if (error) {
+    console.error("[email] failed to send results email", error);
+    return { sent: false };
+  }
   return { sent: true };
 }

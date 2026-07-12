@@ -1,4 +1,5 @@
 import type { AnalysisResult, TenancyInputs } from "@/lib/statute/ma";
+import { build93aDemand } from "@/lib/statute/ch93a";
 
 const DISCLAIMER =
   "This tool provides general legal information, not legal advice, and does not create an attorney-client relationship. For advice about your situation, consult a licensed Massachusetts attorney.";
@@ -40,8 +41,19 @@ function formatCurrency(amount: number): string {
   });
 }
 
+/** For user-entered date-only values (parsed as UTC midnight). */
 function formatDate(date: Date): string {
-  return date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  return date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
+}
+
+/** For "now" timestamps: the letter is dated in Massachusetts local time. */
+function formatTodayDate(date: Date): string {
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "America/New_York",
+  });
 }
 
 export function buildDemandLetter(
@@ -94,17 +106,70 @@ export function buildDemandLetter(
     "reasonable attorney's fees under M.G.L. c. 186, §15B(7).";
 
   return {
-    date: formatDate(today),
+    date: formatTodayDate(today),
     tenantName,
     tenantAddress,
     landlordName,
     landlordAddress,
     propertyAddress,
-    subject: `Re: Security Deposit Demand — ${propertyAddress}`,
+    subject: `Re: Security deposit demand for ${propertyAddress}`,
     salutation: `Dear ${landlordName},`,
     paragraphs: [introParagraph, ...violationParagraphs, demandParagraph, deadlineParagraph],
     closing: "Sincerely,",
     signatureName: tenantName,
     disclaimer: DISCLAIMER,
+  };
+}
+
+export interface CombinedLetterOptions {
+  ownerOccupied: boolean;
+  today?: Date;
+}
+
+/**
+ * The paid letter: a single demand under both M.G.L. c. 186, §15B and
+ * M.G.L. c. 93A, §9, with the statutory 30-day response window 93A requires.
+ * Falls back to the plain §15B letter when the landlord lives in the building
+ * (no 93A claim; see lib/statute/ch93a.ts) or when no violation was found.
+ */
+export function buildCombinedDemandLetter(
+  tenancy: TenancyInputs,
+  analysis: AnalysisResult,
+  party: LetterParty = {},
+  opts: CombinedLetterOptions
+): DemandLetterContent {
+  const today = opts.today ?? new Date();
+  const demand93a = build93aDemand(analysis, { ownerOccupied: opts.ownerOccupied });
+  const base = buildDemandLetter(tenancy, analysis, party, today);
+  if (!demand93a) return base;
+
+  const introParagraph =
+    `I am writing regarding the security deposit of ${formatCurrency(tenancy.depositAmount)} ` +
+    `paid in connection with my tenancy at ${base.propertyAddress}, which ended on ` +
+    `${formatDate(tenancy.moveOutDate)}. This letter is a formal demand under the ` +
+    `Massachusetts security deposit law, M.G.L. c. 186, §15B, and a written demand for ` +
+    `relief under the Massachusetts Consumer Protection Act, M.G.L. c. 93A, §9.`;
+
+  // The base letter's paragraphs are [intro, ...violations, demand, deadline].
+  // Keep the violation and demand paragraphs; replace intro and deadline.
+  const violationAndDemand = base.paragraphs.slice(1, -1);
+
+  const deadlineParagraph =
+    "Please remit payment within 30 days of your receipt of this letter, the response " +
+    "period M.G.L. c. 93A, §9(3) provides. If payment in full is not received within that " +
+    "time, I am prepared to pursue all remedies available to me, including in small claims " +
+    "court, which can include treble damages, interest, court costs, and reasonable " +
+    "attorney's fees under M.G.L. c. 186, §15B(7) and M.G.L. c. 93A, §9.";
+
+  return {
+    ...base,
+    subject: `Re: Demand under M.G.L. c. 93A and c. 186, §15B for ${base.propertyAddress}`,
+    paragraphs: [
+      introParagraph,
+      ...violationAndDemand,
+      demand93a.practiceParagraph,
+      demand93a.remedyParagraph,
+      deadlineParagraph,
+    ],
   };
 }
