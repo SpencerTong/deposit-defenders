@@ -8,11 +8,20 @@ function formatCurrency(amount: number): string {
   });
 }
 
+// These cards are the visitor's leverage, so they carry the brand green of
+// "money coming back," not warning colors that read as bad news for them.
 const severityStyles: Record<Severity, string> = {
-  high: "border-l-4 border-red-500 bg-red-50",
-  medium: "border-l-4 border-amber-500 bg-amber-50",
+  high: "border-l-4 border-accent bg-accent/5",
+  medium: "border-l-4 border-accent-light bg-accent/5",
   low: "border-l-4 border-gray-300 bg-gray-50",
   info: "border-l-4 border-gray-200 bg-gray-50",
+};
+
+const severityBadges: Record<Severity, string | null> = {
+  high: "Strong claim",
+  medium: "Supporting claim",
+  low: null,
+  info: null,
 };
 
 export function AnalysisResult({ analysis }: { analysis: RulesAnalysis }) {
@@ -44,8 +53,17 @@ export function AnalysisResult({ analysis }: { analysis: RulesAnalysis }) {
           </h3>
           {triggeredRules.map((rule) => (
             <div key={rule.id} className={`rounded-lg p-4 ${severityStyles[rule.severity]}`}>
+              {severityBadges[rule.severity] && (
+                <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-accent">
+                  {severityBadges[rule.severity]}
+                </p>
+              )}
               <p className="font-medium text-gray-900">{rule.title}</p>
               <p className="mt-1 text-sm text-gray-700">{rule.explanation}</p>
+              <p className="mt-2 text-sm text-gray-800">
+                <span className="font-medium">{rule.plainTerms.split(":")[0]}:</span>
+                {rule.plainTerms.substring(rule.plainTerms.indexOf(":") + 1)}
+              </p>
               <p className="mt-2 text-xs font-medium uppercase tracking-wide text-gray-500">
                 {rule.citation}
               </p>

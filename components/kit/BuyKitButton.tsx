@@ -7,7 +7,13 @@ import { trackEvent } from "@/lib/events";
 
 type Status = "idle" | "submitting" | "needs_answers" | "error";
 
-export function BuyKitButton({ className }: { className?: string }) {
+export function BuyKitButton({
+  className,
+  trustClassName,
+}: {
+  className?: string;
+  trustClassName?: string;
+}) {
   const [status, setStatus] = useState<Status>("idle");
 
   async function handleClick() {
@@ -48,11 +54,14 @@ export function BuyKitButton({ className }: { className?: string }) {
         disabled={status === "submitting"}
         className={
           className ??
-          "w-full rounded-lg bg-accent px-6 py-4 text-lg font-semibold text-white shadow-sm transition-colors hover:bg-accent-dark disabled:opacity-60 sm:w-auto sm:px-10"
+          "w-full rounded-xl bg-accent px-6 py-4 text-lg font-semibold text-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-accent-dark hover:shadow-lg disabled:opacity-60 sm:w-auto sm:px-10"
         }
       >
         {status === "submitting" ? "Redirecting to checkout…" : "Get my letter written and sent for $49"}
       </button>
+      <p className={trustClassName ?? "mt-2 text-xs text-gray-500"}>
+        One-time payment. Secure checkout by Stripe. Instant delivery.
+      </p>
       {status === "needs_answers" && (
         <p className="mt-2 text-sm text-gray-600">
           Your kit is personalized from the free deposit check, so answer those questions first.
