@@ -41,8 +41,19 @@ function formatCurrency(amount: number): string {
   });
 }
 
+/** For user-entered date-only values (parsed as UTC midnight). */
 function formatDate(date: Date): string {
   return date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
+}
+
+/** For "now" timestamps: the letter is dated in Massachusetts local time. */
+function formatTodayDate(date: Date): string {
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "America/New_York",
+  });
 }
 
 export function buildDemandLetter(
@@ -95,7 +106,7 @@ export function buildDemandLetter(
     "reasonable attorney's fees under M.G.L. c. 186, §15B(7).";
 
   return {
-    date: formatDate(today),
+    date: formatTodayDate(today),
     tenantName,
     tenantAddress,
     landlordName,
