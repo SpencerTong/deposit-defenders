@@ -1,13 +1,78 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import type { LetterDetails, MailStatus } from "@/lib/db/kitOrders";
+import type { DemandLetterContent } from "@/lib/letter/template";
+import { LetterDetailsForm } from "./LetterDetailsForm";
+import { MailPanel } from "./MailPanel";
 
-type OrderState = "checking" | "fulfilled" | "paid" | "unconfirmed";
+type OrderState = "checking" | "workspace" | "paid" | "unconfirmed";
+
+interface OrderInfo {
+  status: string;
+  letterDetails: LetterDetails | null;
+  mailStatus: MailStatus;
+  mailTracking: string | null;
+}
+
+function StepHeading({ number, title }: { number: number; title: string }) {
+  return (
+    <h2 className="mb-3 flex items-center gap-3 text-lg font-semibold text-gray-900">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent text-sm font-semibold text-white">
+        {number}
+      </span>
+      {title}
+    </h2>
+  );
+}
+
+function DownloadLink({ href, label, note }: { href: string; label: string; note: string }) {
+  return (
+    <a
+      href={href}
+      className="flex flex-col rounded-lg border border-gray-200 bg-white p-4 transition-colors hover:border-accent"
+    >
+      <span className="font-medium text-accent">{label}</span>
+      <span className="text-xs text-gray-500">{note}</span>
+    </a>
+  );
+}
 
 export function KitSuccessClient() {
   const [state, setState] = useState<OrderState>("checking");
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [order, setOrder] = useState<OrderInfo | null>(null);
+  const [letter, setLetter] = useState<DemandLetterContent | null>(null);
+  const [editingDetails, setEditingDetails] = useState(false);
+
+  const refreshOrder = useCallback(async (id: string): Promise<OrderInfo | null> => {
+    try {
+      const res = await fetch(`/api/kit/order?session_id=${encodeURIComponent(id)}`);
+      const data = (await res.json()) as ({ ok: true } & OrderInfo) | { ok: false };
+      if (!data.ok) return null;
+      const info: OrderInfo = {
+        status: data.status,
+        letterDetails: data.letterDetails,
+        mailStatus: data.mailStatus ?? "unsent",
+        mailTracking: data.mailTracking,
+      };
+      setOrder(info);
+      return info;
+    } catch {
+      return null;
+    }
+  }, []);
+
+  const refreshLetter = useCallback(async (id: string) => {
+    try {
+      const res = await fetch(`/api/kit/letter-preview?session_id=${encodeURIComponent(id)}`);
+      const data = (await res.json()) as { ok: boolean; letter?: DemandLetterContent };
+      if (data.ok && data.letter) setLetter(data.letter);
+    } catch {
+      // Preview is best-effort; downloads still work.
+    }
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -22,24 +87,19 @@ export function KitSuccessClient() {
     let attempts = 0;
 
     // The webhook fulfills within seconds; poll briefly so the buyer usually
-    // sees "fulfilled" (with the download link) rather than a waiting state.
+    // lands straight in the workspace.
     async function check() {
-      try {
-        const res = await fetch(`/api/kit/order?session_id=${encodeURIComponent(id!)}`);
-        const data = (await res.json()) as { ok: boolean; status?: string };
-        if (cancelled) return;
-        if (data.ok && data.status === "fulfilled") {
-          setState("fulfilled");
-          return;
-        }
-        if (data.ok && (data.status === "paid" || data.status === "pending")) {
-          setState("paid");
-        } else {
-          setState("unconfirmed");
-          return;
-        }
-      } catch {
-        if (!cancelled) setState("unconfirmed");
+      const info = await refreshOrder(id!);
+      if (cancelled) return;
+      if (info && info.status === "fulfilled") {
+        setState("workspace");
+        void refreshLetter(id!);
+        return;
+      }
+      if (info && (info.status === "paid" || info.status === "pending")) {
+        setState("paid");
+      } else if (!info) {
+        setState("unconfirmed");
         return;
       }
       attempts += 1;
@@ -50,53 +110,168 @@ export function KitSuccessClient() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [refreshOrder, refreshLetter]);
+
+  if (state !== "workspace") {
+    return (
+      <main className="mx-auto flex min-h-[60vh] max-w-xl flex-col justify-center px-6 py-16 text-center">
+        {state === "checking" && <p className="text-gray-500">Confirming your payment…</p>}
+
+        {state === "paid" && (
+          <div className="rounded-2xl bg-accent px-6 py-8 text-white shadow-lg">
+            <p className="mb-2 text-sm uppercase tracking-wide text-white/70">Thank you</p>
+            <h1 className="mb-3 font-serif text-2xl font-bold sm:text-3xl">You&apos;re all set</h1>
+            <p className="text-white/90">
+              Your kit is being prepared. This page becomes your letter workspace in a few
+              seconds; your kit also arrives by email.
+            </p>
+          </div>
+        )}
+
+        {state === "unconfirmed" && (
+          <div className="rounded-lg border border-gray-200 bg-gray-50 p-6 text-gray-700">
+            <p className="mb-2 font-medium text-gray-900">We couldn&apos;t confirm your payment yet</p>
+            <p className="text-sm">
+              If you completed checkout, your kit will arrive by email shortly. If it hasn&apos;t
+              arrived within an hour, reply to any of our emails and we&apos;ll sort it out.
+            </p>
+          </div>
+        )}
+
+        <Link href="/" className="mt-8 text-sm text-accent underline">
+          Back to Deposit Defenders
+        </Link>
+      </main>
+    );
+  }
+
+  const details = order?.letterDetails ?? null;
+  const showForm = !details || editingDetails;
+  const sid = sessionId ?? "";
+  const q = `session_id=${encodeURIComponent(sid)}`;
 
   return (
-    <main className="mx-auto flex min-h-[60vh] max-w-xl flex-col justify-center px-6 py-16 text-center">
-      {state === "checking" && <p className="text-gray-500">Confirming your payment…</p>}
+    <main className="mx-auto max-w-xl px-6 py-10">
+      <div className="mb-8 rounded-2xl bg-accent px-6 py-6 text-white shadow-lg">
+        <p className="mb-1 text-sm uppercase tracking-wide text-white/70">Your kit workspace</p>
+        <h1 className="font-serif text-2xl font-bold sm:text-3xl">Finish and send your letter</h1>
+        <p className="mt-2 text-sm text-white/90">
+          Three steps: fill in the details, review the letter, and have us mail it certified.
+          Bookmark this page; it stays available.
+        </p>
+      </div>
 
-      {state === "fulfilled" && (
-        <div className="rounded-2xl bg-accent px-6 py-8 text-white shadow-lg">
-          <p className="mb-2 text-sm uppercase tracking-wide text-white/70">Thank you</p>
-          <h1 className="mb-3 font-serif text-2xl font-bold sm:text-3xl">
-            Your kit is in your inbox
-          </h1>
-          <p className="mb-5 text-white/90">
-            We&apos;ve emailed your demand letter and Dispute Kit. You can also download the kit
-            right now:
-          </p>
-          <a
-            href={`/api/kit/download?session_id=${encodeURIComponent(sessionId ?? "")}`}
-            className="inline-block rounded-lg bg-white px-6 py-3 font-semibold text-accent transition-colors hover:bg-gray-100"
-          >
-            Download the Dispute Kit (PDF)
-          </a>
+      <section className="mb-10">
+        <StepHeading number={1} title="Letter details" />
+        {showForm ? (
+          <LetterDetailsForm
+            sessionId={sid}
+            initial={details}
+            onSaved={() => {
+              setEditingDetails(false);
+              void refreshOrder(sid);
+              void refreshLetter(sid);
+            }}
+          />
+        ) : (
+          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700">
+            <p>
+              <span className="font-medium text-gray-900">{details.tenantName}</span> to{" "}
+              <span className="font-medium text-gray-900">{details.landlordName}</span>,{" "}
+              {details.landlordAddress.line1}, {details.landlordAddress.city},{" "}
+              {details.landlordAddress.state} {details.landlordAddress.zip}
+            </p>
+            <p className="mt-1 text-xs text-gray-500">
+              {details.ownerOccupied
+                ? "Security deposit law letter (your landlord lives in the building)."
+                : "Combined letter under the security deposit law and Chapter 93A."}
+            </p>
+            <button
+              type="button"
+              onClick={() => setEditingDetails(true)}
+              className="mt-2 text-sm font-medium text-accent hover:underline"
+            >
+              Edit details
+            </button>
+          </div>
+        )}
+      </section>
+
+      <section className="mb-10">
+        <StepHeading number={2} title="Review your letter" />
+        {letter ? (
+          <div className="max-h-96 space-y-3 overflow-y-auto rounded-lg border border-gray-200 bg-white p-5 text-sm leading-relaxed text-gray-800">
+            <p>{letter.date}</p>
+            <p className="whitespace-pre-line">
+              {letter.tenantName}
+              {"\n"}
+              {letter.tenantAddress}
+            </p>
+            <p className="whitespace-pre-line">
+              {letter.landlordName}
+              {"\n"}
+              {letter.landlordAddress}
+            </p>
+            <p className="font-medium">{letter.subject}</p>
+            <p>{letter.salutation}</p>
+            {letter.paragraphs.map((paragraph, i) => (
+              <p key={i}>{paragraph}</p>
+            ))}
+            <p>
+              {letter.closing}
+              <br />
+              {letter.signatureName}
+            </p>
+          </div>
+        ) : (
+          <p className="text-sm text-gray-500">Loading your letter…</p>
+        )}
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <DownloadLink
+            href={`/api/kit/letter-pdf?${q}`}
+            label="Demand letter (PDF)"
+            note="Ready to print and sign"
+          />
+          <DownloadLink
+            href={`/api/kit/letter-docx?${q}`}
+            label="Demand letter (Word)"
+            note="Editable .docx for your own changes"
+          />
+          <DownloadLink
+            href={`/api/kit/download?${q}`}
+            label="Dispute Kit (PDF)"
+            note="Evidence checklist, timeline, small claims walkthrough"
+          />
+          <DownloadLink
+            href={`/api/kit/court-form?${q}`}
+            label="Small claim form (draft PDF)"
+            note="Your entries for the court's official form"
+          />
         </div>
-      )}
+      </section>
 
-      {state === "paid" && (
-        <div className="rounded-2xl bg-accent px-6 py-8 text-white shadow-lg">
-          <p className="mb-2 text-sm uppercase tracking-wide text-white/70">Thank you</p>
-          <h1 className="mb-3 font-serif text-2xl font-bold sm:text-3xl">You&apos;re all set</h1>
-          <p className="text-white/90">
-            Your kit is being prepared and will arrive by email in the next few minutes. Keep this
-            page open, or check your inbox.
-          </p>
-        </div>
-      )}
+      <section className="mb-10">
+        <StepHeading number={3} title="Send it certified" />
+        {details && order ? (
+          <MailPanel
+            sessionId={sid}
+            details={details}
+            mailStatus={order.mailStatus}
+            mailTracking={order.mailTracking}
+            onMailed={() => void refreshOrder(sid)}
+          />
+        ) : (
+          <p className="text-sm text-gray-500">Save your letter details first (step 1).</p>
+        )}
+      </section>
 
-      {state === "unconfirmed" && (
-        <div className="rounded-lg border border-gray-200 bg-gray-50 p-6 text-gray-700">
-          <p className="mb-2 font-medium text-gray-900">We couldn&apos;t confirm your payment yet</p>
-          <p className="text-sm">
-            If you completed checkout, your kit will arrive by email shortly. If it hasn&apos;t
-            arrived within an hour, reply to any of our emails and we&apos;ll sort it out.
-          </p>
-        </div>
-      )}
+      <p className="text-sm text-gray-500">
+        This tool provides general legal information, not legal advice, and does not create an
+        attorney-client relationship. For advice about your situation, consult a licensed
+        Massachusetts attorney.
+      </p>
 
-      <Link href="/" className="mt-8 text-sm text-accent underline">
+      <Link href="/" className="mt-6 inline-block text-sm text-accent underline">
         Back to Deposit Defenders
       </Link>
     </main>
