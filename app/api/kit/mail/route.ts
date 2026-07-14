@@ -8,6 +8,8 @@ import { loadPaidOrder } from "@/lib/kit/orderAccess";
 import { buildLetterForOrder } from "@/lib/letter/fromOrder";
 import { renderDemandLetterPdf } from "@/lib/letter/pdf";
 import { isMailFailure, mailCertifiedLetter } from "@/lib/mail/lob";
+import { sendTrackingEmail } from "@/lib/email/resend";
+import { SITE_URL } from "@/lib/site";
 
 export const runtime = "nodejs";
 
@@ -59,6 +61,22 @@ export async function POST(req: NextRequest) {
       lobId: result.id,
       tracking: result.trackingNumber,
     });
+
+    // Courtesy copy of the tracking number. Never fatal: the letter is
+    // already in the mail stream, and the workspace shows the same number.
+    if (order.email) {
+      try {
+        await sendTrackingEmail({
+          to: order.email,
+          landlordName: details.landlordName,
+          trackingNumber: result.trackingNumber,
+          workspaceUrl: `${SITE_URL}/kit/success?session_id=${encodeURIComponent(sessionId as string)}`,
+        });
+      } catch (error) {
+        console.error(`[kit] tracking email failed for order ${order.id}`, error);
+      }
+    }
+
     return NextResponse.json({ ok: true, tracking: result.trackingNumber });
   } catch (error) {
     console.error(`[kit] mailing failed for order ${order.id}`, error);

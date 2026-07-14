@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import { buildResultsEmail } from "./results";
+import { buildTrackingEmail, type TrackingEmailInput } from "./tracking";
 
 const DEFAULT_FROM = "Deposit Defenders <letters@deposit-defenders.com>";
 
@@ -148,6 +149,36 @@ export async function sendResultsEmail(
 
   if (error) {
     console.error("[email] failed to send results email", error);
+    return { sent: false };
+  }
+  return { sent: true };
+}
+
+/**
+ * Emails the certified-mail tracking confirmation after a successful Lob
+ * dispatch. Same graceful-degradation contract as the other senders; the
+ * caller must treat a failed send as non-fatal since the letter is already
+ * in the mail stream.
+ */
+export async function sendTrackingEmail(
+  input: TrackingEmailInput & { to: string }
+): Promise<{ sent: boolean }> {
+  const resend = getClient();
+  if (!resend) {
+    console.log(`[email] RESEND_API_KEY not configured, would send tracking email to ${input.to}`);
+    return { sent: false };
+  }
+
+  const content = buildTrackingEmail(input);
+  const { error } = await resend.emails.send({
+    from: process.env.RESEND_FROM_EMAIL ?? DEFAULT_FROM,
+    to: input.to,
+    subject: content.subject,
+    html: content.html,
+  });
+
+  if (error) {
+    console.error("[email] failed to send tracking email", error);
     return { sent: false };
   }
   return { sent: true };
