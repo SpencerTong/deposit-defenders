@@ -15,6 +15,9 @@ vi.mock("@/lib/mail/lob", () => ({
 vi.mock("@/lib/letter/pdf", () => ({
   renderDemandLetterPdf: vi.fn().mockResolvedValue(Buffer.from("%PDF-1.4 fake")),
 }));
+vi.mock("@/lib/email/resend", () => ({
+  sendTrackingEmail: vi.fn().mockResolvedValue({ sent: true }),
+}));
 
 import { POST } from "./route";
 import {
@@ -24,6 +27,7 @@ import {
   setKitOrderMailResult,
 } from "@/lib/db/kitOrders";
 import { mailCertifiedLetter } from "@/lib/mail/lob";
+import { sendTrackingEmail } from "@/lib/email/resend";
 
 const details: LetterDetails = {
   tenantName: "Jordan Renter",
@@ -53,7 +57,7 @@ const answers = {
 function order(overrides: Partial<KitOrder> = {}): KitOrder {
   return {
     id: "o1",
-    email: null,
+    email: "buyer@example.com",
     answers,
     stripeSessionId: "cs_test_1",
     status: "fulfilled",
@@ -94,6 +98,27 @@ describe("POST /api/kit/mail", () => {
       lobId: "ltr_123",
       tracking: "9407300000000000000001",
     });
+    expect(sendTrackingEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: "buyer@example.com",
+        landlordName: "Pat Owner",
+        trackingNumber: "9407300000000000000001",
+        workspaceUrl: expect.stringContaining("/kit/success?session_id=cs_test_1"),
+      })
+    );
+  });
+
+  it("still succeeds when the tracking email fails, since the letter is already mailed", async () => {
+    vi.mocked(sendTrackingEmail).mockRejectedValueOnce(new Error("smtp down"));
+    const res = await POST(request({ sessionId: "cs_test_1" }));
+    expect(res.status).toBe(200);
+    expect(setKitOrderMailResult).toHaveBeenCalled();
+  });
+
+  it("does not email tracking when the mailing failed", async () => {
+    vi.mocked(mailCertifiedLetter).mockResolvedValue({ failure: "provider_error" });
+    await POST(request({ sessionId: "cs_test_1" }));
+    expect(sendTrackingEmail).not.toHaveBeenCalled();
   });
 
   it("refuses when letter details have not been saved", async () => {
