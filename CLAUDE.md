@@ -1,4 +1,4 @@
-# Project: Deposit Defenders — MA Security Deposit Demand Letters
+# Project: Deposit Defenders (MA Security Deposit Demand Letters)
 
 ## What this is
 
@@ -24,17 +24,17 @@ A **live, revenue-generating product** at `https://deposit-defenders.com`. Massa
 
 ## Architecture
 
-- `/` — landing (hero, cited stat band, how-it-works) + question flow
-- `/letter/preview` — free ungated analysis + free-vs-paid comparison card + optional email capture
-- `/kit` — the $49 offer page → Stripe Checkout
-- `/kit/success?session_id=` — the post-purchase workspace (details form incl. owner-occupied question, letter preview, downloads, certified mailing). Access is by session id in the URL (no accounts, documented tradeoff); the workspace opens on payment, never gated on email delivery
+- `/`, landing (hero, cited stat band, how-it-works) + question flow
+- `/letter/preview`, free ungated analysis + free-vs-paid comparison card + optional email capture
+- `/kit`, the $49 offer page → Stripe Checkout
+- `/kit/success?session_id=`, the post-purchase workspace (details form incl. owner-occupied question, letter preview, downloads, certified mailing). Access is by session id in the URL (no accounts, documented tradeoff); the workspace opens on payment, never gated on email delivery
 - `/guide/*` (8 SEO articles), `/faq` (FAQPage schema), `/terms`
-- `lib/statute/ma.ts` — the §15B rules engine (pure, unit tested; each rule has explanation + plainTerms + citation + severity). All §15B legal logic lives here; adding NY later = new file, not a rewrite
-- `lib/statute/ch93a.ts` — the Chapter 93A layer (940 CMR 3.17(4) mapping, verified against primary sources 2026-07-11; returns null for owner-occupied landlords per Billings v. Wilson, 397 Mass. 614)
-- `lib/letter/` — plain and combined letter assembly, PDF/docx renderers, `fromOrder.ts` as the single source of truth for a buyer's current letter
-- `lib/kit/` — kit PDF content, fulfillment (idempotent, webhook-driven), order access gate
-- `lib/mail/lob.ts` — certified mailing (graceful degrade; distinguishes undeliverable-address failures)
-- `lib/email/` — Resend senders + pure content builders (results, tracking), all unit tested
+- `lib/statute/ma.ts`, the §15B rules engine (pure, unit tested; each rule has explanation + plainTerms + citation + severity). All §15B legal logic lives here; adding NY later = new file, not a rewrite
+- `lib/statute/ch93a.ts`, the Chapter 93A layer (940 CMR 3.17(4) mapping, verified against primary sources 2026-07-11; returns null for owner-occupied landlords per Billings v. Wilson, 397 Mass. 614)
+- `lib/letter/`, plain and combined letter assembly, PDF/docx renderers, `fromOrder.ts` as the single source of truth for a buyer's current letter
+- `lib/kit/`, kit PDF content, fulfillment (idempotent, webhook-driven), order access gate
+- `lib/mail/lob.ts`, certified mailing (graceful degrade; distinguishes undeliverable-address failures)
+- `lib/email/`, Resend senders + pure content builders (results, tracking), all unit tested
 
 ## Non-negotiable invariants
 
@@ -58,4 +58,4 @@ Mobile-first (traffic comes from Reddit/TikTok on phones). Clean, trustworthy, g
 
 ## What NOT to build
 
-No auth/accounts. No multi-state (until MA validates). No photo upload. No admin panel (read the DB directly). No email drip sequences. No native apps. No animation libraries. And in this phase: no new features without funnel data or customer requests demanding them — the two known candidates are in-workspace paragraph editing and a Lob delivery-status webhook.
+No auth/accounts. No multi-state (until MA validates). No photo upload. No admin panel (read the DB directly). No email drip sequences. No native apps. No animation libraries. And in this phase: no new features without funnel data or customer requests demanding them, the two known candidates are in-workspace paragraph editing and a Lob delivery-status webhook.

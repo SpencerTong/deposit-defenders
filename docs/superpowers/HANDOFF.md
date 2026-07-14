@@ -1,4 +1,4 @@
-# HANDOFF — read this first
+# HANDOFF: read this first
 
 **Updated:** 2026-07-14
 
