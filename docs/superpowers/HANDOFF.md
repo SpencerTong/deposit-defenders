@@ -1,36 +1,40 @@
 # HANDOFF — read this first
 
-**Updated:** 2026-07-11
+**Updated:** 2026-07-14
 
-> **DO NOT MERGE PR #1 TO `main` (production) until Project 2's certified mailing is live.** The marketing copy on `revenue-buildout` now promises "we send your letter by certified mail for you" (settled launch decision 2026-07-11: no customer release before Project 2). Shipping this copy without working mailing would be false advertising. The kit PDF content (`lib/kit/content.ts`) intentionally still describes self-mailing because it is the delivered product for any test purchases.
+Orientation for a fresh session picking up Deposit Defenders. Read `CLAUDE.md` first (legal-safety rules are non-negotiable), then this file.
 
-Orientation for a fresh session picking up Deposit Defenders (MA security-deposit demand-letter tool). Read `CLAUDE.md` first (legal-safety rules are non-negotiable), then this file.
+## The one-paragraph summary
 
-## Where things stand
+**Deposit Defenders is a live business.** `https://deposit-defenders.com` charges real cards ($49 via live Stripe), emails customers from the verified domain (`letters@deposit-defenders.com` via Resend), and physically mails demand letters by USPS Certified Mail (live Lob). The build phase is complete; the current phase is **marketing and validation**. Do not rebuild things; drive traffic, measure, and iterate on conversion.
 
-- **Branch:** `revenue-buildout` (PR #1 open against `main`, **not merged**). Do new work from this branch.
-- **Deployed:** live at `https://deposit-defenders.vercel.app`, running **Stripe TEST mode** (no real charges). Vercel Production has all required env vars: both Postgres URLs, `RESEND_API_KEY`, `RESEND_FROM_EMAIL` (currently the temporary `onboarding@resend.dev`), `STRIPE_SECRET_KEY` (test), `STRIPE_WEBHOOK_SECRET` (test webhook already created and pointed at the prod URL).
-- **Verified working end-to-end on Vercel** (test mode): question flow → analysis → email letter → `/kit` → Stripe test checkout → webhook fulfillment → kit email → `kit_orders` row flips to `fulfilled`.
-- **Domain:** `deposit-defenders.com` is **purchased but not yet wired** to Vercel or verified in Resend.
+## Where things stand (2026-07-14)
 
-## The v1 system (already built)
+- **Branch:** `main` is the only branch; everything is merged (PRs #1 through #6). Work on feature branches off `main`; the user merges PRs themselves (permission rules require it).
+- **Live and proven by a real dollar test:** the owner bought the kit with a real card; the live webhook fulfilled instantly; the kit email arrived from the domain; the workspace produced the combined letter; a real certified letter was dispatched via Lob with a live USPS tracking number. (Envelope arrival pending as of this writing; $49 refunded via Stripe dashboard.)
+- **The product:** free ungated §15B analysis (the hook) → $49 kit: combined §15B + Chapter 93A demand letter (30-day window; §15B-only when the landlord is owner-occupied, per Billings v. Wilson), post-purchase workspace at `/kit/success?session_id=` (details form, letter preview, PDF/.docx/kit/small-claim-draft downloads, one-click certified mailing with tracking emailed to the buyer), 8 SEO guide articles, `/faq` with FAQPage schema, `/terms`.
+- **Env (all in Vercel Production):** live `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET` (live endpoint at `deposit-defenders.com/api/webhooks/stripe`, event `checkout.session.completed`), live `LOB_API_KEY` (Lob account has a payment card; required for live sends), `RESEND_API_KEY` + `RESEND_FROM_EMAIL="Deposit Defenders <letters@deposit-defenders.com>"`, `NEXT_PUBLIC_SITE_URL=https://deposit-defenders.com`, Supabase Postgres URLs. DNS lives at Squarespace (site A record + Resend DKIM/SPF, all verified).
+- **Deliberately deferred by the owner:** attorney review of the combined letter text (accepted risk; plan is to buy a flat-fee review out of early revenue) and forming an LLC (MA fee is $500/yr). The mitigations shipped instead: disclaimers everywhere, `/terms`, hedged language, pre-mail acknowledgment, verified statute citations.
 
-See `docs/superpowers/specs/2026-07-08-ma-revenue-buildout-design.md` and its plan. Summary: §15B rules engine (`lib/statute/ma.ts`), demand-letter + kit PDF generation, Stripe-webhook-driven automated $49 kit fulfillment (idempotent), 8 SEO guide articles with schema, `npm run funnel` report.
+## Current phase: marketing and validation
 
-## Next work, in order
+The engineering is done. Next steps, in priority order:
 
-1. **Project 1 — Landing redesign + funnel restructure. ✅ DONE (2026-07-10, pushed to PR #1).** Spec: `docs/superpowers/specs/2026-07-10-project1-landing-funnel-design.md`; plan: `docs/superpowers/plans/2026-07-10-project1-landing-funnel.md`. Analysis is now free/ungated with a $49 CTA (fires `clicked_kit`), the letter is paid-only, `/api/leads` sends a lightweight results email instead of the letter PDF, and the landing page has the cited stat band. Verified end-to-end via headless Chrome (all funnel events fire with `src` attribution). Remaining: drive validation traffic and watch `npm run funnel` for the `clicked_kit` signal.
-2. **Project 2 — Paid-product upgrade. ✅ BUILT (2026-07-11, pushed to PR #1).** Spec: `docs/superpowers/specs/2026-07-10-project2-paid-upgrade-design.md`; plan: `docs/superpowers/plans/2026-07-11-project2-paid-upgrade.md`. The 93A legal-research gate passed (93A §9 + 940 CMR 3.17(4) verified against primary sources; owner-occupied landlords get the §15B-only letter per Billings v. Wilson, user-approved). Built: combined §15B+93A letter (30-day window), post-purchase workspace at `/kit/success` (details form incl. owner-occupied question, letter preview, PDF/.docx/kit/small-claim-draft downloads, idempotent "Mail it certified" via Lob), `kit_orders` mailing columns (migrated in prod Supabase), fulfillment email links the workspace. Verified end-to-end headless incl. a real Lob **test-mode** certified send with tracking. Remaining before go-live: user's legal review of the 93A/combined letter text, domain wiring, `LOB_API_KEY` (test) + live key in Vercel, then Stripe live keys + live webhook.
+1. **Seed traffic with source tags.** Reddit first (r/boston, r/massachusetts, r/CambridgeMA, r/somerville; check each sub's self-promo rules; answering real "landlord kept my deposit" threads helpfully beats cold posts). TikTok second (screen-record the flow to the "up to $X" analysis card). Every link gets `?src=` (`?src=reddit`, `?src=tiktok`, etc.).
+2. **Measure with `npm run funnel`** (events: landed → started → completed_questions → viewed_analysis → submitted_email → clicked_kit → purchased, segmented by `src`). The willingness-to-pay signal is `clicked_kit` → `purchased`.
+3. **Iterate on conversion, not features.** Copy tweaks, stat presentation, CTA wording; small PRs. Resist feature work until the funnel data demands it.
+4. **Support:** buyers reply to the kit/tracking emails, which go to the Resend-account owner's inbox. The DB is the admin panel (read `kit_orders` directly).
 
-Each spec has a "Handoff instructions" block. Use `superpowers:writing-plans` → `superpowers:executing-plans`, TDD, commit per task, and verify (`npm test`, `npm run type-check`, `npm run build`, plus driving the flow in a browser).
+Known candidate features if data or customers ask: editing letter paragraphs in the workspace before mailing (today: structured fields + custom-note paragraph; free-form edits only via the .docx download, which the mail-for-you path does not use), and a Lob delivery-status webhook (today: buyers track via USPS).
 
-## Outstanding infra (independent of the two projects; do whenever)
+## Engineering conventions (when code work does come up)
 
-- **Wire the domain:** add `deposit-defenders.com` to the Vercel project (set DNS at registrar), verify it in Resend (DNS records), then set `RESEND_FROM_EMAIL=letters@deposit-defenders.com` and `NEXT_PUBLIC_SITE_URL=https://deposit-defenders.com` in Vercel and remove the `onboarding@resend.dev` override. This is what lets **any** customer receive email (right now only the Resend-account owner's address does).
-- **Go live on payments (later, explicit):** swap Stripe to live keys + create a live webhook endpoint at `https://<domain>/api/webhooks/stripe` (event `checkout.session.completed`). Only after Project 2 is built and the 93A text is legally reviewed.
+- `superpowers:writing-plans` → `superpowers:executing-plans`, TDD, commit per task, verify with `npm test`, `npm run type-check`, `npm run build`, and drive the affected flow headless (Playwright + system Chrome; see scratchpad scripts pattern).
+- Invariants to never break: a physical letter can never send twice (atomic mail claim, 409 on retry); the workspace opens on payment, never gated on email delivery; email/webhook failures degrade gracefully and Stripe retries fulfillment; no em dashes or outcome-promising language in any user-facing copy.
 
 ## Local dev gotchas
 
-- Run `npm run dev` and `stripe listen --forward-to localhost:3000/api/webhooks/stripe` in **your own terminals** — a dev server started by the assistant dies when the session pauses.
-- **Postgres (Supabase) is blocked on the user's local network** — `npm run db:migrate` / `npm run funnel` and local checkout time out. Use a different network (mobile hotspot) or run against Vercel. See the memory note `postgres-blocked-on-local-network`.
-- The `kit_orders` table (incl. migrations) already exists in the production Supabase DB.
+- Run `npm run dev` and `stripe listen --forward-to localhost:3000/api/webhooks/stripe` in **your own terminals**; a dev server started by the assistant dies when the session pauses.
+- **Postgres (Supabase) is intermittently blocked on the user's local network**: `npm run db:migrate` / `npm run funnel` may time out (it worked on 2026-07-12 and was blocked again on 2026-07-14). Use a hotspot, or verify through the production API/Vercel logs instead.
+- Stripe CLI may need `stripe login` re-auth for live-mode reads.
+- Favicon changes cache hard in browsers; test in a private window.
