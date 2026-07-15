@@ -26,6 +26,13 @@ Cadence per sitting (60 to 90 min, 1 or 2 sittings per week):
 4. When the thread is squarely about a withheld MA deposit, add one sentence at the end: disclosure plus link, e.g. "I built a free tool that checks this against the statute for your exact situation" with `https://deposit-defenders.com?src=reddit`.
 5. Check each sub's rules in the sidebar before the first linked comment there. r/legaladvice forbids links; help there without any link, or skip.
 
+**Sub rules audit (checked 2026-07-14):**
+
+- **r/massachusetts rule 9:** bans commercial advertising INCLUDING "subtle promotion of products, services, or websites through disguised posts or comments". Rule 8 bans AI-generated text. Verdict: **no links here, ever.** Pure-value comments only, written in the owner's own voice.
+- **r/boston rule 5:** bans self/link posts that constitute advertising, including "self-affiliated business... service promoting". Verdict: **no links here either.** Same pure-value approach.
+- Adjusted link strategy: the site link (with `?src=reddit`) lives in the **Reddit profile bio**, not in comments in these subs. Helpful commenters get profile clicks; this is the ban-proof pattern. Direct links only in subs whose rules allow them (check each before first link) and only when someone asks directly.
+- r/legaladvice: no links allowed at all; read-only or unlinked help.
+
 **Account safety rules:**
 
 - Use the established account. Personalize every comment; never paste the same text twice.
