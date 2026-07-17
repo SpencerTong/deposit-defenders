@@ -3,6 +3,12 @@
 **Date:** 2026-07-15
 **Purpose:** buy ~40-75 high-intent Massachusetts visitors to answer the validation question the organic channels are too thin to answer. Success is measured in our own funnel (`?src=gads`), not in Google's dashboard.
 
+## LAUNCHED 2026-07-17
+
+Account 330-101-5345, Campaign #1, built live with the owner. Everything below was implemented and audited: 14 exact-match keywords (verified saved as Exact match), 8 negative keywords at campaign level, MA-only presence targeting, no Search Partners or Display, Maximize Clicks with $4.00 CPC cap, $11/day custom budget, final URL `https://deposit-defenders.com/?src=gads`, auto-apply recommendations confirmed OFF, and the auto-attached account-level Call asset with the owner's personal phone number was found and removed. Google's own projection at these settings: ~65 clicks/week at ~$1.18 avg CPC. Ads and keywords are Pending/Under review as of launch; review usually clears within a day.
+
+**Manual stop required: pause the campaign around 2026-07-30 (~$150 spent). There is no automatic total-budget cutoff.** Then run `npm run funnel` and use the readout table below.
+
 ## Step 0: Keyword Planner check (free, do this before spending anything)
 
 After creating the account: Tools > Keyword Planner > "Get search volume and forecasts". Paste the keyword list below (without brackets), set location to Massachusetts, and read two columns: average monthly searches and "top of page bid (low range)".
