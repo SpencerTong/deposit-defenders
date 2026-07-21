@@ -282,7 +282,7 @@ export function analyzeTenancy(
   const trebleApplies = (r2Triggered || r4Triggered) && outstandingBalance > 0;
   const interestOwed = r6Triggered ? input.depositAmount * ANNUAL_INTEREST_RATE * tenancyYears : 0;
   const trebledPrincipal = trebleApplies ? outstandingBalance * 3 : 0;
-  const maxExposure = trebleApplies ? trebledPrincipal + interestOwed : outstandingBalance;
+  const maxExposure = (trebleApplies ? trebledPrincipal : outstandingBalance) + interestOwed;
 
   const notes: string[] = [];
   if (trebleApplies) {

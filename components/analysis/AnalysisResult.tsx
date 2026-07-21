@@ -24,6 +24,70 @@ const severityBadges: Record<Severity, string | null> = {
   info: null,
 };
 
+function ExposureBreakdown({ exposure }: { exposure: RulesAnalysis["exposure"] }) {
+  const { outstandingBalance, trebleApplies, trebledPrincipal, interestOwed, maxExposure } =
+    exposure;
+
+  if (maxExposure <= 0) return null;
+
+  const lines: { label: string; amount: number; citation?: string }[] = [];
+
+  if (trebleApplies) {
+    lines.push({
+      label: "Deposit balance owed",
+      amount: outstandingBalance,
+    });
+    lines.push({
+      label: "x3 treble damages",
+      amount: trebledPrincipal - outstandingBalance,
+      citation: "M.G.L. c. 186, §15B(7)",
+    });
+  } else if (outstandingBalance > 0) {
+    lines.push({
+      label: "Deposit balance owed",
+      amount: outstandingBalance,
+    });
+  }
+
+  if (interestOwed > 0) {
+    lines.push({
+      label: "Unpaid annual interest (5%/yr)",
+      amount: interestOwed,
+      citation: "M.G.L. c. 186, §15B(3)(b)",
+    });
+  }
+
+  return (
+    <div className="mt-5 rounded-xl bg-white/10 px-4 py-4 text-left">
+      <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-white/70">
+        How this number is calculated
+      </p>
+      <div className="space-y-2">
+        {lines.map((line, i) => (
+          <div key={i} className="flex items-baseline justify-between gap-3 text-sm">
+            <span className="text-white/90">
+              {i > 0 && <span className="mr-1.5 text-white/50">+</span>}
+              {line.label}
+              {line.citation && (
+                <span className="ml-1.5 text-xs text-white/50">({line.citation})</span>
+              )}
+            </span>
+            <span className="whitespace-nowrap font-medium text-white">
+              {formatCurrency(line.amount)}
+            </span>
+          </div>
+        ))}
+        <div className="mt-1 flex items-baseline justify-between gap-3 border-t border-white/20 pt-2 text-sm">
+          <span className="font-semibold text-white">Total potential claim</span>
+          <span className="whitespace-nowrap font-semibold text-white">
+            {formatCurrency(maxExposure)}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function AnalysisResult({ analysis }: { analysis: RulesAnalysis }) {
   const triggeredRules = analysis.rules.filter(
     (rule) => rule.triggered && rule.id !== "R5_WEAR_AND_TEAR_FLAGS"
@@ -44,6 +108,7 @@ export function AnalysisResult({ analysis }: { analysis: RulesAnalysis }) {
             This can include treble (3x) damages under Massachusetts law.
           </p>
         )}
+        <ExposureBreakdown exposure={analysis.exposure} />
       </div>
 
       {triggeredRules.length > 0 ? (
