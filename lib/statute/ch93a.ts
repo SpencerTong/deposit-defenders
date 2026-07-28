@@ -8,6 +8,7 @@ import type { AnalysisResult } from "./ma";
  * describe the unfair or deceptive act and the injury, and be delivered at
  * least 30 days before filing suit. 940 CMR 3.17(4) declares specific §15B
  * failures to be unfair or deceptive practices, with a catch-all at (4)(k).
+ * (4)(e) [statement of condition] added and re-verified 2026-07-27.
  *
  * The 93A demand is intentionally omitted when the landlord lives in the
  * building: renting a unit in an owner-occupied dwelling is generally not
@@ -46,6 +47,10 @@ const REGULATION_BY_RULE: Record<string, { cite: string; practice: string }> = {
   R6_NO_INTEREST_PAID: {
     cite: "940 CMR 3.17(4)(c)",
     practice: "failing to pay the interest due on a deposit held for a year or longer",
+  },
+  R7_NO_STATEMENT_OF_CONDITION: {
+    cite: "940 CMR 3.17(4)(e)",
+    practice: "failing to furnish a written statement of the premises' condition at move-in",
   },
 };
 

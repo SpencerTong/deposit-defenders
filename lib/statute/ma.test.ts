@@ -248,6 +248,37 @@ describe("R6_NO_INTEREST_PAID", () => {
   });
 });
 
+describe("R7_NO_STATEMENT_OF_CONDITION", () => {
+  it("triggers when no statement of condition was given at move-in", () => {
+    const result = analyzeTenancy(
+      baseInputs({ receivedStatementOfCondition: "no" }),
+      new Date("2024-01-20")
+    );
+    const rule = ruleById(result, "R7_NO_STATEMENT_OF_CONDITION");
+    expect(rule.triggered).toBe(true);
+    expect(rule.citation).toContain("15B(2)(c)");
+    expect(rule.citation).toContain("940 CMR 3.17(4)(e)");
+  });
+
+  it("treats unknown status the same as never having received one", () => {
+    const result = analyzeTenancy(
+      baseInputs({ receivedStatementOfCondition: "unknown" }),
+      new Date("2024-01-20")
+    );
+    const rule = ruleById(result, "R7_NO_STATEMENT_OF_CONDITION");
+    expect(rule.triggered).toBe(true);
+  });
+
+  it("does not by itself expose the landlord to treble damages or add to the demand", () => {
+    const result = analyzeTenancy(
+      baseInputs({ receivedStatementOfCondition: "no", amountReturned: 1500 }),
+      new Date("2024-01-20")
+    );
+    expect(result.exposure.trebleApplies).toBe(false);
+    expect(result.exposure.maxExposure).toBe(0);
+  });
+});
+
 describe("R5 wear-and-tear keyword flags", () => {
   it("flags common cosmetic terms as commonly contestable", () => {
     const result = analyzeTenancy(

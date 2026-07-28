@@ -53,6 +53,14 @@ describe("build93aDemand", () => {
     expect(demand!.practiceParagraph).toContain("M.G.L. c. 93A");
   });
 
+  it("also cites (4)(e) when the landlord never gave a statement of condition", () => {
+    const demand = build93aDemand(
+      analyzeTenancy(tenancy({ receivedStatementOfCondition: "no" })),
+      { ownerOccupied: false }
+    );
+    expect(demand!.practiceParagraph).toContain("940 CMR 3.17(4)(e)");
+  });
+
   it("demands a response within 30 days and describes 93A remedies with hedged language", () => {
     const demand = build93aDemand(violatingAnalysis(), { ownerOccupied: false });
     expect(demand!.responseDays).toBe(30);

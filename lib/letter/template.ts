@@ -56,6 +56,38 @@ function formatTodayDate(date: Date): string {
   });
 }
 
+/**
+ * States what was already returned so the outstanding balance in the demand
+ * paragraph doesn't read as an unexplained smaller number than the deposit.
+ * Omitted when nothing has been returned yet, since there's nothing to explain.
+ */
+function formatReturnedClause(tenancy: TenancyInputs, analysis: AnalysisResult): string {
+  if (tenancy.amountReturned <= 0) return "";
+  return (
+    ` You returned ${formatCurrency(tenancy.amountReturned)} of that deposit, leaving an ` +
+    `outstanding balance of ${formatCurrency(analysis.exposure.outstandingBalance)}.`
+  );
+}
+
+/** Shows the arithmetic behind the demand total, mirroring the breakdown on the analysis screen. */
+function formatExposureBreakdown(exposure: AnalysisResult["exposure"]): string {
+  const parts: string[] = [];
+  if (exposure.trebleApplies) {
+    parts.push(
+      `${formatCurrency(exposure.outstandingBalance)} in outstanding deposit balance, trebled ` +
+        `under §15B(7) to ${formatCurrency(exposure.trebledPrincipal)}`
+    );
+  } else if (exposure.outstandingBalance > 0) {
+    parts.push(`${formatCurrency(exposure.outstandingBalance)} in outstanding deposit balance`);
+  }
+  if (exposure.interestOwed > 0) {
+    parts.push(
+      `${formatCurrency(exposure.interestOwed)} in unpaid annual interest under §15B(3)(b)`
+    );
+  }
+  return parts.join(", plus ");
+}
+
 export function buildDemandLetter(
   tenancy: TenancyInputs,
   analysis: AnalysisResult,
@@ -72,7 +104,9 @@ export function buildDemandLetter(
     `I am writing regarding the security deposit of ${formatCurrency(tenancy.depositAmount)} ` +
     `paid in connection with my tenancy at ${propertyAddress}, which ended on ${formatDate(
       tenancy.moveOutDate
-    )}. Massachusetts law, M.G.L. c. 186, §15B, imposes specific requirements on landlords who ` +
+    )}.` +
+    formatReturnedClause(tenancy, analysis) +
+    ` Massachusetts law, M.G.L. c. 186, §15B, imposes specific requirements on landlords who ` +
     `hold a tenant's security deposit, and this letter serves as formal demand for the amount ` +
     `described below.`;
 
@@ -91,12 +125,10 @@ export function buildDemandLetter(
             "information available to me, but I have not yet received the full amount I am owed.",
         ];
 
+  const exposureBreakdown = formatExposureBreakdown(analysis.exposure);
   const demandParagraph =
     `Demand is hereby made for payment of ${formatCurrency(analysis.exposure.maxExposure)}` +
-    (analysis.exposure.trebleApplies
-      ? ", which reflects treble damages on the outstanding balance plus accrued interest as " +
-        "Massachusetts law may allow."
-      : ".") +
+    (exposureBreakdown ? `, consisting of ${exposureBreakdown}.` : ".") +
     (analysis.exposure.notes.length > 0 ? ` ${analysis.exposure.notes.join(" ")}` : "");
 
   const deadlineParagraph =
@@ -146,7 +178,9 @@ export function buildCombinedDemandLetter(
   const introParagraph =
     `I am writing regarding the security deposit of ${formatCurrency(tenancy.depositAmount)} ` +
     `paid in connection with my tenancy at ${base.propertyAddress}, which ended on ` +
-    `${formatDate(tenancy.moveOutDate)}. This letter is a formal demand under the ` +
+    `${formatDate(tenancy.moveOutDate)}.` +
+    formatReturnedClause(tenancy, analysis) +
+    ` This letter is a formal demand under the ` +
     `Massachusetts security deposit law, M.G.L. c. 186, §15B, and a written demand for ` +
     `relief under the Massachusetts Consumer Protection Act, M.G.L. c. 93A, §9.`;
 

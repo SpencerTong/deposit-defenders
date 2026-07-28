@@ -207,6 +207,26 @@ export function analyzeTenancy(
     severity: r3Triggered ? "high" : "info",
   });
 
+  // R7 -- no statement of condition at move-in, §15B(2)(c). Not a §15B(6) forfeiture
+  // trigger (verified against malegislature.gov text of subsection (6): only (a)-(e) are
+  // listed there and statement-of-condition isn't one of them), so this does not add to
+  // exposure. It is independently declared an unfair or deceptive practice under
+  // 940 CMR 3.17(4)(e), and it undercuts the landlord's evidence for any move-out damage claim.
+  const r7Triggered = input.receivedStatementOfCondition !== "yes";
+  rules.push({
+    id: "R7_NO_STATEMENT_OF_CONDITION",
+    triggered: r7Triggered,
+    title: "No written statement of the unit's condition at move-in",
+    explanation: r7Triggered
+      ? "§15B(2)(c) requires the landlord to furnish a signed, separate written statement of the premises' condition upon receiving the deposit or within 10 days after the tenancy began, whichever is later. This does not by itself forfeit the deposit, but failing to provide one is a separate unfair or deceptive practice under 940 CMR 3.17(4)(e), and it undercuts the landlord's ability to prove that any damage claimed at move-out existed during the tenancy rather than before it."
+      : "The landlord provided a written statement of the unit's condition at move-in, as §15B(2)(c) requires.",
+    plainTerms: r7Triggered
+      ? "In plain terms: without a signed move-in condition statement, your landlord has no paper trail showing what the unit looked like before you lived there, which makes it harder for them to justify keeping money for damage."
+      : "Your landlord documented the unit's move-in condition as required.",
+    citation: "M.G.L. c. 186, §15B(2)(c); 940 CMR 3.17(4)(e)",
+    severity: r7Triggered ? "low" : "info",
+  });
+
   // R5 -- wear-and-tear keyword flags on each claimed deduction, informational only, §15B(4)(iii)
   const deductionFlags: DeductionFlag[] = input.deductionsClaimed.map((deduction) => {
     const { classification, note } = classifyDeduction(deduction.description);

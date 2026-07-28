@@ -90,6 +90,35 @@ describe("buildDemandLetter", () => {
     expect(letter.paragraphs.some((p) => p.includes("$5,550"))).toBe(true);
   });
 
+  it("discloses the amount already returned and the resulting outstanding balance", () => {
+    const analysis = analyzeTenancy(violatingTenancy(), new Date("2024-02-15"));
+    const letter = buildDemandLetter(violatingTenancy(), analysis);
+    // violatingTenancy: $3,000 deposit, $1,200 returned, $1,800 outstanding.
+    expect(letter.paragraphs.some((p) => p.includes("returned $1,200"))).toBe(true);
+    expect(
+      letter.paragraphs.some((p) => p.includes("outstanding balance of $1,800"))
+    ).toBe(true);
+  });
+
+  it("omits the returned-amount clause when nothing has been returned yet", () => {
+    const t = { ...violatingTenancy(), amountReturned: 0 };
+    const analysis = analyzeTenancy(t, new Date("2024-02-15"));
+    const letter = buildDemandLetter(t, analysis);
+    expect(letter.paragraphs.some((p) => p.includes("You returned"))).toBe(false);
+  });
+
+  it("shows the arithmetic behind the demand total", () => {
+    const analysis = analyzeTenancy(violatingTenancy(), new Date("2024-02-15"));
+    const letter = buildDemandLetter(violatingTenancy(), analysis);
+    // $1,800 outstanding x3 = $5,400, plus $150 interest = $5,550.
+    const demandPara = letter.paragraphs.find((p) => p.startsWith("Demand is hereby made"));
+    expect(demandPara).toContain("$1,800");
+    expect(demandPara).toContain("trebled");
+    expect(demandPara).toContain("$5,400");
+    expect(demandPara).toContain("$150");
+    expect(demandPara).toContain("$5,550");
+  });
+
   it("gives a 10-business-day deadline and reserves small-claims remedies", () => {
     const analysis = analyzeTenancy(violatingTenancy(), new Date("2024-02-15"));
     const letter = buildDemandLetter(violatingTenancy(), analysis);
