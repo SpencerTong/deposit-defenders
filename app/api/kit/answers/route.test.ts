@@ -76,6 +76,17 @@ describe("POST /api/kit/answers", () => {
     expect(setKitOrderAnswers).not.toHaveBeenCalled();
   });
 
+  it("rejects an invalid tri-state literal", async () => {
+    const res = await POST(
+      request({
+        sessionId: "cs_test_1",
+        answers: { ...validAnswers, receivedBankReceipt: "maybe" },
+      })
+    );
+    expect(res.status).toBe(400);
+    expect(setKitOrderAnswers).not.toHaveBeenCalled();
+  });
+
   it("refuses to edit once mailing has started", async () => {
     vi.mocked(getKitOrderBySessionId).mockResolvedValue(order({ mailStatus: "sending" }));
     const res = await POST(request({ sessionId: "cs_test_1", answers: validAnswers }));
