@@ -4,7 +4,15 @@ export function isNonNegativeAmount(value: string): boolean {
   return value.trim() !== "" && Number(value) >= 0;
 }
 
-export const flowFieldValidity: Record<string, (a: FlowAnswers) => boolean> = {
+export type FlowStepId =
+  | "deposit-rent"
+  | "dates"
+  | "move-in-paperwork"
+  | "move-out-paperwork"
+  | "deductions"
+  | "interest";
+
+export const flowFieldValidity: Record<FlowStepId, (a: FlowAnswers) => boolean> = {
   "deposit-rent": (a) => isNonNegativeAmount(a.depositAmount) && isNonNegativeAmount(a.monthlyRent),
   dates: (a) => a.tenancyStartDate !== "" && a.moveOutDate !== "" && a.tenancyEndConfirmed !== null,
   "move-in-paperwork": () => true,

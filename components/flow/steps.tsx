@@ -2,12 +2,12 @@
 
 import type { ReactNode } from "react";
 import type { FlowAnswers } from "@/lib/flow/types";
-import { flowFieldValidity } from "@/lib/flow/validation";
+import { flowFieldValidity, type FlowStepId } from "@/lib/flow/validation";
 import { DateField, NumberField, TriStateField, YesNoField } from "./FormFields";
 import { DeductionsEditor } from "./DeductionsEditor";
 
 export interface FlowStep {
-  id: string;
+  id: FlowStepId;
   title: string;
   render: (answers: FlowAnswers, update: (patch: Partial<FlowAnswers>) => void) => ReactNode;
   isValid: (answers: FlowAnswers) => boolean;

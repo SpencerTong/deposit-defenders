@@ -19,7 +19,7 @@ describe("setKitOrderAnswers", () => {
     await setKitOrderAnswers("o1", newAnswers);
 
     expect(queryMock).toHaveBeenCalledTimes(1);
-    const [sql, params] = queryMock.mock.calls[0];
+    const [sql, params] = queryMock.mock.calls[0]!;
     expect(sql).toContain("answers_history = answers_history ||");
     expect(sql).toContain("answers = $2");
     expect(sql).toContain("WHERE id = $1");
