@@ -326,7 +326,7 @@ export function KitSuccessClient() {
             onMailed={() => void refreshOrder(sid)}
           />
         ) : (
-          <p className="text-sm text-gray-500">Save your letter details first (step 1).</p>
+          <p className="text-sm text-gray-500">Save your letter details first (step 2).</p>
         )}
       </section>
 
