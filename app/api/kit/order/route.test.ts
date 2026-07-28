@@ -74,4 +74,14 @@ describe("GET /api/kit/order", () => {
     expect(json.status).toBe("fulfilled");
     expect(retrieveCheckoutSession).not.toHaveBeenCalled();
   });
+
+  it("returns the order's answers snapshot", async () => {
+    vi.mocked(getKitOrderBySessionId).mockResolvedValue(
+      order({ status: "fulfilled", answers: { depositAmount: "2000" } })
+    );
+
+    const res = await GET(request());
+    const json = (await res.json()) as { ok: boolean; answers: unknown };
+    expect(json.answers).toEqual({ depositAmount: "2000" });
+  });
 });
