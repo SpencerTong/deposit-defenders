@@ -33,6 +33,26 @@ function Step({ number, title, children }: { number: number; title: string; chil
   );
 }
 
+function ReceiptLine({
+  label,
+  detail,
+  amount,
+}: {
+  label: string;
+  detail: string;
+  amount: string;
+}) {
+  return (
+    <div className="flex items-start justify-between gap-3 border-b border-gray-100 py-2.5 last:border-b-0">
+      <div>
+        <p className="text-sm font-medium text-gray-900">{label}</p>
+        <p className="text-xs text-gray-500 line-through">{detail}</p>
+      </div>
+      <p className="whitespace-nowrap pt-0.5 text-xs text-gray-500">{amount}</p>
+    </div>
+  );
+}
+
 export default function KitPage() {
   return (
     <main className="mx-auto max-w-xl px-6 py-10">
@@ -53,6 +73,39 @@ export default function KitPage() {
           trustClassName="mt-2 text-xs text-white/70"
         />
       </div>
+
+      <section className="mb-10">
+        <h2 className="mb-1 text-lg font-semibold text-gray-900">What&apos;s actually in the $49</h2>
+        <p className="mb-4 text-sm text-gray-600">
+          Priced separately, here is what each piece is worth on its own.
+        </p>
+        <div className="rounded-lg border border-gray-200 bg-white p-4">
+          <ReceiptLine
+            label="Chapter 93A-strengthened demand letter"
+            detail="the version a landlord-tenant attorney sends"
+            amount="$150+ to start"
+          />
+          <ReceiptLine
+            label="Certified mail, return receipt"
+            detail="USPS counter price"
+            amount="~$10"
+          />
+          <ReceiptLine
+            label="Small claims form, pre-filled"
+            detail="figuring out Massachusetts court paperwork yourself"
+            amount="an evening, maybe more"
+          />
+          <div className="mt-1 flex items-baseline justify-between border-t-2 border-accent pt-3">
+            <p className="text-sm font-semibold text-accent">Your price today</p>
+            <p className="text-xl font-bold text-accent">$49</p>
+          </div>
+        </div>
+        <p className="mt-3 text-xs text-gray-500">
+          $150+ is commonly just the cost of an initial consult, if a landlord-tenant attorney
+          does not already offer a free one. Having them draft and send a letter for you is
+          typically billed separately on top of that, often by the hour.
+        </p>
+      </section>
 
       <section className="mb-10">
         <h2 className="mb-3 text-lg font-semibold text-gray-900">
@@ -100,14 +153,6 @@ export default function KitPage() {
             workspace the moment it ships.
           </Step>
         </ol>
-      </section>
-
-      <section className="mb-10 rounded-lg border-l-4 border-accent bg-gray-50 p-4">
-        <p className="text-sm text-gray-800">
-          For perspective: a single consult with a landlord-tenant attorney commonly starts
-          around $150, and certified mail with return receipt alone runs about $10 at the post
-          office. The kit is $49, once, with everything prepared for you.
-        </p>
       </section>
 
       <div className="mb-6 text-center">

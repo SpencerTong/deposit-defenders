@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 import { buildResultsEmail } from "./results";
 import { buildTrackingEmail, type TrackingEmailInput } from "./tracking";
+import { buildSupportRequestEmail, type SupportRequestInput } from "./support";
 
 const DEFAULT_FROM = "Deposit Defenders <letters@deposit-defenders.com>";
 
@@ -179,6 +180,39 @@ export async function sendTrackingEmail(
 
   if (error) {
     console.error("[email] failed to send tracking email", error);
+    return { sent: false };
+  }
+  return { sent: true };
+}
+
+/**
+ * Relays a /support form submission to the owner's inbox via SUPPORT_NOTIFY_EMAIL,
+ * with the customer's address set as reply-to. The owner's real address is never
+ * sent to the client and never appears in source, so it stays out of view-source
+ * and the network tab; it lives only in server-side env config.
+ */
+export async function sendSupportRequest(input: SupportRequestInput): Promise<{ sent: boolean }> {
+  const resend = getClient();
+  const notifyTo = process.env.SUPPORT_NOTIFY_EMAIL;
+  if (!resend || !notifyTo) {
+    console.log(
+      `[email] RESEND_API_KEY or SUPPORT_NOTIFY_EMAIL not configured, would relay support ` +
+        `request from ${input.fromEmail}`
+    );
+    return { sent: false };
+  }
+
+  const content = buildSupportRequestEmail(input);
+  const { error } = await resend.emails.send({
+    from: process.env.RESEND_FROM_EMAIL ?? DEFAULT_FROM,
+    to: notifyTo,
+    replyTo: input.fromEmail,
+    subject: content.subject,
+    html: content.html,
+  });
+
+  if (error) {
+    console.error("[email] failed to relay support request", error);
     return { sent: false };
   }
   return { sent: true };

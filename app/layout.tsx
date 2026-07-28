@@ -41,6 +41,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <a href="/terms" className="underline">
             Terms and disclaimer
           </a>
+          {" · "}
+          <a href="/support" className="underline">
+            Contact us
+          </a>
         </footer>
         <Analytics />
       </body>
