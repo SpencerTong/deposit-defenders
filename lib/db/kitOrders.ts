@@ -1,4 +1,5 @@
 import { getPool } from "./client";
+import type { FlowAnswers } from "@/lib/flow/types";
 
 export type KitOrderStatus = "pending" | "paid" | "fulfilled";
 
@@ -175,6 +176,27 @@ export async function setKitOrderLetterDetails(
     id,
     JSON.stringify(details),
   ]);
+}
+
+/**
+ * Overwrites the order's answers snapshot, first appending the prior value
+ * onto answers_history with a timestamp. Postgres evaluates every SET
+ * expression in an UPDATE against the pre-update row, so referencing
+ * `answers` while also setting it in the same statement is safe: the
+ * history append always captures the value being replaced, not the new one.
+ */
+export async function setKitOrderAnswers(id: string, answers: FlowAnswers): Promise<void> {
+  const pool = getPool();
+  if (!pool) return;
+  await pool.query(
+    `UPDATE kit_orders
+     SET answers_history = answers_history || jsonb_build_array(
+           jsonb_build_object('answers', answers, 'replaced_at', now())
+         ),
+         answers = $2
+     WHERE id = $1`,
+    [id, JSON.stringify(answers)]
+  );
 }
 
 /**
