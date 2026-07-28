@@ -33,7 +33,20 @@ describe("summarizeFlowAnswers", () => {
       ],
     };
     const summary = summarizeFlowAnswers(withDeductions);
-    expect(summary).toContain("2 deductions claimed ($200)");
+    expect(summary).toContain("2 deductions claimed ($200.00)");
+  });
+
+  it("rounds decimal deduction totals to two decimal places", () => {
+    const withDecimalDeductions: FlowAnswers = {
+      ...base,
+      deductionsClaimed: [
+        { description: "Carpet cleaning", amount: "150.11" },
+        { description: "Wall patching", amount: "58.21" },
+      ],
+    };
+    const summary = summarizeFlowAnswers(withDecimalDeductions);
+    expect(summary).toContain("$208.32");
+    expect(summary).not.toMatch(/\$208\.32\d/);
   });
 
   it("never uses an em dash or en dash", () => {

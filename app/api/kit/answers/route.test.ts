@@ -5,7 +5,7 @@ import { initialFlowAnswers, type FlowAnswers } from "@/lib/flow/types";
 
 vi.mock("@/lib/db/kitOrders", () => ({
   getKitOrderBySessionId: vi.fn(),
-  setKitOrderAnswers: vi.fn().mockResolvedValue(undefined),
+  setKitOrderAnswers: vi.fn().mockResolvedValue(true),
 }));
 
 import { POST } from "./route";
@@ -104,5 +104,13 @@ describe("POST /api/kit/answers", () => {
     vi.mocked(getKitOrderBySessionId).mockResolvedValue(order({ status: "pending" }));
     const res = await POST(request({ sessionId: "cs_test_1", answers: validAnswers }));
     expect(res.status).toBe(403);
+  });
+
+  it("returns 409 when the order is locked between the read and the conditional write", async () => {
+    vi.mocked(setKitOrderAnswers).mockResolvedValueOnce(false);
+    const res = await POST(request({ sessionId: "cs_test_1", answers: validAnswers }));
+    expect(res.status).toBe(409);
+    const body = await res.json();
+    expect(body).toEqual({ ok: false, error: "locked_after_mailing" });
   });
 });

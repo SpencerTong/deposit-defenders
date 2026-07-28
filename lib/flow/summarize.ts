@@ -14,7 +14,7 @@ export function summarizeFlowAnswers(a: FlowAnswers): string {
   const deductionsText =
     count === 0
       ? "no deductions claimed"
-      : `${count} deduction${count === 1 ? "" : "s"} claimed ($${total})`;
+      : `${count} deduction${count === 1 ? "" : "s"} claimed ($${total.toFixed(2)})`;
 
   return (
     `${deposit} deposit on ${rent} rent, tenancy ${formatDate(a.tenancyStartDate)} to ` +

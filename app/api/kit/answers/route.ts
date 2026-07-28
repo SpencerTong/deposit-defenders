@@ -96,6 +96,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "invalid_answers" }, { status: 400 });
   }
 
-  await setKitOrderAnswers(access.order.id, parsed);
+  const updated = await setKitOrderAnswers(access.order.id, parsed);
+  if (!updated) {
+    return NextResponse.json({ ok: false, error: "locked_after_mailing" }, { status: 409 });
+  }
   return NextResponse.json({ ok: true });
 }

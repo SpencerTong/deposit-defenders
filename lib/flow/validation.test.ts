@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isCompleteFlowAnswers, isNonNegativeAmount } from "./validation";
+import { isCompleteFlowAnswers, isNonNegativeAmount, isValidDateString } from "./validation";
 import { initialFlowAnswers, type FlowAnswers } from "./types";
 
 const complete: FlowAnswers = {
@@ -25,6 +25,16 @@ describe("isNonNegativeAmount", () => {
   });
 });
 
+describe("isValidDateString", () => {
+  it("accepts a well-formed ISO date", () => {
+    expect(isValidDateString("2023-06-01")).toBe(true);
+  });
+
+  it("rejects a garbage string", () => {
+    expect(isValidDateString("banana")).toBe(false);
+  });
+});
+
 describe("isCompleteFlowAnswers", () => {
   it("accepts a fully answered flow", () => {
     expect(isCompleteFlowAnswers(complete)).toBe(true);
@@ -36,6 +46,10 @@ describe("isCompleteFlowAnswers", () => {
 
   it("rejects tenancy dates left blank", () => {
     expect(isCompleteFlowAnswers({ ...complete, tenancyStartDate: "" })).toBe(false);
+  });
+
+  it("rejects an unparseable tenancy start date", () => {
+    expect(isCompleteFlowAnswers({ ...complete, tenancyStartDate: "banana" })).toBe(false);
   });
 
   it("requires an itemized-list date only when a list was received", () => {
