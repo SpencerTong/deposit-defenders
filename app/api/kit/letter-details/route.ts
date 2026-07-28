@@ -75,6 +75,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: access.error }, { status: access.status });
   }
 
+  if (access.order.mailStatus !== "unsent") {
+    return NextResponse.json({ ok: false, error: "locked_after_mailing" }, { status: 409 });
+  }
+
   const parsed = parseDetails(details);
   if (!parsed) {
     return NextResponse.json({ ok: false, error: "invalid_details" }, { status: 400 });
