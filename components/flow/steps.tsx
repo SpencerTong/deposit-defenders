@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import type { FlowAnswers } from "@/lib/flow/types";
+import { flowFieldValidity } from "@/lib/flow/validation";
 import { DateField, NumberField, TriStateField, YesNoField } from "./FormFields";
 import { DeductionsEditor } from "./DeductionsEditor";
 
@@ -11,8 +12,6 @@ export interface FlowStep {
   render: (answers: FlowAnswers, update: (patch: Partial<FlowAnswers>) => void) => ReactNode;
   isValid: (answers: FlowAnswers) => boolean;
 }
-
-const isNonNegativeNumber = (value: string) => value.trim() !== "" && Number(value) >= 0;
 
 export const flowSteps: FlowStep[] = [
   {
@@ -34,7 +33,7 @@ export const flowSteps: FlowStep[] = [
         />
       </>
     ),
-    isValid: (a) => isNonNegativeNumber(a.depositAmount) && isNonNegativeNumber(a.monthlyRent),
+    isValid: flowFieldValidity["deposit-rent"],
   },
   {
     id: "dates",
@@ -58,8 +57,7 @@ export const flowSteps: FlowStep[] = [
         />
       </>
     ),
-    isValid: (a) =>
-      a.tenancyStartDate !== "" && a.moveOutDate !== "" && a.tenancyEndConfirmed !== null,
+    isValid: flowFieldValidity["dates"],
   },
   {
     id: "move-in-paperwork",
@@ -79,7 +77,7 @@ export const flowSteps: FlowStep[] = [
         />
       </>
     ),
-    isValid: () => true,
+    isValid: flowFieldValidity["move-in-paperwork"],
   },
   {
     id: "move-out-paperwork",
@@ -107,14 +105,13 @@ export const flowSteps: FlowStep[] = [
         )}
       </>
     ),
-    isValid: (a) =>
-      a.receivedItemizedList !== null && (!a.receivedItemizedList || a.itemizedListDate !== ""),
+    isValid: flowFieldValidity["move-out-paperwork"],
   },
   {
     id: "deductions",
     title: "Deductions and refund",
     render: (answers, update) => <DeductionsEditor answers={answers} update={update} />,
-    isValid: (a) => isNonNegativeNumber(a.amountReturned),
+    isValid: flowFieldValidity["deductions"],
   },
   {
     id: "interest",
@@ -127,6 +124,6 @@ export const flowSteps: FlowStep[] = [
         onChange={(v) => update({ interestPaidAnnually: v })}
       />
     ),
-    isValid: () => true,
+    isValid: flowFieldValidity["interest"],
   },
 ];
