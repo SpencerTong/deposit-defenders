@@ -32,3 +32,6 @@ next-env.d.ts
 
 # git worktrees
 .worktrees/
+
+# personal Claude Code permission overrides
+.claude/settings.local.json
