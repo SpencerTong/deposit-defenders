@@ -29,12 +29,13 @@ A **live, revenue-generating product** at `https://deposit-defenders.com`. Massa
 - `/kit`, the $49 offer page → Stripe Checkout
 - `/kit/success?session_id=`, the post-purchase workspace (details form incl. owner-occupied question, letter preview, downloads, certified mailing). Access is by session id in the URL (no accounts, documented tradeoff); the workspace opens on payment, never gated on email delivery
 - `/guide/*` (8 SEO articles), `/faq` (FAQPage schema), `/terms`
-- `lib/statute/ma.ts`, the §15B rules engine (pure, unit tested; each rule has explanation + plainTerms + citation + severity). All §15B legal logic lives here; adding NY later = new file, not a rewrite
-- `lib/statute/ch93a.ts`, the Chapter 93A layer (940 CMR 3.17(4) mapping, verified against primary sources 2026-07-11; returns null for owner-occupied landlords per Billings v. Wilson, 397 Mass. 614)
-- `lib/letter/`, plain and combined letter assembly, PDF/docx renderers, `fromOrder.ts` as the single source of truth for a buyer's current letter
+- `/support`, a masked contact form (`components/support/SupportForm.tsx` → `app/api/support/route.ts`) that relays to the owner's personal inbox via `SUPPORT_NOTIFY_EMAIL` (Resend `replyTo` set to the customer's address). The owner's real address is never in source or served to the client; linked from the global footer
+- `lib/statute/ma.ts`, the §15B rules engine (pure, unit tested; each rule has explanation + plainTerms + citation + severity). All §15B legal logic lives here; adding NY later = new file, not a rewrite. Includes R7 (no statement of condition, §15B(2)(c)/940 CMR 3.17(4)(e)): a real, citable violation but not a §15B(6) forfeiture/treble trigger, so it adds zero dollars to exposure
+- `lib/statute/ch93a.ts`, the Chapter 93A layer (940 CMR 3.17(4) mapping, verified against primary sources 2026-07-11, (4)(e) added and re-verified 2026-07-27; returns null for owner-occupied landlords per Billings v. Wilson, 397 Mass. 614)
+- `lib/letter/`, plain and combined letter assembly, PDF/docx renderers, `fromOrder.ts` as the single source of truth for a buyer's current letter. The demand paragraph shows its arithmetic (balance, treble multiplier, interest) instead of asserting a bare total, and the intro discloses any amount already returned
 - `lib/kit/`, kit PDF content, fulfillment (idempotent, webhook-driven), order access gate
 - `lib/mail/lob.ts`, certified mailing (graceful degrade; distinguishes undeliverable-address failures)
-- `lib/email/`, Resend senders + pure content builders (results, tracking), all unit tested
+- `lib/email/`, Resend senders + pure content builders (results, tracking, support), all unit tested
 
 ## Non-negotiable invariants
 
