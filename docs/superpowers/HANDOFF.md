@@ -47,6 +47,12 @@ Known candidate features if data or customers ask: editing letter paragraphs in 
 
 **A new candidate, from Peebles:** detecting lease clauses that require professional cleaning. Peebles makes these void under §15B(8) when they penalize via the deposit, and it was the single most active MA tenant thread on Reddit. It needs a new question in the intake flow, so it is a feature, not a copy tweak. Not built; awaiting a decision.
 
+## Customer count, stated plainly (corrected 2026-08-01)
+
+**There is exactly one real paying customer: Mary, from paid search.** The second `purchased` event in the `(none)` src bucket was the owner's own product test, not a customer. So **no free channel has ever produced a sale**, and the only channel that has produced one loses roughly $112 per acquisition. Reddit and SEO are hypotheses at this point, not results. Do not describe the business as having validated organic demand.
+
+This is why the multi-state gate in `CLAUDE.md` exists: expansion is blocked until MA produces **10+ paying customers in a single month through a repeatable channel at positive contribution margin.**
+
 ## The September clock (added 2026-08-01)
 
 Boston's lease turnover is concentrated on **September 1**, and §15B gives landlords 30 days, so disputes surface late September through October. That is the demand peak for this product, and it is the reason the July paid test read as weak: it ran in the deadest part of the summer.
