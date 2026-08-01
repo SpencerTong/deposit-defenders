@@ -72,6 +72,12 @@ try {
       ADD COLUMN IF NOT EXISTS mailed_at TIMESTAMPTZ
   `);
   console.log("kit_orders mailing columns ready.");
+
+  await client.query(`
+    ALTER TABLE kit_orders
+      ADD COLUMN IF NOT EXISTS answers_history JSONB NOT NULL DEFAULT '[]'::jsonb
+  `);
+  console.log("kit_orders answers_history column ready.");
 } catch (error) {
   console.error("Migration failed:", error.message);
   process.exitCode = 1;

@@ -4,15 +4,19 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import type { LetterDetails, MailStatus } from "@/lib/db/kitOrders";
 import type { DemandLetterContent } from "@/lib/letter/template";
+import type { FlowAnswers } from "@/lib/flow/types";
+import { summarizeFlowAnswers } from "@/lib/flow/summarize";
 import { FAQ_ITEMS } from "@/lib/faq/content";
 import { FaqAccordion } from "@/components/faq/FaqAccordion";
 import { LetterDetailsForm } from "./LetterDetailsForm";
 import { MailPanel } from "./MailPanel";
+import { AnswersSummaryForm } from "./AnswersSummaryForm";
 
 type OrderState = "checking" | "workspace" | "paid" | "unconfirmed";
 
 interface OrderInfo {
   status: string;
+  answers: FlowAnswers;
   letterDetails: LetterDetails | null;
   mailStatus: MailStatus;
   mailTracking: string | null;
@@ -47,6 +51,7 @@ export function KitSuccessClient() {
   const [order, setOrder] = useState<OrderInfo | null>(null);
   const [letter, setLetter] = useState<DemandLetterContent | null>(null);
   const [editingDetails, setEditingDetails] = useState(false);
+  const [editingAnswers, setEditingAnswers] = useState(false);
 
   const refreshOrder = useCallback(async (id: string): Promise<OrderInfo | null> => {
     try {
@@ -55,6 +60,7 @@ export function KitSuccessClient() {
       if (!data.ok) return null;
       const info: OrderInfo = {
         status: data.status,
+        answers: data.answers as FlowAnswers,
         letterDetails: data.letterDetails,
         mailStatus: data.mailStatus ?? "unsent",
         mailTracking: data.mailTracking,
@@ -149,7 +155,9 @@ export function KitSuccessClient() {
   }
 
   const details = order?.letterDetails ?? null;
-  const showForm = !details || editingDetails;
+  const mailLocked = order?.mailStatus !== "unsent";
+  const showForm = !mailLocked && (!details || editingDetails);
+  const showAnswersForm = !mailLocked && editingAnswers;
   const sid = sessionId ?? "";
   const q = `session_id=${encodeURIComponent(sid)}`;
 
@@ -159,8 +167,8 @@ export function KitSuccessClient() {
         <p className="mb-1 text-sm uppercase tracking-wide text-white/70">Your kit workspace</p>
         <h1 className="font-serif text-2xl font-bold sm:text-3xl">Finish and send your letter</h1>
         <p className="mt-2 text-sm text-white/90">
-          Three steps: fill in the details, review the letter, and have us mail it certified.
-          Bookmark this page; it stays available.
+          Four steps: check your answers, fill in the details, review the letter, and have us
+          mail it certified. Bookmark this page, it stays available.
         </p>
       </div>
 
@@ -172,7 +180,42 @@ export function KitSuccessClient() {
       )}
 
       <section className="mb-10">
-        <StepHeading number={1} title="Letter details" />
+        <StepHeading number={1} title="Your answers" />
+        {order && (
+          showAnswersForm ? (
+            <AnswersSummaryForm
+              sessionId={sid}
+              initial={order.answers}
+              onSaved={() => {
+                setEditingAnswers(false);
+                void refreshOrder(sid);
+                void refreshLetter(sid);
+              }}
+            />
+          ) : (
+            <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700">
+              <p>{summarizeFlowAnswers(order.answers)}</p>
+              {mailLocked ? (
+                <p className="mt-2 text-xs text-gray-500">
+                  Your letter has already been mailed, so these answers are locked and can no
+                  longer be edited. Contact support if something here was wrong.
+                </p>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setEditingAnswers(true)}
+                  className="mt-2 text-sm font-medium text-accent hover:underline"
+                >
+                  Edit answers
+                </button>
+              )}
+            </div>
+          )
+        )}
+      </section>
+
+      <section className="mb-10">
+        <StepHeading number={2} title="Letter details" />
         {showForm ? (
           <LetterDetailsForm
             sessionId={sid}
@@ -183,7 +226,7 @@ export function KitSuccessClient() {
               void refreshLetter(sid);
             }}
           />
-        ) : (
+        ) : details ? (
           <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700">
             <p>
               <span className="font-medium text-gray-900">{details.tenantName}</span> to{" "}
@@ -196,19 +239,26 @@ export function KitSuccessClient() {
                 ? "Security deposit law letter (your landlord lives in the building)."
                 : "Combined letter under the security deposit law and Chapter 93A."}
             </p>
-            <button
-              type="button"
-              onClick={() => setEditingDetails(true)}
-              className="mt-2 text-sm font-medium text-accent hover:underline"
-            >
-              Edit details
-            </button>
+            {mailLocked ? (
+              <p className="mt-2 text-xs text-gray-500">
+                Your letter has already been mailed, so these details are locked and can no
+                longer be edited. Contact support if something here was wrong.
+              </p>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setEditingDetails(true)}
+                className="mt-2 text-sm font-medium text-accent hover:underline"
+              >
+                Edit details
+              </button>
+            )}
           </div>
-        )}
+        ) : null}
       </section>
 
       <section className="mb-10">
-        <StepHeading number={2} title="Review your letter" />
+        <StepHeading number={3} title="Review your letter" />
         <p className="mb-3 text-xs text-gray-500">
           This letter is a self-help document prepared from your answers. Review every fact
           carefully before sending; you are responsible for its accuracy. It states your claims
@@ -266,7 +316,7 @@ export function KitSuccessClient() {
       </section>
 
       <section className="mb-10">
-        <StepHeading number={3} title="Send it certified" />
+        <StepHeading number={4} title="Send it certified" />
         {details && order ? (
           <MailPanel
             sessionId={sid}
@@ -276,7 +326,7 @@ export function KitSuccessClient() {
             onMailed={() => void refreshOrder(sid)}
           />
         ) : (
-          <p className="text-sm text-gray-500">Save your letter details first (step 1).</p>
+          <p className="text-sm text-gray-500">Save your letter details first (step 2).</p>
         )}
       </section>
 

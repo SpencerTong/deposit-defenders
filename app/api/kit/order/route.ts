@@ -31,6 +31,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({
     ok: true,
     status,
+    answers: order.answers,
     letterDetails: order.letterDetails,
     mailStatus: order.mailStatus,
     mailTracking: order.mailTracking,

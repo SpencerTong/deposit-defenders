@@ -106,7 +106,7 @@ export function MailPanel({ sessionId, details, mailStatus, mailTracking, onMail
       {status === "bad_address" && (
         <p className="mt-2 text-sm text-red-600">
           The postal service could not verify one of the addresses as deliverable, so nothing
-          was sent. Use &quot;Edit details&quot; in step 1 to double-check the street number,
+          was sent. Use &quot;Edit details&quot; in step 2 to double-check the street number,
           spelling, city, state, and ZIP, then try again.
         </p>
       )}

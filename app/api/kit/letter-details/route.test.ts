@@ -82,4 +82,17 @@ describe("POST /api/kit/letter-details", () => {
     const res = await POST(request({ sessionId: "cs_test_1", details: validDetails }));
     expect(res.status).toBe(403);
   });
+
+  it("refuses to edit once mailing has started", async () => {
+    vi.mocked(getKitOrderBySessionId).mockResolvedValue(order({ mailStatus: "sending" }));
+    const res = await POST(request({ sessionId: "cs_test_1", details: validDetails }));
+    expect(res.status).toBe(409);
+    expect(setKitOrderLetterDetails).not.toHaveBeenCalled();
+  });
+
+  it("refuses to edit once the letter has been sent", async () => {
+    vi.mocked(getKitOrderBySessionId).mockResolvedValue(order({ mailStatus: "sent" }));
+    const res = await POST(request({ sessionId: "cs_test_1", details: validDetails }));
+    expect(res.status).toBe(409);
+  });
 });
