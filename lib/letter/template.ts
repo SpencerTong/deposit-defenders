@@ -125,6 +125,32 @@ export function buildDemandLetter(
             "information available to me, but I have not yet received the full amount I am owed.",
         ];
 
+  // R5 is keyword matching, so the letter never asserts that a given charge IS
+  // wear and tear. It states the governing standard from Peebles and disputes
+  // the charges, which is the tenant's position to take, not a legal conclusion
+  // this tool draws for them.
+  const contestedDeductions = analysis.deductionFlags.filter(
+    (flag) => flag.classification === "commonly_contestable"
+  );
+  const wearAndTearParagraphs =
+    contestedDeductions.length > 0
+      ? [
+          `I dispute the following itemized charge${contestedDeductions.length === 1 ? "" : "s"} as ` +
+            `deductions for reasonable wear and tear: ` +
+            contestedDeductions
+              .map((flag) => `${flag.description} (${formatCurrency(flag.amount)})`)
+              .join("; ") +
+            `. In Peebles v. JRK Property Holdings, Inc., SJC-13702 (Mass. Aug. 1, 2025), the ` +
+            `Supreme Judicial Court held that a tenant's reasonable use of a property as a ` +
+            `residence is expected to result in gradual deterioration that may require painting, ` +
+            `carpet cleaning or repair, or other refurbishment at the end of a lease, and that ` +
+            `deductions from a security deposit to repair such reasonable wear and tear violate ` +
+            `M.G.L. c. 186, §15B(4)(iii). The Court identified the unit's condition at the start ` +
+            `of the lease and the length of the occupancy among the circumstances bearing on that ` +
+            `question.`,
+        ]
+      : [];
+
   const exposureBreakdown = formatExposureBreakdown(analysis.exposure);
   const demandParagraph =
     `Demand is hereby made for payment of ${formatCurrency(analysis.exposure.maxExposure)}` +
@@ -146,7 +172,13 @@ export function buildDemandLetter(
     propertyAddress,
     subject: `Re: Security deposit demand for ${propertyAddress}`,
     salutation: `Dear ${landlordName},`,
-    paragraphs: [introParagraph, ...violationParagraphs, demandParagraph, deadlineParagraph],
+    paragraphs: [
+      introParagraph,
+      ...violationParagraphs,
+      ...wearAndTearParagraphs,
+      demandParagraph,
+      deadlineParagraph,
+    ],
     closing: "Sincerely,",
     signatureName: tenantName,
     disclaimer: DISCLAIMER,
@@ -184,8 +216,9 @@ export function buildCombinedDemandLetter(
     `Massachusetts security deposit law, M.G.L. c. 186, §15B, and a written demand for ` +
     `relief under the Massachusetts Consumer Protection Act, M.G.L. c. 93A, §9.`;
 
-  // The base letter's paragraphs are [intro, ...violations, demand, deadline].
-  // Keep the violation and demand paragraphs; replace intro and deadline.
+  // The base letter's paragraphs are
+  // [intro, ...violations, ...wearAndTearDispute?, demand, deadline].
+  // Keep everything but the intro and deadline, which are replaced below.
   const violationAndDemand = base.paragraphs.slice(1, -1);
 
   const deadlineParagraph =

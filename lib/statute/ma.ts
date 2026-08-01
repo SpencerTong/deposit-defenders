@@ -88,12 +88,21 @@ function fullYearsBetween(start: Date, end: Date): number {
   return Math.max(years, 0);
 }
 
+// Terms Peebles v. JRK Property Holdings, SJC-13702 (Aug. 1, 2025) names as the
+// kind of end-of-lease work reasonable use is expected to require: "painting,
+// carpet cleaning or repair, or other refurbishment". Deliberately conservative:
+// ambiguous words like "stain" are left out because this list is checked before
+// LEGITIMATE_KEYWORDS, so a term that also describes real damage (pet stains,
+// water stains) would mis-flag it as contestable.
 const CONTESTABLE_KEYWORDS = [
   "clean",
   "paint",
   "nail hole",
   "nail holes",
   "carpet clean",
+  "carpet repair",
+  "carpet replacement",
+  "refurbish",
   "wear and tear",
   "scuff",
   "dust",
@@ -218,12 +227,13 @@ export function analyzeTenancy(
     triggered: r7Triggered,
     title: "No written statement of the unit's condition at move-in",
     explanation: r7Triggered
-      ? "§15B(2)(c) requires the landlord to furnish a signed, separate written statement of the premises' condition upon receiving the deposit or within 10 days after the tenancy began, whichever is later. This does not by itself forfeit the deposit, but failing to provide one is a separate unfair or deceptive practice under 940 CMR 3.17(4)(e), and it undercuts the landlord's ability to prove that any damage claimed at move-out existed during the tenancy rather than before it."
+      ? "§15B(2)(c) requires the landlord to furnish a signed, separate written statement of the premises' condition upon receiving the deposit or within 10 days after the tenancy began, whichever is later. This does not by itself forfeit the deposit, but failing to provide one is a separate unfair or deceptive practice under 940 CMR 3.17(4)(e), and it undercuts the landlord's ability to prove that any damage claimed at move-out existed during the tenancy rather than before it. In Peebles v. JRK Property Holdings, Inc., SJC-13702 (Aug. 1, 2025), the Supreme Judicial Court identified the unit's condition at the start of the lease as one of the circumstances that determines whether damage is reasonable wear and tear, and noted (n.7) that the statement of condition is what the Legislature requires to aid that inquiry. Without one, the landlord is arguing that question without the document the statute provides for it."
       : "The landlord provided a written statement of the unit's condition at move-in, as §15B(2)(c) requires.",
     plainTerms: r7Triggered
-      ? "In plain terms: without a signed move-in condition statement, your landlord has no paper trail showing what the unit looked like before you lived there, which makes it harder for them to justify keeping money for damage."
+      ? "In plain terms: without a signed move-in condition statement, your landlord has no paper trail showing what the unit looked like before you lived there, which makes it harder for them to justify keeping money for damage. Massachusetts' highest court has said the unit's starting condition is one of the things that decides whether a charge is normal wear and tear."
       : "Your landlord documented the unit's move-in condition as required.",
-    citation: "M.G.L. c. 186, §15B(2)(c); 940 CMR 3.17(4)(e)",
+    citation:
+      "M.G.L. c. 186, §15B(2)(c); 940 CMR 3.17(4)(e); Peebles v. JRK Property Holdings, Inc., SJC-13702 (Mass. Aug. 1, 2025)",
     severity: r7Triggered ? "low" : "info",
   });
 
@@ -241,13 +251,14 @@ export function analyzeTenancy(
     title: "Deductions that commonly resemble ordinary wear and tear",
     explanation:
       contestableCount > 0
-        ? `${contestableCount} of ${deductionFlags.length} claimed deduction(s) use language commonly associated with ordinary wear and tear, which §15B(4)(iii) excludes from deductions. These are informational flags based on keyword matching, not legal conclusions about any specific deduction.`
+        ? `${contestableCount} of ${deductionFlags.length} claimed deduction(s) use language commonly associated with ordinary wear and tear, which §15B(4)(iii) excludes from deductions. In Peebles v. JRK Property Holdings, Inc., SJC-13702 (Aug. 1, 2025), the Supreme Judicial Court held that a tenant's reasonable use of a residence is expected to cause gradual deterioration that may require painting, carpet cleaning or repair, or other refurbishment at the end of a lease, and that deducting for such reasonable wear and tear violates the statute. The Court declined to set a bright-line rule: whether particular damage is reasonable wear and tear depends on all the circumstances, including the nature and cause of the damage, the deterioration expected from reasonable use under the lease, the unit's condition at the start of the lease, and the length of the occupancy. The longer the occupancy, the more wear is reasonably expected. These are informational flags based on keyword matching, not legal conclusions about any specific deduction.`
         : "None of the claimed deductions match common ordinary-wear-and-tear language. This is an informational flag based on keyword matching, not a legal conclusion.",
     plainTerms:
       contestableCount > 0
-        ? "In plain terms: charges like routine cleaning or repainting are often just normal wear from living there, which cannot be taken out of a deposit."
+        ? "In plain terms: charges like routine cleaning or repainting are often just normal wear from living there, which cannot be taken out of a deposit. Massachusetts' highest court said so directly in 2025. Whether a specific charge counts depends on the details, and a longer tenancy means more wear is treated as normal."
         : "No claimed deductions matched common wear-and-tear language.",
-    citation: "M.G.L. c. 186, §15B(4)(iii)",
+    citation:
+      "M.G.L. c. 186, §15B(4)(iii); Peebles v. JRK Property Holdings, Inc., SJC-13702 (Mass. Aug. 1, 2025)",
     severity: "info",
   });
 

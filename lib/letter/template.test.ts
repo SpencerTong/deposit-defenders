@@ -77,10 +77,39 @@ describe("buildDemandLetter", () => {
     }
   });
 
-  it("omits the informational wear-and-tear flag from the violations list", () => {
+  it("omits the informational wear-and-tear flag from the enumerated violations list", () => {
     const analysis = analyzeTenancy(violatingTenancy(), new Date("2024-02-15"));
     const letter = buildDemandLetter(violatingTenancy(), analysis);
-    expect(letter.paragraphs.some((p) => p.includes("§15B(4)(iii)"))).toBe(false);
+    const r5 = analysis.rules.find((r) => r.id === "R5_WEAR_AND_TEAR_FLAGS");
+    expect(r5?.triggered).toBe(true);
+    // R5 is keyword matching, so its rule text is never recited as a proven
+    // violation. The letter disputes the charges separately (see below).
+    expect(letter.paragraphs.some((p) => p.includes(r5!.title))).toBe(false);
+    expect(letter.paragraphs.some((p) => p.includes(r5!.explanation))).toBe(false);
+  });
+
+  it("disputes contestable deductions as wear and tear, citing Peebles", () => {
+    const analysis = analyzeTenancy(violatingTenancy(), new Date("2024-02-15"));
+    const letter = buildDemandLetter(violatingTenancy(), analysis);
+    // Match on "I dispute": R7's violation paragraph also cites Peebles now.
+    const para = letter.paragraphs.find((p) => p.includes("I dispute"));
+    expect(para).toBeDefined();
+    expect(para).toContain("Carpet cleaning");
+    expect(para).toContain("$300");
+    expect(para).toContain("SJC-13702");
+    expect(para).toContain("§15B(4)(iii)");
+    // Framed as the tenant's own dispute, not a conclusion this tool draws.
+    expect(para).toContain("I dispute");
+  });
+
+  it("omits the wear-and-tear dispute paragraph when no deduction is contestable", () => {
+    const tenancy: TenancyInputs = {
+      ...violatingTenancy(),
+      deductionsClaimed: [{ description: "Broken window", amount: 300 }],
+    };
+    const analysis = analyzeTenancy(tenancy, new Date("2024-02-15"));
+    const letter = buildDemandLetter(tenancy, analysis);
+    expect(letter.paragraphs.some((p) => p.includes("I dispute"))).toBe(false);
   });
 
   it("states the demand amount matching the analysis's max exposure", () => {
@@ -173,6 +202,16 @@ describe("buildCombinedDemandLetter", () => {
     expect(body).toContain("30 days");
     expect(body).not.toContain("10 business days");
     expect(body.toLowerCase()).not.toContain("guaranteed");
+  });
+
+  it("carries the wear-and-tear dispute into the combined letter buyers receive", () => {
+    const t = violatingTenancy();
+    const a = analyzeTenancy(t);
+    const letter = buildCombinedDemandLetter(t, a, {}, { ownerOccupied: false, today: TODAY });
+    const body = letter.paragraphs.join(" ");
+    expect(body).toContain("I dispute");
+    expect(body).toContain("Carpet cleaning");
+    expect(body).toContain("SJC-13702");
   });
 
   it("keeps the §15B letter unchanged for a clean analysis even when not owner-occupied", () => {
