@@ -6,7 +6,7 @@ import { analyzeTenancy, type AnalysisResult as RulesAnalysis } from "@/lib/stat
 import { toTenancyInputs } from "@/lib/flow/toTenancyInputs";
 import { FLOW_ANSWERS_STORAGE_KEY } from "@/lib/flow/storage";
 import type { FlowAnswers } from "@/lib/flow/types";
-import { trackEvent } from "@/lib/events";
+import { trackEventOnce } from "@/lib/events";
 import { AnalysisResult } from "@/components/analysis/AnalysisResult";
 import { KitComparisonCard } from "@/components/letter/KitComparisonCard";
 import { ResultsEmailCapture } from "@/components/letter/ResultsEmailCapture";
@@ -27,7 +27,7 @@ export function LetterPreviewClient() {
     const result = analyzeTenancy(toTenancyInputs(parsedAnswers));
     setAnswers(parsedAnswers);
     setAnalysis(result);
-    trackEvent("viewed_analysis", {
+    trackEventOnce("viewed_analysis", {
       maxExposure: result.exposure.maxExposure,
       violationCount: result.rules.filter((rule) => rule.triggered).length,
     });
@@ -45,7 +45,7 @@ export function LetterPreviewClient() {
     <main className="mx-auto max-w-xl px-6 py-10">
       <AnalysisResult analysis={analysis} />
 
-      <KitComparisonCard onCtaClick={() => trackEvent("clicked_kit")} />
+      <KitComparisonCard onCtaClick={() => trackEventOnce("clicked_kit")} />
 
       <ResultsEmailCapture answers={answers} />
     </main>

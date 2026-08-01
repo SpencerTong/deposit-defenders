@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ATTRIBUTION_STORAGE_KEY } from "@/lib/attribution";
 import { FLOW_ANSWERS_STORAGE_KEY } from "@/lib/flow/storage";
-import { trackEvent } from "@/lib/events";
+import { trackEventOnce } from "@/lib/events";
 
 type Status = "idle" | "submitting" | "needs_answers" | "error";
 
@@ -17,7 +17,7 @@ export function BuyKitButton({
   const [status, setStatus] = useState<Status>("idle");
 
   async function handleClick() {
-    trackEvent("clicked_kit");
+    trackEventOnce("clicked_kit");
 
     const rawAnswers = window.sessionStorage.getItem(FLOW_ANSWERS_STORAGE_KEY);
     if (!rawAnswers) {

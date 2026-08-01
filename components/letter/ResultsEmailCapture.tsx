@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { FlowAnswers } from "@/lib/flow/types";
 import { ATTRIBUTION_STORAGE_KEY } from "@/lib/attribution";
-import { trackEvent } from "@/lib/events";
+import { trackEventOnce } from "@/lib/events";
 
 type SubmitStatus = "idle" | "submitting" | "sent" | "error";
 
@@ -25,7 +25,7 @@ export function ResultsEmailCapture({ answers }: { answers: FlowAnswers }) {
       });
       if (!res.ok) throw new Error("request failed");
       setStatus("sent");
-      trackEvent("submitted_email");
+      trackEventOnce("submitted_email");
     } catch {
       setStatus("error");
     }

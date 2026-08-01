@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getOrPersistAttributionSrc, trackEvent } from "@/lib/events";
+import { getOrPersistAttributionSrc, trackEventOnce } from "@/lib/events";
 import { QuestionFlow } from "@/components/flow/QuestionFlow";
 import { FLOW_ANSWERS_STORAGE_KEY } from "@/lib/flow/storage";
 import type { FlowAnswers } from "@/lib/flow/types";
@@ -36,16 +36,16 @@ export default function HomePage() {
 
   useEffect(() => {
     getOrPersistAttributionSrc(window.location.search);
-    trackEvent("landed");
+    trackEventOnce("landed");
   }, []);
 
   function handleStart() {
     setStarted(true);
-    trackEvent("started");
+    trackEventOnce("started");
   }
 
   function handleComplete(answers: FlowAnswers) {
-    trackEvent("completed_questions");
+    trackEventOnce("completed_questions");
     window.sessionStorage.setItem(FLOW_ANSWERS_STORAGE_KEY, JSON.stringify(answers));
     router.push("/letter/preview");
   }
