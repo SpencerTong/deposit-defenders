@@ -313,15 +313,31 @@ export const guideArticles: GuideArticle[] = [
     slug: "normal-wear-and-tear-vs-damage-massachusetts",
     title: "Normal Wear and Tear vs. Damage: What Massachusetts Landlords Can Deduct",
     metaDescription:
-      "Massachusetts landlords can't deduct ordinary wear and tear from your security deposit. Here's where the line falls (cleaning, painting, carpets, nail holes) and the sworn itemized list M.G.L. c. 186 §15B requires.",
-    updated: "2026-07-08",
+      "Massachusetts landlords can't deduct ordinary wear and tear from your security deposit, and the Supreme Judicial Court confirmed it in 2025. Here's where the line falls (cleaning, painting, carpets, nail holes) and the sworn itemized list M.G.L. c. 186 §15B requires.",
+    updated: "2026-07-31",
     intro:
-      "Most security deposit fights come down to one question: was it damage, or was it just living there? Massachusetts law answers more of that question than most tenants realize. Under M.G.L. c. 186, §15B(4), a landlord can only deduct for damage beyond \"reasonable wear and tear,\" and only with a sworn, itemized list delivered on time.",
+      "Most security deposit fights come down to one question: was it damage, or was it just living there? Massachusetts law answers more of that question than most tenants realize. Under M.G.L. c. 186, §15B(4), a landlord can only deduct for damage beyond \"reasonable wear and tear,\" and only with a sworn, itemized list delivered on time. In August 2025 the state's highest court took up that phrase for the first time since it entered the statute in 1970.",
     sections: [
       {
         heading: "What the statute allows landlords to deduct",
         paragraphs: [
           "Under §15B(4), deductions from a security deposit are limited to three things: unpaid rent (not lawfully withheld), unpaid increases in real estate taxes you were obligated to pay under the lease, and the reasonable cost of repairing damage caused by the tenant or their guests, expressly excluding reasonable wear and tear.",
+        ],
+      },
+      {
+        heading: "What the Supreme Judicial Court decided in 2025",
+        paragraphs: [
+          "In Peebles v. JRK Property Holdings, Inc., SJC-13702 (Aug. 1, 2025), the Supreme Judicial Court answered two questions certified to it by a federal court. On the first, it held that a tenant's reasonable use of a property as a residence is expected to result in gradual deterioration that may require painting, carpet cleaning or repair, or other refurbishment at the end of a lease, and that deducting from a security deposit to repair such reasonable wear and tear violates §15B(4)(iii).",
+          "One thing the Court specifically declined to do is set a bright line. The tenants asked it to rule that every deduction for cleaning or painting is unlawful, and it said it could not. Whether particular damage is reasonable wear and tear depends on all the circumstances, including the nature and cause of the damage, the deterioration expected from reasonable use under that lease, the condition of the unit when you moved in, and how long you lived there.",
+          "That last factor cuts in tenants' favor over time. The Court said the longer an occupancy lasts, the more wear is reasonably expected, potentially reaching severe wear that is still reasonable given the length of the tenancy.",
+          "The opinion gives concrete examples of what counts as reasonable wear: scuff marks on floors from walking on them, a reasonable degree of scuffing on walls, marks around doorways, and stains and other signs of age on carpets. It also approvingly cites an earlier case where carpet stains requiring replacement and wall holes requiring spackling were found to be wear and tear on those facts. By contrast, damage from unreasonable use, its example was overloading a cracked floor until it collapsed, is not.",
+        ],
+      },
+      {
+        heading: "Lease clauses requiring professional cleaning",
+        paragraphs: [
+          "The second question in Peebles was about a lease addendum requiring tenants to return the apartment \"professionally cleaned,\" with a list of charges that would be applied otherwise. The Court held that a clause requiring professionally cleaned condition on penalty of deductions for painting, cleaning, or repairs regardless of whether the damage is reasonable wear and tear conflicts with §15B(4), and is therefore void and unenforceable under §15B(8).",
+          "Two limits are worth knowing. The Court expressly did not decide whether a stand-alone requirement to clean, one not tied to security deposit deductions, would be a problem. It also did not decide whether merely including such a clause triggers the forfeiture provision in §15B(6)(c), because that question was not put to it. So the clean takeaway is narrower than \"cleaning clauses are illegal\": a clause that penalizes you through your deposit for wear and tear is unenforceable.",
         ],
       },
       {
@@ -354,12 +370,17 @@ export const guideArticles: GuideArticle[] = [
       {
         question: "Can my landlord charge a standard cleaning fee?",
         answer:
-          "Massachusetts law doesn't recognize automatic cleaning fees taken from a security deposit. Cleaning charges are commonly contested as ordinary wear and tear unless the unit was left genuinely beyond normal move-out condition, and any deduction still requires the sworn, itemized list.",
+          "Massachusetts law doesn't recognize automatic cleaning fees taken from a security deposit. In Peebles v. JRK Property Holdings (SJC-13702, 2025), the Supreme Judicial Court named carpet cleaning among the end-of-lease work that reasonable use is expected to require, and deductions for reasonable wear and tear violate the statute. Whether a specific charge qualifies still depends on the circumstances, and any deduction requires the sworn, itemized list.",
+      },
+      {
+        question: "My lease says I have to hire professional cleaners. Is that enforceable?",
+        answer:
+          "In Peebles, the Supreme Judicial Court held that a lease clause requiring the unit be returned in professionally cleaned condition, on penalty of deposit deductions for cleaning, painting, or repairs regardless of whether the damage is reasonable wear and tear, conflicts with §15B(4) and is void and unenforceable under §15B(8). The Court did not decide whether a stand-alone cleaning requirement, one not backed by deposit deductions, would be a problem.",
       },
       {
         question: "I lived there three years. Can they charge me to repaint?",
         answer:
-          "Repainting after a multi-year tenancy is one of the most commonly contested deductions, since paint wears in the normal course of living. Deteriorating paint from ordinary use is generally wear and tear, not tenant damage.",
+          "Repainting after a multi-year tenancy is one of the most commonly contested deductions, since paint wears in the normal course of living. Peebles lists painting among the refurbishment that reasonable residential use is expected to require, and says the longer the occupancy, the more wear is reasonably expected. Deteriorating paint from ordinary use is generally wear and tear, not tenant damage.",
       },
       {
         question: "What proof does my landlord need for a deduction?",
