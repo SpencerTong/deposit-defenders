@@ -5,9 +5,20 @@ import { flowSteps } from "./steps";
 import { ProgressBar } from "./ProgressBar";
 import { initialFlowAnswers, type FlowAnswers } from "@/lib/flow/types";
 
-export function QuestionFlow({ onComplete }: { onComplete: (answers: FlowAnswers) => void }) {
+export function QuestionFlow({
+  onComplete,
+  initial,
+}: {
+  onComplete: (answers: FlowAnswers) => void;
+  /** Seeds answers already collected before the flow opened, so the landing
+   *  page can ask the first question inline without discarding the response. */
+  initial?: Partial<FlowAnswers>;
+}) {
   const [stepIndex, setStepIndex] = useState(0);
-  const [answers, setAnswers] = useState<FlowAnswers>(initialFlowAnswers);
+  const [answers, setAnswers] = useState<FlowAnswers>({
+    ...initialFlowAnswers,
+    ...initial,
+  });
 
   const step = flowSteps[stepIndex];
   if (!step) return null;

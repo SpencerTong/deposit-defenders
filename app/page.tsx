@@ -33,6 +33,7 @@ function HowStep({ number, title, detail }: { number: number; title: string; det
 export default function HomePage() {
   const router = useRouter();
   const [started, setStarted] = useState(false);
+  const [deposit, setDeposit] = useState("");
 
   useEffect(() => {
     getOrPersistAttributionSrc(window.location.search);
@@ -53,7 +54,10 @@ export default function HomePage() {
   if (started) {
     return (
       <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-xl flex-col justify-center px-6 py-10">
-        <QuestionFlow onComplete={handleComplete} />
+        <QuestionFlow
+          onComplete={handleComplete}
+          initial={deposit.trim() !== "" ? { depositAmount: deposit.trim() } : undefined}
+        />
       </main>
     );
   }
@@ -68,14 +72,44 @@ export default function HomePage() {
           Answer six quick questions about your security deposit. See what Massachusetts law
           says you may be owed, instantly and for free.
         </p>
-        <button
-          type="button"
-          onClick={handleStart}
-          className="w-full rounded-lg bg-accent px-6 py-4 text-lg font-semibold text-white shadow-sm transition-colors hover:bg-accent-dark sm:w-auto sm:px-10"
+        {/* Asking the first question here rather than behind a "start" click:
+            typing a real number is a smaller step than committing to a form,
+            and the value carries into the flow so nothing is retyped. */}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleStart();
+          }}
+          className="mx-auto max-w-sm"
         >
-          Check my deposit for free
-        </button>
-        <p className="mt-4 text-sm text-gray-600">Takes about 2 minutes. No account needed.</p>
+          <label htmlFor="deposit-amount" className="mb-2 block text-base font-medium text-gray-900">
+            How much was your security deposit?
+          </label>
+          <div className="relative">
+            <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
+              $
+            </span>
+            <input
+              id="deposit-amount"
+              type="number"
+              inputMode="decimal"
+              autoComplete="off"
+              placeholder="2,000"
+              value={deposit}
+              onChange={(e) => setDeposit(e.target.value)}
+              className="w-full rounded-lg border border-gray-300 py-3.5 pl-8 pr-4 text-lg focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
+            />
+          </div>
+          <button
+            type="submit"
+            className="mt-3 w-full rounded-lg bg-accent px-6 py-4 text-lg font-semibold text-white shadow-sm transition-colors hover:bg-accent-dark"
+          >
+            Check my deposit for free
+          </button>
+        </form>
+        <p className="mt-4 text-sm text-gray-600">
+          Takes about 2 minutes. No account needed.
+        </p>
       </section>
 
       <section className="mt-14">

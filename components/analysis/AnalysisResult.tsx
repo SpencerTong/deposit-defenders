@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { AnalysisResult as RulesAnalysis, Severity } from "@/lib/statute/ma";
 
 function formatCurrency(amount: number): string {
@@ -88,7 +89,19 @@ function ExposureBreakdown({ exposure }: { exposure: RulesAnalysis["exposure"] }
   );
 }
 
-export function AnalysisResult({ analysis }: { analysis: RulesAnalysis }) {
+/**
+ * `cta` renders directly under the violation cards, which is the moment a
+ * reader has both the number and the reasons for it. Previously the only call
+ * to action sat below the deduction flags AND a full disclaimer paragraph,
+ * several screens down on the mobile traffic this page mostly serves.
+ */
+export function AnalysisResult({
+  analysis,
+  cta,
+}: {
+  analysis: RulesAnalysis;
+  cta?: ReactNode;
+}) {
   const triggeredRules = analysis.rules.filter(
     (rule) => rule.triggered && rule.id !== "R5_WEAR_AND_TEAR_FLAGS"
   );
@@ -147,6 +160,8 @@ export function AnalysisResult({ analysis }: { analysis: RulesAnalysis }) {
         </div>
       )}
 
+      {cta}
+
       {contestableFlags.length > 0 && (
         <div className="mb-8">
           <h3 className="mb-1 text-lg font-semibold text-gray-900">
@@ -167,11 +182,6 @@ export function AnalysisResult({ analysis }: { analysis: RulesAnalysis }) {
         </div>
       )}
 
-      <p className="text-sm text-gray-500">
-        This tool provides general legal information, not legal advice, and does not create an
-        attorney-client relationship. For advice about your situation, consult a licensed
-        Massachusetts attorney.
-      </p>
     </div>
   );
 }
