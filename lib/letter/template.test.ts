@@ -106,6 +106,33 @@ describe("buildDemandLetter", () => {
     expect(letter.paragraphs.some((p) => p.includes(r8!.explanation))).toBe(false);
   });
 
+  it("argues the cleaning clause is unenforceable when the lease had one", () => {
+    const tenancy: TenancyInputs = {
+      ...violatingTenancy(),
+      leaseRequiredProfessionalCleaning: "yes",
+    };
+    const letter = buildDemandLetter(tenancy, analyzeTenancy(tenancy, new Date("2024-02-15")));
+    const para = letter.paragraphs.find((p) => p.includes("professionally cleaned condition"));
+
+    expect(para).toBeDefined();
+    expect(para).toContain("§15B(8)");
+    expect(para).toContain("SJC-13702");
+    expect(para).toContain("void and unenforceable");
+    // Peebles expressly declined to decide forfeiture.
+    expect(para!.toLowerCase()).not.toContain("forfeit");
+  });
+
+  it("omits the cleaning paragraph when the lease had no such clause", () => {
+    const tenancy: TenancyInputs = {
+      ...violatingTenancy(),
+      leaseRequiredProfessionalCleaning: "no",
+    };
+    const letter = buildDemandLetter(tenancy, analyzeTenancy(tenancy, new Date("2024-02-15")));
+    expect(
+      letter.paragraphs.some((p) => p.includes("professionally cleaned condition"))
+    ).toBe(false);
+  });
+
   it("disputes contestable deductions as wear and tear, citing Peebles", () => {
     const analysis = analyzeTenancy(violatingTenancy(), new Date("2024-02-15"));
     const letter = buildDemandLetter(violatingTenancy(), analysis);
@@ -237,5 +264,14 @@ describe("buildCombinedDemandLetter", () => {
     const a = analyzeTenancy(t);
     const combined = buildCombinedDemandLetter(t, a, {}, { ownerOccupied: false, today: TODAY });
     expect(combined.paragraphs.join(" ")).not.toContain("93A");
+  });
+
+  it("carries the cleaning argument into the combined letter buyers receive", () => {
+    const t: TenancyInputs = { ...violatingTenancy(), leaseRequiredProfessionalCleaning: "yes" };
+    const letter = buildCombinedDemandLetter(t, analyzeTenancy(t), {}, {
+      ownerOccupied: false,
+      today: TODAY,
+    });
+    expect(letter.paragraphs.join(" ")).toContain("professionally cleaned condition");
   });
 });

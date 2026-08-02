@@ -160,6 +160,21 @@ export function buildDemandLetter(
         ]
       : [];
 
+  const cleaningClauseTriggered = analysis.rules.some(
+    (rule) => rule.id === "R8_PROFESSIONAL_CLEANING_CLAUSE" && rule.triggered
+  );
+  const cleaningClauseParagraphs = cleaningClauseTriggered
+    ? [
+        `My lease required the unit to be returned in professionally cleaned condition. ` +
+          `In Peebles v. JRK Property Holdings, Inc., SJC-13702 (Mass. Aug. 1, 2025), the ` +
+          `Supreme Judicial Court held that such a provision, where it imposes charges for ` +
+          `cleaning, painting, or repairs regardless of whether the damage is reasonable wear ` +
+          `and tear, conflicts with M.G.L. c. 186, §15B(4) and is void and unenforceable under ` +
+          `M.G.L. c. 186, §15B(8). Any deduction taken under that provision is therefore ` +
+          `improper.`,
+      ]
+    : [];
+
   const exposureBreakdown = formatExposureBreakdown(analysis.exposure);
   const demandParagraph =
     `Demand is hereby made for payment of ${formatCurrency(analysis.exposure.maxExposure)}` +
@@ -185,6 +200,7 @@ export function buildDemandLetter(
       introParagraph,
       ...violationParagraphs,
       ...wearAndTearParagraphs,
+      ...cleaningClauseParagraphs,
       demandParagraph,
       deadlineParagraph,
     ],
