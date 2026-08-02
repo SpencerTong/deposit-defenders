@@ -110,7 +110,17 @@ export const flowSteps: FlowStep[] = [
   {
     id: "deductions",
     title: "Deductions and refund",
-    render: (answers, update) => <DeductionsEditor answers={answers} update={update} />,
+    render: (answers, update) => (
+      <>
+        <DeductionsEditor answers={answers} update={update} />
+        <TriStateField
+          label="Did your lease require you to have the unit professionally cleaned when you moved out?"
+          helpText="Often in a move-out addendum, sometimes with a list of charges if you don't."
+          value={answers.leaseRequiredProfessionalCleaning}
+          onChange={(v) => update({ leaseRequiredProfessionalCleaning: v })}
+        />
+      </>
+    ),
     isValid: flowFieldValidity["deductions"],
   },
   {

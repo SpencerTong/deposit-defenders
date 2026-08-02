@@ -68,4 +68,18 @@ describe("isCompleteFlowAnswers", () => {
   it("rejects a negative amount returned", () => {
     expect(isCompleteFlowAnswers({ ...complete, amountReturned: "-1" })).toBe(false);
   });
+
+  it("does not require the professional cleaning answer to advance", () => {
+    const withAnswer: FlowAnswers = {
+      ...complete,
+      leaseRequiredProfessionalCleaning: "yes",
+    };
+    const withoutAnswer: FlowAnswers = {
+      ...complete,
+      leaseRequiredProfessionalCleaning: null,
+    };
+
+    expect(isCompleteFlowAnswers(withoutAnswer)).toBe(true);
+    expect(isCompleteFlowAnswers(withAnswer)).toBe(true);
+  });
 });
