@@ -96,6 +96,39 @@ describe("buildKitContent", () => {
   });
 });
 
+describe("buildKitContent R8 recital exclusion", () => {
+  it("does not count the professional cleaning clause as a §15B requirement not met", () => {
+    // R8-only tenancy: nothing else in §15B is violated, so the "how to use
+    // this kit" summary must not claim any requirement wasn't met (and must
+    // not clash with the letter, which separately omits R8's recital). See
+    // NON_RECITABLE_RULE_IDS in lib/statute/ma.ts.
+    const tenancy: TenancyInputs = {
+      depositAmount: 2000,
+      monthlyRent: 2000,
+      tenancyStartDate: new Date("2023-06-01"),
+      moveOutDate: new Date("2023-12-01"),
+      tenancyEndConfirmed: true,
+      receivedItemizedList: false,
+      listSwornUnderPenalty: "unknown",
+      receivedBankReceipt: "yes",
+      receivedStatementOfCondition: "yes",
+      deductionsClaimed: [],
+      amountReturned: 2000,
+      interestPaidAnnually: "unknown",
+      leaseRequiredProfessionalCleaning: "yes",
+    };
+    const analysis = analyzeTenancy(tenancy, new Date("2026-07-08T12:00:00"));
+    const r8 = analysis.rules.find((r) => r.id === "R8_PROFESSIONAL_CLEANING_CLAUSE");
+    expect(r8?.triggered).toBe(true);
+
+    const kit = buildKitContent(tenancy, analysis, new Date("2026-07-08T12:00:00"));
+    const howToUse = kit.sections.find((s) => s.heading === "How to use this kit")!;
+    const text = howToUse.paragraphs.join(" ");
+    expect(text).not.toContain("requirement(s) of M.G.L. c. 186, §15B may not have been met");
+    expect(text).toContain("did not show a clear procedural violation");
+  });
+});
+
 describe("buildKitContent response window option", () => {
   it("uses a 30 calendar day window when the combined 93A letter applies", () => {
     const tenancy = violatingTenancy();

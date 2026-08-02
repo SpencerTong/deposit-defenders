@@ -60,6 +60,25 @@ describe("POST /api/kit/answers", () => {
     );
   });
 
+  it("accepts a payload missing a tri-state field added after older orders were placed", async () => {
+    // Simulates a pre-existing buyer whose stored answers JSON predates the
+    // leaseRequiredProfessionalCleaning field: the client sends a payload
+    // where the key is entirely absent (not null), which JSON.stringify would
+    // also produce for a genuinely `undefined` value. Build the payload by
+    // deleting the key rather than spreading initialFlowAnswers, which always
+    // has it and so could never catch this regression.
+    const payload = { ...validAnswers } as Record<string, unknown>;
+    delete payload.leaseRequiredProfessionalCleaning;
+    expect("leaseRequiredProfessionalCleaning" in payload).toBe(false);
+
+    const res = await POST(request({ sessionId: "cs_test_1", answers: payload }));
+    expect(res.status).toBe(200);
+    expect(setKitOrderAnswers).toHaveBeenCalledWith(
+      "o1",
+      expect.objectContaining({ leaseRequiredProfessionalCleaning: null })
+    );
+  });
+
   it("rejects an incomplete answers payload", async () => {
     const res = await POST(
       request({ sessionId: "cs_test_1", answers: { ...validAnswers, depositAmount: "" } })

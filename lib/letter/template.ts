@@ -1,4 +1,4 @@
-import type { AnalysisResult, TenancyInputs } from "@/lib/statute/ma";
+import { NON_RECITABLE_RULE_IDS, type AnalysisResult, type TenancyInputs } from "@/lib/statute/ma";
 import { build93aDemand } from "@/lib/statute/ch93a";
 
 const DISCLAIMER =
@@ -110,17 +110,15 @@ export function buildDemandLetter(
     `hold a tenant's security deposit, and this letter serves as formal demand for the amount ` +
     `described below.`;
 
-  // R8, like R5, is excluded from this recital. The Court in Peebles expressly
-  // declined to decide whether the clause alone (n.8) or in combination with a
-  // deduction (§15B(6)(c) forfeiture) fails a §15B requirement, so asserting
-  // "the following requirements of §15B were not met" would overstate what R8's
-  // own explanation concedes is undecided. R8 still renders as a violation card
-  // on the analysis screen; the letter argues it via a dedicated paragraph.
+  // R5 and R8 are excluded from this recital; see NON_RECITABLE_RULE_IDS in
+  // lib/statute/ma.ts. The Court in Peebles expressly declined to decide
+  // whether the clause alone (n.8) or in combination with a deduction
+  // (§15B(6)(c) forfeiture) fails a §15B requirement, so asserting "the
+  // following requirements of §15B were not met" would overstate what R8's own
+  // explanation concedes is undecided. R8 still renders as a violation card on
+  // the analysis screen; the letter argues it via a dedicated paragraph.
   const triggeredRules = analysis.rules.filter(
-    (rule) =>
-      rule.triggered &&
-      rule.id !== "R5_WEAR_AND_TEAR_FLAGS" &&
-      rule.id !== "R8_PROFESSIONAL_CLEANING_CLAUSE"
+    (rule) => rule.triggered && !NON_RECITABLE_RULE_IDS.has(rule.id)
   );
 
   const violationParagraphs =
@@ -176,8 +174,8 @@ export function buildDemandLetter(
           `Supreme Judicial Court held that such a provision, where it imposes charges for ` +
           `cleaning, painting, or repairs regardless of whether the damage is reasonable wear ` +
           `and tear, conflicts with M.G.L. c. 186, §15B(4) and is void and unenforceable under ` +
-          `M.G.L. c. 186, §15B(8). Any deduction taken under that provision is therefore ` +
-          `improper.`,
+          `M.G.L. c. 186, §15B(8). To the extent any deduction was taken under that provision, ` +
+          `it may be improper.`,
       ]
     : [];
 

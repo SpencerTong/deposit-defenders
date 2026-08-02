@@ -15,6 +15,16 @@ const ITEMIZATION_DEADLINE_DAYS = 30;
 const RETURN_DEADLINE_DAYS = 30;
 const ANNUAL_INTEREST_RATE = 0.05;
 
+/** Rules that must never be recited as a §15B requirement the landlord failed to
+ *  meet. R5 is keyword matching, not a legal conclusion. R8 rests on questions
+ *  Peebles expressly declined to decide (n.8, and §15B(6)(c) forfeiture), so the
+ *  product cites it as a supporting finding only. Both still render on the
+ *  analysis screen. */
+export const NON_RECITABLE_RULE_IDS: ReadonlySet<string> = new Set([
+  "R5_WEAR_AND_TEAR_FLAGS",
+  "R8_PROFESSIONAL_CLEANING_CLAUSE",
+]);
+
 export type TriState = "yes" | "no" | "unknown";
 
 export interface Deduction {
@@ -282,12 +292,12 @@ export function analyzeTenancy(
     explanation: !r8Triggered
       ? "No lease provision requiring professional cleaning at move-out was reported."
       : contestableChargePresent
-        ? "In Peebles v. JRK Property Holdings, Inc., SJC-13702 (Aug. 1, 2025), the Supreme Judicial Court held that a lease provision requiring the unit be returned in professionally cleaned condition, on penalty of charges for cleaning, painting, or repairs regardless of whether the damage is reasonable wear and tear, conflicts with §15B(4) and is void and unenforceable under §15B(8). One or more deductions taken here use language commonly associated with cleaning, painting, or refurbishment, which may fall within the conduct the Court described. Any amount withheld under such a provision may be improper."
+        ? "In Peebles v. JRK Property Holdings, Inc., SJC-13702 (Aug. 1, 2025), the Supreme Judicial Court held that a lease provision requiring the unit be returned in professionally cleaned condition, on penalty of charges for cleaning, painting, or repairs regardless of whether the damage is reasonable wear and tear, conflicts with §15B(4) and is void and unenforceable under §15B(8). One or more deductions taken here use language commonly associated with ordinary wear and tear, which may fall within the conduct the Court described. Any amount withheld under such a provision may be improper."
         : "In Peebles v. JRK Property Holdings, Inc., SJC-13702 (Aug. 1, 2025), the Supreme Judicial Court held that a lease provision requiring professionally cleaned condition, on penalty of deposit deductions regardless of reasonable wear and tear, is void and unenforceable under §15B(8). No deduction here was flagged as cleaning or painting work, and the Court did not decide whether a stand-alone cleaning requirement, one not backed by deposit deductions, raises the same problem.",
     plainTerms: !r8Triggered
       ? "No professional cleaning requirement was reported."
       : contestableChargePresent
-        ? "In plain terms: a lease clause like this cannot be used to charge you for cleaning or painting that is just normal wear from living there. One or more of your itemized deductions use language associated with cleaning, painting, or refurbishment, so this may apply to your situation."
+        ? "In plain terms: a lease clause like this cannot be used to charge you for cleaning or painting that is just normal wear from living there. One or more of your itemized deductions use language associated with ordinary wear and tear, so this may apply to your situation."
         : "In plain terms: a lease clause like this cannot be used to charge you for cleaning or painting that is just normal wear from living there. You were not charged that way here, and the state's highest court has not yet decided how far a cleaning requirement on its own goes, so this mainly supports the rest of your claim.",
     citation:
       "M.G.L. c. 186, §15B(4), §15B(8); Peebles v. JRK Property Holdings, Inc., SJC-13702 (Mass. Aug. 1, 2025)",

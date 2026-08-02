@@ -1,4 +1,4 @@
-import type { AnalysisResult, TenancyInputs } from "@/lib/statute/ma";
+import { NON_RECITABLE_RULE_IDS, type AnalysisResult, type TenancyInputs } from "@/lib/statute/ma";
 import { EFILING_SURCHARGE, SMALL_CLAIMS_LIMIT, filingFeeForClaim } from "./court-data";
 
 const DISCLAIMER =
@@ -75,8 +75,10 @@ export function buildKitContent(
     : addCalendarDays(today, window.days);
   const responseDeadlineDate = formatDate(responseDeadline);
   const trebleApplies = analysis.exposure.trebleApplies;
+  // R5 and R8 are never recited as a §15B requirement that was not met; see
+  // NON_RECITABLE_RULE_IDS in lib/statute/ma.ts.
   const triggered = analysis.rules.filter(
-    (rule) => rule.triggered && rule.id !== "R5_WEAR_AND_TEAR_FLAGS"
+    (rule) => rule.triggered && !NON_RECITABLE_RULE_IDS.has(rule.id)
   );
   const filingFee = filingFeeForClaim(analysis.exposure.outstandingBalance);
   const fitsSmallClaims = analysis.exposure.outstandingBalance <= SMALL_CLAIMS_LIMIT;

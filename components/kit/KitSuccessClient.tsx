@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import type { LetterDetails, MailStatus } from "@/lib/db/kitOrders";
 import type { DemandLetterContent } from "@/lib/letter/template";
-import type { FlowAnswers } from "@/lib/flow/types";
+import { initialFlowAnswers, type FlowAnswers } from "@/lib/flow/types";
 import { summarizeFlowAnswers } from "@/lib/flow/summarize";
 import { FAQ_ITEMS } from "@/lib/faq/content";
 import { FaqAccordion } from "@/components/faq/FaqAccordion";
@@ -185,7 +185,10 @@ export function KitSuccessClient() {
           showAnswersForm ? (
             <AnswersSummaryForm
               sessionId={sid}
-              initial={order.answers}
+              // Orders placed before a flow field existed store answers JSON
+              // without that key; merge onto defaults so the form always has a
+              // defined value to edit instead of silently carrying `undefined`.
+              initial={{ ...initialFlowAnswers, ...order.answers }}
               onSaved={() => {
                 setEditingAnswers(false);
                 void refreshOrder(sid);

@@ -1,6 +1,6 @@
 import type { KitOrder } from "@/lib/db/kitOrders";
 import type { FlowAnswers } from "@/lib/flow/types";
-import { analyzeTenancy } from "@/lib/statute/ma";
+import { analyzeTenancy, NON_RECITABLE_RULE_IDS } from "@/lib/statute/ma";
 import { toTenancyInputs } from "@/lib/flow/toTenancyInputs";
 import { EFILING_SURCHARGE, SMALL_CLAIMS_LIMIT, filingFeeForClaim } from "@/lib/kit/court-data";
 import { formatAddress } from "@/lib/letter/fromOrder";
@@ -47,8 +47,10 @@ export function buildSmallClaimDraft(order: KitOrder): SmallClaimDraft {
   const analysis = analyzeTenancy(tenancy);
   const details = order.letterDetails;
 
+  // R5 and R8 are never recited as a §15B requirement the landlord failed to
+  // meet in a court filing; see NON_RECITABLE_RULE_IDS in lib/statute/ma.ts.
   const triggered = analysis.rules.filter(
-    (rule) => rule.triggered && rule.id !== "R5_WEAR_AND_TEAR_FLAGS"
+    (rule) => rule.triggered && !NON_RECITABLE_RULE_IDS.has(rule.id)
   );
   const violationList =
     triggered.length > 0

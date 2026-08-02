@@ -9,8 +9,12 @@ export const runtime = "nodejs";
 
 const INVALID = Symbol("invalid");
 
+// `undefined` covers orders saved before a tri-state field existed: the stored
+// answers JSON simply lacks the key, so it never reaches here as `null`.
+// Treating it the same as `null` (unanswered) lets pre-existing buyers save
+// edits instead of getting a spurious invalid_answers 400.
 function parseTriStateOrNull(value: unknown): TriState | null | typeof INVALID {
-  if (value === null) return null;
+  if (value === null || value === undefined) return null;
   if (value === "yes" || value === "no" || value === "unknown") return value;
   return INVALID;
 }

@@ -1,4 +1,4 @@
-import type { AnalysisResult } from "./ma";
+import { NON_RECITABLE_RULE_IDS, type AnalysisResult } from "./ma";
 
 /**
  * Chapter 93A layer on top of the §15B rules engine.
@@ -65,15 +65,13 @@ export function build93aDemand(
 ): Ch93aDemand | null {
   if (opts.ownerOccupied) return null;
 
-  // R8, like R5, is excluded here. The fallback regulation reads "otherwise
-  // failing to comply with M.G.L. c. 186, §15B", which for R8 would assert the
-  // §15B(6)(c) forfeiture question Peebles expressly declined to decide (n.8).
-  // R8 is argued in the letter's dedicated paragraph, not in this 93A recital.
+  // R5 and R8 are excluded here; see NON_RECITABLE_RULE_IDS in lib/statute/ma.ts.
+  // The fallback regulation reads "otherwise failing to comply with M.G.L. c.
+  // 186, §15B", which for R8 would assert the §15B(6)(c) forfeiture question
+  // Peebles expressly declined to decide (n.8). R8 is argued in the letter's
+  // dedicated paragraph, not in this 93A recital.
   const triggered = analysis.rules.filter(
-    (rule) =>
-      rule.triggered &&
-      rule.id !== "R5_WEAR_AND_TEAR_FLAGS" &&
-      rule.id !== "R8_PROFESSIONAL_CLEANING_CLAUSE"
+    (rule) => rule.triggered && !NON_RECITABLE_RULE_IDS.has(rule.id)
   );
   if (triggered.length === 0) return null;
 

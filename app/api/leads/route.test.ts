@@ -76,6 +76,29 @@ describe("POST /api/leads", () => {
     );
   });
 
+  it("does not count the professional cleaning clause flag as a violation", async () => {
+    // R8-only tenancy: no other §15B violation, and nothing outstanding, so
+    // the results email must not report a nonzero violationCount for a $0
+    // exposure. See NON_RECITABLE_RULE_IDS in lib/statute/ma.ts.
+    const res = await POST(
+      request({
+        email: "renter@example.com",
+        answers: answers({
+          receivedBankReceipt: "yes",
+          receivedStatementOfCondition: "yes",
+          receivedItemizedList: false,
+          itemizedListDate: "",
+          amountReturned: "1500",
+          leaseRequiredProfessionalCleaning: "yes",
+        }),
+      })
+    );
+    expect(res.status).toBe(200);
+    const call = vi.mocked(sendResultsEmail).mock.calls[0]?.[0];
+    expect(call?.violationCount).toBe(0);
+    expect(call?.maxExposure).toBe(0);
+  });
+
   it("sends the results email, not the letter", async () => {
     const res = await POST(request({ email: "renter@example.com", answers: answers() }));
     const json = (await res.json()) as { ok: boolean; sent: boolean };

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { analyzeTenancy } from "@/lib/statute/ma";
+import { analyzeTenancy, NON_RECITABLE_RULE_IDS } from "@/lib/statute/ma";
 import { toTenancyInputs } from "@/lib/flow/toTenancyInputs";
 import type { FlowAnswers } from "@/lib/flow/types";
 import { sendResultsEmail } from "@/lib/email/resend";
@@ -35,10 +35,12 @@ export async function POST(req: NextRequest) {
 
   const resolvedSrc = typeof src === "string" ? src : null;
   const rulesFired = analysis.rules.filter((rule) => rule.triggered).map((rule) => rule.id);
-  // R5 is an informational wear-and-tear flag, not a violation; matches the
-  // on-screen count in AnalysisResult.
+  // R5 and R8 are informational flags, not violations to recite as unmet §15B
+  // requirements; see NON_RECITABLE_RULE_IDS in lib/statute/ma.ts. (R8 still
+  // renders as its own card on the analysis screen, so this count can be one
+  // lower than the number of cards shown there when R8 fires alone.)
   const violationCount = analysis.rules.filter(
-    (rule) => rule.triggered && rule.id !== "R5_WEAR_AND_TEAR_FLAGS"
+    (rule) => rule.triggered && !NON_RECITABLE_RULE_IDS.has(rule.id)
   ).length;
 
   await recordLead({

@@ -43,6 +43,30 @@ function order(overrides: Partial<KitOrder> = {}): KitOrder {
 }
 
 describe("buildSmallClaimDraft", () => {
+  it("omits the professional cleaning clause flag from the claim description", () => {
+    // R8-only tenancy: no other §15B violation, and the deposit was returned
+    // in full, so the only thing that fires is R8. It must never be recited
+    // as an unmet §15B requirement in a court filing; see
+    // NON_RECITABLE_RULE_IDS in lib/statute/ma.ts.
+    const draft = buildSmallClaimDraft(
+      order({
+        answers: {
+          ...answers,
+          deductionsClaimed: [],
+          amountReturned: "2000",
+          receivedBankReceipt: "yes",
+          receivedStatementOfCondition: "yes",
+          interestPaidAnnually: "yes",
+          leaseRequiredProfessionalCleaning: "yes",
+        },
+      })
+    );
+    expect(draft.claimDescription).not.toContain("professional cleaning");
+    expect(draft.claimDescription).toContain(
+      "failure to return the balance of my security deposit"
+    );
+  });
+
   it("names the parties from the stored details", () => {
     const draft = buildSmallClaimDraft(order());
     expect(draft.plaintiffName).toBe("Jordan Renter");
