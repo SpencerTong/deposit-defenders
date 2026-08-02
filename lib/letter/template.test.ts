@@ -133,6 +133,22 @@ describe("buildDemandLetter", () => {
     ).toBe(false);
   });
 
+  it("omits the cleaning paragraph when the clause exists but no cleaning charge was taken", () => {
+    const tenancy: TenancyInputs = {
+      ...violatingTenancy(),
+      leaseRequiredProfessionalCleaning: "yes",
+      deductionsClaimed: [{ description: "Broken window", amount: 300 }],
+    };
+    const analysis = analyzeTenancy(tenancy, new Date("2024-02-15"));
+    const r8 = analysis.rules.find((r) => r.id === "R8_PROFESSIONAL_CLEANING_CLAUSE");
+    expect(r8?.triggered).toBe(true);
+
+    const letter = buildDemandLetter(tenancy, analysis);
+    expect(
+      letter.paragraphs.some((p) => p.includes("professionally cleaned condition"))
+    ).toBe(false);
+  });
+
   it("disputes contestable deductions as wear and tear, citing Peebles", () => {
     const analysis = analyzeTenancy(violatingTenancy(), new Date("2024-02-15"));
     const letter = buildDemandLetter(violatingTenancy(), analysis);

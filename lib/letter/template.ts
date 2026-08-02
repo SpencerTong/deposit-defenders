@@ -160,10 +160,16 @@ export function buildDemandLetter(
         ]
       : [];
 
+  // Only argue the clause when a cleaning-related charge was actually taken
+  // under it. The rule engine itself hedges the stand-alone-clause case (see
+  // R8's contestableChargePresent === false branch in lib/statute/ma.ts): the
+  // Court in Peebles did not decide whether a clause unbacked by any deduction
+  // raises the same problem. Reuse the same "contestable charge" set the
+  // wear-and-tear paragraph above is gated on, rather than re-deriving it.
   const cleaningClauseTriggered = analysis.rules.some(
     (rule) => rule.id === "R8_PROFESSIONAL_CLEANING_CLAUSE" && rule.triggered
   );
-  const cleaningClauseParagraphs = cleaningClauseTriggered
+  const cleaningClauseParagraphs = cleaningClauseTriggered && contestedDeductions.length > 0
     ? [
         `My lease required the unit to be returned in professionally cleaned condition. ` +
           `In Peebles v. JRK Property Holdings, Inc., SJC-13702 (Mass. Aug. 1, 2025), the ` +
