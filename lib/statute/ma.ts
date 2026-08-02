@@ -263,6 +263,33 @@ export function analyzeTenancy(
     severity: "info",
   });
 
+  // R8 -- lease clause requiring professional cleaning at move-out, §15B(8).
+  // Informational like R7: adds zero dollars. Peebles v. JRK Property Holdings,
+  // SJC-13702 (Aug. 1, 2025) settles that such a clause is void where it imposes
+  // deposit deductions regardless of reasonable wear and tear, but expressly
+  // reserved the stand-alone case (n.8) and expressly declined to decide whether
+  // including the clause triggers §15B(6)(c) forfeiture. Never assert forfeiture.
+  const r8Triggered = input.leaseRequiredProfessionalCleaning === "yes";
+  const cleaningChargeTaken = contestableCount > 0;
+  rules.push({
+    id: "R8_PROFESSIONAL_CLEANING_CLAUSE",
+    triggered: r8Triggered,
+    title: "Lease required professional cleaning at move-out",
+    explanation: !r8Triggered
+      ? "No lease provision requiring professional cleaning at move-out was reported."
+      : cleaningChargeTaken
+        ? "In Peebles v. JRK Property Holdings, Inc., SJC-13702 (Aug. 1, 2025), the Supreme Judicial Court held that a lease provision requiring the unit be returned in professionally cleaned condition, on penalty of charges for cleaning, painting, or repairs regardless of whether the damage is reasonable wear and tear, conflicts with §15B(4) and is void and unenforceable under §15B(8). A charge of that kind appears among the deductions taken here, so any amount withheld under such a provision may be improper."
+        : "In Peebles v. JRK Property Holdings, Inc., SJC-13702 (Aug. 1, 2025), the Supreme Judicial Court held that a lease provision requiring professionally cleaned condition, on penalty of deposit deductions regardless of reasonable wear and tear, is void and unenforceable under §15B(8). No cleaning or painting charge was reported among the deductions here, and the Court did not decide whether a stand-alone cleaning requirement, one not backed by deposit deductions, raises the same problem.",
+    plainTerms: !r8Triggered
+      ? "No professional cleaning requirement was reported."
+      : cleaningChargeTaken
+        ? "In plain terms: a lease cannot make you pay for cleaning or painting that is just normal wear from living there, and it looks like you were charged for exactly that."
+        : "In plain terms: a clause like this cannot be used to take cleaning or painting costs out of your deposit. You were not charged that way here, so this mainly supports the rest of your claim.",
+    citation:
+      "M.G.L. c. 186, §15B(4), §15B(8); Peebles v. JRK Property Holdings, Inc., SJC-13702 (Mass. Aug. 1, 2025)",
+    severity: r8Triggered ? (cleaningChargeTaken ? "medium" : "low") : "info",
+  });
+
   // Forfeited deductions (R3) mean the tenant is entitled to the full deposit back.
   const deductionsForfeited = r3Triggered;
   const entitledBalance = deductionsForfeited

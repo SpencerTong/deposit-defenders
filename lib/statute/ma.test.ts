@@ -365,3 +365,63 @@ describe("plain-terms summaries", () => {
     }
   });
 });
+
+describe("R8 professional cleaning clause", () => {
+  it("does not trigger when the lease had no cleaning requirement", () => {
+    const result = analyzeTenancy(baseInputs({ leaseRequiredProfessionalCleaning: "no" }));
+    expect(ruleById(result, "R8_PROFESSIONAL_CLEANING_CLAUSE").triggered).toBe(false);
+  });
+
+  it("does not trigger when the tenant is unsure", () => {
+    const result = analyzeTenancy(baseInputs({ leaseRequiredProfessionalCleaning: "unknown" }));
+    expect(ruleById(result, "R8_PROFESSIONAL_CLEANING_CLAUSE").triggered).toBe(false);
+  });
+
+  it("is a supporting claim when the clause exists but nothing was charged under it", () => {
+    const result = analyzeTenancy(
+      baseInputs({ leaseRequiredProfessionalCleaning: "yes", deductionsClaimed: [] })
+    );
+    const rule = ruleById(result, "R8_PROFESSIONAL_CLEANING_CLAUSE");
+    expect(rule.triggered).toBe(true);
+    expect(rule.severity).toBe("low");
+    // The Court reserved the stand-alone case, so say so.
+    expect(rule.explanation).toContain("did not decide");
+  });
+
+  it("is stronger when a contestable charge was actually taken under the clause", () => {
+    const result = analyzeTenancy(
+      baseInputs({
+        leaseRequiredProfessionalCleaning: "yes",
+        deductionsClaimed: [{ description: "Carpet cleaning", amount: 150 }],
+      })
+    );
+    const rule = ruleById(result, "R8_PROFESSIONAL_CLEANING_CLAUSE");
+    expect(rule.triggered).toBe(true);
+    expect(rule.severity).toBe("medium");
+    expect(rule.citation).toContain("§15B(8)");
+    expect(rule.citation).toContain("SJC-13702");
+  });
+
+  it("adds no dollars to the claim", () => {
+    const without = analyzeTenancy(
+      baseInputs({
+        leaseRequiredProfessionalCleaning: "no",
+        deductionsClaimed: [{ description: "Carpet cleaning", amount: 150 }],
+      })
+    );
+    const with_ = analyzeTenancy(
+      baseInputs({
+        leaseRequiredProfessionalCleaning: "yes",
+        deductionsClaimed: [{ description: "Carpet cleaning", amount: 150 }],
+      })
+    );
+    expect(with_.exposure).toEqual(without.exposure);
+  });
+
+  it("never claims forfeiture, which Peebles expressly left undecided", () => {
+    const result = analyzeTenancy(baseInputs({ leaseRequiredProfessionalCleaning: "yes" }));
+    const rule = ruleById(result, "R8_PROFESSIONAL_CLEANING_CLAUSE");
+    expect(rule.explanation.toLowerCase()).not.toContain("forfeit");
+    expect(rule.plainTerms.toLowerCase()).not.toContain("forfeit");
+  });
+});
