@@ -18,6 +18,7 @@ function violatingTenancy(): TenancyInputs {
     deductionsClaimed: [{ description: "Carpet cleaning", amount: 300 }],
     amountReturned: 1200,
     interestPaidAnnually: "no",
+    leaseRequiredProfessionalCleaning: "no",
   };
 }
 

@@ -16,6 +16,7 @@ const tenancy: TenancyInputs = {
   deductionsClaimed: [],
   amountReturned: 0,
   interestPaidAnnually: "no",
+  leaseRequiredProfessionalCleaning: "no",
 };
 
 describe("renderKitPdf", () => {

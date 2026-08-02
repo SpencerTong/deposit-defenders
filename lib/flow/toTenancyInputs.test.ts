@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { toTenancyInputs } from "./toTenancyInputs";
-import { initialFlowAnswers, type FlowAnswers } from "./types";
+import { initialFlowAnswers, type FlowAnswers } from "@/lib/flow/types";
 
 function answers(overrides: Partial<FlowAnswers> = {}): FlowAnswers {
   return {
@@ -82,5 +82,21 @@ describe("toTenancyInputs", () => {
   it("treats an unparseable numeric field as 0 rather than NaN", () => {
     const result = toTenancyInputs(answers({ amountReturned: "" }));
     expect(result.amountReturned).toBe(0);
+  });
+
+  it("maps the professional cleaning answer through", () => {
+    const answers = { ...initialFlowAnswers, leaseRequiredProfessionalCleaning: "yes" as const };
+    expect(toTenancyInputs(answers).leaseRequiredProfessionalCleaning).toBe("yes");
+  });
+
+  it("treats a snapshot saved before this field existed as not sure", () => {
+    // kit_orders.answers rows predate the field, and fromOrder.ts rebuilds every
+    // buyer's letter from that stored snapshot on each read.
+    const legacy = { ...initialFlowAnswers } as Record<string, unknown>;
+    delete legacy.leaseRequiredProfessionalCleaning;
+
+    const result = toTenancyInputs(legacy as unknown as FlowAnswers);
+
+    expect(result.leaseRequiredProfessionalCleaning).toBe("unknown");
   });
 });

@@ -44,11 +44,13 @@ function parseAnswers(value: unknown): FlowAnswers | null {
   const receivedStatementOfCondition = parseTriStateOrNull(a.receivedStatementOfCondition);
   const listSwornUnderPenalty = parseTriStateOrNull(a.listSwornUnderPenalty);
   const interestPaidAnnually = parseTriStateOrNull(a.interestPaidAnnually);
+  const leaseRequiredProfessionalCleaning = parseTriStateOrNull(a.leaseRequiredProfessionalCleaning);
   if (
     receivedBankReceipt === INVALID ||
     receivedStatementOfCondition === INVALID ||
     listSwornUnderPenalty === INVALID ||
-    interestPaidAnnually === INVALID
+    interestPaidAnnually === INVALID ||
+    leaseRequiredProfessionalCleaning === INVALID
   ) {
     return null;
   }
@@ -70,6 +72,7 @@ function parseAnswers(value: unknown): FlowAnswers | null {
     deductionsClaimed,
     amountReturned: a.amountReturned,
     interestPaidAnnually: interestPaidAnnually as TriState | null,
+    leaseRequiredProfessionalCleaning: leaseRequiredProfessionalCleaning as TriState | null,
   };
 }
 

@@ -36,6 +36,7 @@ export interface TenancyInputs {
   deductionsClaimed: Deduction[];
   amountReturned: number;
   interestPaidAnnually: TriState;
+  leaseRequiredProfessionalCleaning: TriState;
 }
 
 export type Severity = "high" | "medium" | "low" | "info";

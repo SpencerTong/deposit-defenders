@@ -19,6 +19,7 @@ export interface FlowAnswers {
   deductionsClaimed: DeductionDraft[];
   amountReturned: string;
   interestPaidAnnually: TriState | null;
+  leaseRequiredProfessionalCleaning: TriState | null;
 }
 
 export const initialFlowAnswers: FlowAnswers = {
@@ -35,4 +36,5 @@ export const initialFlowAnswers: FlowAnswers = {
   deductionsClaimed: [],
   amountReturned: "",
   interestPaidAnnually: null,
+  leaseRequiredProfessionalCleaning: null,
 };

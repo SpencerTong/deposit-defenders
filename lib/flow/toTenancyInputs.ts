@@ -34,5 +34,6 @@ export function toTenancyInputs(answers: FlowAnswers): TenancyInputs {
     deductionsClaimed,
     amountReturned: toNumber(answers.amountReturned),
     interestPaidAnnually: toTriState(answers.interestPaidAnnually),
+    leaseRequiredProfessionalCleaning: toTriState(answers.leaseRequiredProfessionalCleaning),
   };
 }

@@ -16,6 +16,7 @@ function baseInputs(overrides: Partial<TenancyInputs> = {}): TenancyInputs {
     deductionsClaimed: [],
     amountReturned: 1500,
     interestPaidAnnually: "yes",
+    leaseRequiredProfessionalCleaning: "no",
     ...overrides,
   };
 }
