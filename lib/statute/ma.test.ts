@@ -402,25 +402,57 @@ describe("R8 professional cleaning clause", () => {
     expect(rule.citation).toContain("SJC-13702");
   });
 
-  it("adds no dollars to the claim", () => {
+  it("adds no dollars to the claim, even when the balance is outstanding and treble applies", () => {
+    // amountReturned: 0 (instead of the base fixture's full return) makes the
+    // outstanding balance, and therefore treble exposure via R4, non-zero on
+    // both sides. A zero-vs-zero comparison would pass even if R8 wrongly set
+    // deductionsForfeited or otherwise touched exposure, so this is deliberately
+    // not the base fixture.
     const without = analyzeTenancy(
       baseInputs({
         leaseRequiredProfessionalCleaning: "no",
         deductionsClaimed: [{ description: "Carpet cleaning", amount: 150 }],
+        amountReturned: 0,
       })
     );
     const with_ = analyzeTenancy(
       baseInputs({
         leaseRequiredProfessionalCleaning: "yes",
         deductionsClaimed: [{ description: "Carpet cleaning", amount: 150 }],
+        amountReturned: 0,
       })
+    );
+    expect(without.exposure.outstandingBalance).toBeGreaterThan(0);
+    expect(without.exposure.trebleApplies).toBe(true);
+    expect(with_.exposure).toEqual(without.exposure);
+  });
+
+  it("adds no dollars to the claim when R8 is the only reported violation", () => {
+    const without = analyzeTenancy(
+      baseInputs({ leaseRequiredProfessionalCleaning: "no", amountReturned: 0 })
+    );
+    const with_ = analyzeTenancy(
+      baseInputs({ leaseRequiredProfessionalCleaning: "yes", amountReturned: 0 })
     );
     expect(with_.exposure).toEqual(without.exposure);
   });
 
-  it("never claims forfeiture, which Peebles expressly left undecided", () => {
+  it("never claims forfeiture, which Peebles expressly left undecided (low branch)", () => {
     const result = analyzeTenancy(baseInputs({ leaseRequiredProfessionalCleaning: "yes" }));
     const rule = ruleById(result, "R8_PROFESSIONAL_CLEANING_CLAUSE");
+    expect(rule.explanation.toLowerCase()).not.toContain("forfeit");
+    expect(rule.plainTerms.toLowerCase()).not.toContain("forfeit");
+  });
+
+  it("never claims forfeiture, which Peebles expressly left undecided (medium branch)", () => {
+    const result = analyzeTenancy(
+      baseInputs({
+        leaseRequiredProfessionalCleaning: "yes",
+        deductionsClaimed: [{ description: "Carpet cleaning", amount: 150 }],
+      })
+    );
+    const rule = ruleById(result, "R8_PROFESSIONAL_CLEANING_CLAUSE");
+    expect(rule.severity).toBe("medium");
     expect(rule.explanation.toLowerCase()).not.toContain("forfeit");
     expect(rule.plainTerms.toLowerCase()).not.toContain("forfeit");
   });

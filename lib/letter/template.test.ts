@@ -90,6 +90,22 @@ describe("buildDemandLetter", () => {
     expect(letter.paragraphs.some((p) => p.includes(r5!.explanation))).toBe(false);
   });
 
+  it("omits the professional cleaning clause flag from the enumerated violations list", () => {
+    const tenancy: TenancyInputs = {
+      ...violatingTenancy(),
+      leaseRequiredProfessionalCleaning: "yes",
+    };
+    const analysis = analyzeTenancy(tenancy, new Date("2024-02-15"));
+    const letter = buildDemandLetter(tenancy, analysis);
+    const r8 = analysis.rules.find((r) => r.id === "R8_PROFESSIONAL_CLEANING_CLAUSE");
+    expect(r8?.triggered).toBe(true);
+    // R8, like R5, is never recited under "the following requirements of §15B
+    // were not met": Peebles expressly declined to decide whether the clause
+    // triggers a §15B(6)(c) forfeiture, so this heading would overstate it.
+    expect(letter.paragraphs.some((p) => p.includes(r8!.title))).toBe(false);
+    expect(letter.paragraphs.some((p) => p.includes(r8!.explanation))).toBe(false);
+  });
+
   it("disputes contestable deductions as wear and tear, citing Peebles", () => {
     const analysis = analyzeTenancy(violatingTenancy(), new Date("2024-02-15"));
     const letter = buildDemandLetter(violatingTenancy(), analysis);

@@ -62,6 +62,44 @@ describe("build93aDemand", () => {
     expect(demand!.practiceParagraph).toContain("940 CMR 3.17(4)(e)");
   });
 
+  it("returns null when R8 (professional cleaning clause) is the only triggered rule", () => {
+    // An otherwise-clean tenancy whose sole flag is the cleaning clause must not
+    // produce a 93A demand: R8 is excluded from the regulation mapping because
+    // Peebles expressly declined to decide whether the clause triggers a
+    // §15B(6)(c) forfeiture (n.8), and the fallback catch-all, 940 CMR
+    // 3.17(4)(k) "otherwise failing to comply with M.G.L. c. 186, §15B", would
+    // assert exactly that undecided question if R8 fell through to it.
+    const demand = build93aDemand(cleanAnalysis(), { ownerOccupied: false });
+    expect(demand).toBeNull();
+    const onlyR8 = analyzeTenancy(
+      tenancy({
+        receivedItemizedList: true,
+        itemizedListDate: new Date("2024-01-10"),
+        listSwornUnderPenalty: "yes",
+        receivedBankReceipt: "yes",
+        amountReturned: 2000,
+        interestPaidAnnually: "yes",
+        leaseRequiredProfessionalCleaning: "yes",
+      })
+    );
+    const r8 = onlyR8.rules.find((r) => r.id === "R8_PROFESSIONAL_CLEANING_CLAUSE");
+    expect(r8?.triggered).toBe(true);
+    expect(build93aDemand(onlyR8, { ownerOccupied: false })).toBeNull();
+  });
+
+  it("contributes nothing to the practice paragraph when other violations are also present", () => {
+    // Same set of violations with and without the cleaning clause flag should
+    // produce byte-identical 93A demands: R8 must never fall through to the
+    // (4)(k) catch-all ("otherwise failing to comply with M.G.L. c. 186, §15B"),
+    // which would assert the §15B(6)(c) forfeiture question Peebles reserved.
+    const withoutR8 = build93aDemand(analyzeTenancy(tenancy()), { ownerOccupied: false });
+    const withR8 = build93aDemand(
+      analyzeTenancy(tenancy({ leaseRequiredProfessionalCleaning: "yes" })),
+      { ownerOccupied: false }
+    );
+    expect(withR8).toEqual(withoutR8);
+  });
+
   it("demands a response within 30 days and describes 93A remedies with hedged language", () => {
     const demand = build93aDemand(violatingAnalysis(), { ownerOccupied: false });
     expect(demand!.responseDays).toBe(30);
