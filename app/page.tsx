@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { getOrPersistAttributionSrc, trackEventOnce } from "@/lib/events";
 import { QuestionFlow } from "@/components/flow/QuestionFlow";
 import { FLOW_ANSWERS_STORAGE_KEY } from "@/lib/flow/storage";
@@ -162,6 +163,22 @@ export default function HomePage() {
         >
           Check my deposit for free
         </button>
+      </section>
+
+      {/* Placed below the primary CTA on purpose. The guides were previously
+          unreachable from the homepage, which tells search engines they do not
+          matter, but they must not pull people out of the flow before it. */}
+      <section className="mt-14 border-t border-gray-200 pt-8">
+        <h2 className="mb-2 text-lg font-semibold text-gray-900">
+          Want to read up first?
+        </h2>
+        <p className="mb-4 text-sm text-gray-600">
+          Plain-English guides to what M.G.L. c. 186, §15B requires of your landlord: the 30-day
+          deadline, what can and cannot be deducted, interest, and small claims court.
+        </p>
+        <Link href="/guide" className="text-sm font-medium text-accent hover:underline">
+          Read the Massachusetts security deposit guides
+        </Link>
       </section>
     </main>
   );

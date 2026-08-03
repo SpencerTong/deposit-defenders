@@ -29,6 +29,19 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body className="flex min-h-screen flex-col bg-[#fafaf8] font-sans text-gray-900">
+        {/* Deliberately minimal: a wordmark plus one link. A site asking $49 for a
+            legal document needs visible identity, but the landing page's only job
+            is starting the question flow, so this must not become an exit menu. */}
+        <header className="border-b border-gray-200 bg-white/60">
+          <nav className="mx-auto flex max-w-xl items-center justify-between px-6 py-3">
+            <a href="/" className="font-serif text-lg font-bold text-gray-900">
+              Deposit Defenders
+            </a>
+            <a href="/guide" className="text-sm font-medium text-accent hover:underline">
+              Guides
+            </a>
+          </nav>
+        </header>
         <div className="flex-1">{children}</div>
         <footer className="border-t border-gray-200 px-6 py-6 text-center text-xs text-gray-600">
           This tool provides general legal information, not legal advice, and does not create an
