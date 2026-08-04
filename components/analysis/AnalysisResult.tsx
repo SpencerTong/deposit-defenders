@@ -85,6 +85,15 @@ function ExposureBreakdown({ exposure }: { exposure: RulesAnalysis["exposure"] }
           </span>
         </div>
       </div>
+      {/* A number this large from an unfamiliar site invites doubt, and the
+          doubt happens here rather than in the footer. The method page states
+          which violations add nothing, which is the part that earns trust. */}
+      <a
+        href="/guide/how-we-calculate-your-claim"
+        className="mt-3 inline-block text-xs text-white/70 underline underline-offset-2 hover:text-white"
+      >
+        See how we calculate this, and what we count as zero
+      </a>
     </div>
   );
 }

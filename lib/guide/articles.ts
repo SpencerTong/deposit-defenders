@@ -585,6 +585,124 @@ export const guideArticles: GuideArticle[] = [
     ctaHref: "/",
     ctaLabel: "Start with the free letter",
   },
+  {
+    slug: "how-we-calculate-your-claim",
+    title: "How We Calculate Your Potential Claim",
+    metaDescription:
+      "Exactly how we turn your answers into a dollar figure under M.G.L. c. 186 §15B: what adds money, what deliberately adds nothing, and the statute and case law behind every step.",
+    updated: "2026-08-03",
+    intro:
+      "This page explains, step by step, how the number on our free analysis screen is produced. We publish it because a dollar figure from a website you have never heard of deserves scrutiny. If you are a renter, this shows you where your number came from. If you are a reporter or an attorney checking our work, the citation for each step is here, along with a plain account of what we leave out on purpose.",
+    sections: [
+      {
+        heading: "The short version",
+        paragraphs: [
+          "Only three things add money to the figure we show you: the deposit balance your landlord still owes, a tripling of that balance in the situations where the statute allows it, and unpaid annual interest. Nothing else moves the number, including several findings that are real violations of the law.",
+        ],
+      },
+      {
+        heading: "Step one: the balance still owed",
+        paragraphs: [
+          "We start with the deposit you paid, subtract any deductions your landlord itemized, and subtract anything already returned to you. What remains is the outstanding balance.",
+          "One rule can raise that balance back to the full deposit. Section 15B(4) requires a landlord who keeps any part of a deposit for damage to give you an itemized list, sworn under the pains and penalties of perjury, within 30 days of the end of the tenancy. If that list was missing, late, or not sworn, §15B(6)(b) forfeits the landlord's right to keep those deductions at all. When your answers show that, we treat the balance owed as the whole deposit rather than the deposit minus deductions.",
+        ],
+      },
+      {
+        heading: "Step two: does the tripling apply",
+        paragraphs: [
+          "Massachusetts law lets a court award three times the balance a landlord wrongfully held. Lawyers call this treble damages, which just means tripled: instead of handing back what they kept, the landlord can be ordered to pay three times that amount.",
+          "The tripling is not automatic, and it does not attach to every violation. Section 15B(7) applies it to specific failures listed in §15B(6). Our analysis applies it in two of those situations:",
+        ],
+        list: [
+          "The deposit was not held in a separate account and you were never given a receipt naming the bank, which is §15B(6)(a).",
+          "The balance you were owed was not returned within 30 days of the end of the tenancy, which is §15B(6)(e).",
+        ],
+      },
+      {
+        paragraphs: [
+          "If neither applies, we show the balance untripled, even when other violations are present. We also apply the tripling only to the outstanding balance, never to interest.",
+          "Section 15B(7) additionally allows court costs and reasonable attorney's fees on top of the tripled amount. We mention that but never put a number on it, because what those come to is for a court to decide.",
+        ],
+      },
+      {
+        heading: "Step three: unpaid interest",
+        paragraphs: [
+          "A deposit held for a year or more earns 5% annual interest under §15B(3)(b), or the interest the account actually earned if your lease says so. When your answers show a tenancy of at least a year with no interest paid, we add 5% of the deposit for each full year. We count whole years only and round nothing in your favor.",
+        ],
+      },
+      {
+        heading: "What we deliberately count as zero",
+        paragraphs: [
+          "This is the section worth reading closely, because it is where a tool with an incentive to inflate would inflate. Each of the following is something we show you, and none of it adds a dollar to your figure.",
+        ],
+        list: [
+          "No written statement of the unit's condition at move-in. This is a genuine violation of §15B(2)(c), and separately an unfair or deceptive practice under 940 CMR 3.17(4)(e). But it is not one of the failures listed in §15B(6), so it does not forfeit the deposit and we add nothing for it. We still show it, because it weakens a landlord's evidence for any damage claim.",
+          "Wear-and-tear flags on itemized charges. When a charge uses wording commonly associated with ordinary wear and tear, such as painting or carpet cleaning, we flag it. That flag is a prompt to look closer, not a legal conclusion that the charge was improper, and it adds nothing.",
+          "A professional cleaning clause in your lease. In Peebles v. JRK Property Holdings, Inc., SJC-13702 (Mass. Aug. 1, 2025), the Supreme Judicial Court held that such a clause is void under §15B(8) where it is enforced by charging the deposit regardless of ordinary wear and tear. That is a strong argument to make, but it is not a separate sum of money, so it adds nothing.",
+          "A deposit larger than one month's rent. The excess is separately recoverable under §15B(1)(b)(iii), and we say so in a note, but it is not tripled and we keep it out of the headline number.",
+          "Interest on a tenancy shorter than a year. None is due yet, so we add nothing.",
+        ],
+      },
+      {
+        heading: "What the number is not",
+        paragraphs: [
+          "The figure is labeled up to for a reason. It is the maximum the statute would allow on the facts you gave us, if those facts are accurate and a court agrees with them. It is not a prediction, not an offer, and not an appraisal of your case. Landlords settle for less, defenses exist, and some of these questions have never been decided by an appellate court.",
+          "We also only know what you tell us. We do not see your lease, your bank records, or your landlord's paperwork. If an answer is wrong, the number will be wrong, which is why a buyer can correct their answers before anything is mailed.",
+          "Some landlords fall outside part of this analysis. If your landlord lives in the building, the Chapter 93A consumer protection layer generally does not reach them, following Billings v. Wilson, 397 Mass. 614 (1986). We ask about that before generating a paid letter, and the letter changes accordingly.",
+        ],
+      },
+      {
+        heading: "Where this comes from",
+        paragraphs: [
+          "Every statutory claim above is checked against primary sources rather than secondary summaries or other websites.",
+        ],
+        list: [
+          "M.G.L. c. 186, §15B, the Massachusetts security deposit statute, as published on malegislature.gov.",
+          "940 CMR 3.17, the Attorney General's landlord and tenant regulations, as published in the official CMR text.",
+          "Peebles v. JRK Property Holdings, Inc., SJC-13702 (Mass. Aug. 1, 2025).",
+          "Billings v. Wilson, 397 Mass. 614 (1986).",
+        ],
+      },
+      {
+        paragraphs: [
+          "The §15B rules and the Chapter 93A mapping were last verified against primary sources on July 27, 2026. The Peebles analysis was added on August 1, 2026.",
+          "If you are an attorney or a tenant advocate and you believe something here is wrong, we would genuinely like to know. All of this logic lives in one place, so a correction can be made quickly. Our contact form reaches the owner directly.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: "Is this legal advice?",
+        answer:
+          "No. This is general legal information, and using the tool does not create an attorney-client relationship. For advice about your situation, consult a licensed Massachusetts attorney.",
+      },
+      {
+        question: "Why is my number less than three times my deposit?",
+        answer:
+          "Two reasons are common. The tripling under §15B(7) only attaches to certain failures, so if neither applies to you we show the balance untripled. And the tripling applies to the balance still outstanding, not to the original deposit, so anything already returned to you reduces it.",
+      },
+      {
+        question: "Why does the analysis list a violation that adds no money?",
+        answer:
+          "Because it is still true and still useful. Some requirements of §15B carry no separate financial remedy but still matter, either as an unfair or deceptive practice or because they weaken your landlord's position on a damage claim. We would rather show you an accurate zero than pad the total.",
+      },
+      {
+        question: "Do I have to pay to see the calculation?",
+        answer:
+          "No. The analysis and this explanation are free and require no account. The $49 product is the demand letter, drafted and mailed by certified mail, plus a small claims draft.",
+      },
+    ],
+    related: [
+      "treble-damages-security-deposit-massachusetts",
+      "normal-wear-and-tear-vs-damage-massachusetts",
+      "landlord-didnt-return-security-deposit-30-days-massachusetts",
+    ],
+    ctaHeading: "See your own numbers",
+    ctaBody:
+      "Answer about six questions and see this calculation run on your own deposit, free, with a citation on every line.",
+    ctaHref: "/",
+    ctaLabel: "Check my deposit for free",
+  },
 ];
 
 export function getGuideArticle(slug: string): GuideArticle | undefined {

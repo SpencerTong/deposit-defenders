@@ -47,6 +47,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           This tool provides general legal information, not legal advice, and does not create an
           attorney-client relationship. For advice about your situation, consult a licensed
           Massachusetts attorney.{" "}
+          {/* First in the list on purpose: reporters and attorneys who land on
+              the homepage need a way to audit the numbers without first
+              entering a stranger's data into the question flow. */}
+          <a href="/guide/how-we-calculate-your-claim" className="underline">
+            How we calculate claims
+          </a>
+          {" · "}
           <a href="/faq" className="underline">
             Common questions
           </a>

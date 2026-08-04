@@ -74,7 +74,8 @@ export function MailPanel({ sessionId, details, mailStatus, mailTracking, onMail
         We print your final letter and send it to {details.landlordName} at{" "}
         {details.landlordAddress.line1}, {details.landlordAddress.city} by USPS Certified Mail
         with return receipt. You get the tracking number here. This happens only when you click
-        the button, and it can be sent only once.
+        the button, and it will never go out twice by accident. If something needs correcting
+        after it is sent, contact us and we can reopen it.
       </p>
       <label className="mb-4 flex items-start gap-2 text-sm text-gray-700">
         <input
