@@ -37,6 +37,7 @@ const TEST_SRCS = [
   "prod-smoke",
   "live-smoke",
   "e2e-test",
+  "mobile-audit",
 ];
 
 const TZ = "America/New_York";

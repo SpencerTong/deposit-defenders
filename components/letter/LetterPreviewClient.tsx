@@ -46,6 +46,22 @@ export function LetterPreviewClient() {
     <main className="mx-auto max-w-xl px-6 py-10">
       <AnalysisResult
         analysis={analysis}
+        topCta={
+          <div className="mb-8">
+            <Link
+              href="/kit"
+              onClick={() => trackEventOnce("clicked_kit")}
+              className="block w-full rounded-lg bg-accent px-6 py-3.5 text-center text-base font-semibold text-white transition-colors hover:bg-accent-dark"
+            >
+              Get my letter written and sent, $49
+            </Link>
+            {/* Says the scroll is worth it, so the button does not read as the
+                only way forward. The reasons are the reason people trust it. */}
+            <p className="mt-2 text-center text-sm text-gray-500">
+              Or keep reading to see what your landlord may have gotten wrong.
+            </p>
+          </div>
+        }
         cta={
           <div className="mb-8 rounded-lg border border-accent/30 bg-accent/5 p-5">
             <p className="mb-4 text-sm text-gray-700">

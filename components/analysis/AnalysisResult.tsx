@@ -99,16 +99,28 @@ function ExposureBreakdown({ exposure }: { exposure: RulesAnalysis["exposure"] }
 }
 
 /**
- * `cta` renders directly under the violation cards, which is the moment a
- * reader has both the number and the reasons for it. Previously the only call
- * to action sat below the deduction flags AND a full disclaimer paragraph,
- * several screens down on the mobile traffic this page mostly serves.
+ * Two call-to-action slots, because the page serves two different readers.
+ *
+ * `topCta` renders immediately under the claim card, the moment the number
+ * lands and motivation peaks. `cta` renders under the violation cards, for the
+ * reader who wanted the reasons before deciding.
+ *
+ * The top slot exists because of a measurement on 2026-08-11: on a 390x844
+ * phone this page is 4,438px tall, and the first buy button sat at y=2966,
+ * about 3.5 screens below the number that motivates the purchase. Moving the
+ * `cta` slot up once already (above the deduction flags) was not enough,
+ * because the violation cards above it are themselves several screens long.
+ *
+ * Both slots should fire `clicked_kit` through `trackEventOnce`, which dedupes
+ * per session, so two buttons cannot inflate the funnel's click count.
  */
 export function AnalysisResult({
   analysis,
+  topCta,
   cta,
 }: {
   analysis: RulesAnalysis;
+  topCta?: ReactNode;
   cta?: ReactNode;
 }) {
   const triggeredRules = analysis.rules.filter(
@@ -132,6 +144,10 @@ export function AnalysisResult({
         )}
         <ExposureBreakdown exposure={analysis.exposure} />
       </div>
+
+      {/* Outside the claim card, not inside it: the card is the screenshot
+          people share, and a price tag in the middle of it reads as an ad. */}
+      {topCta}
 
       {triggeredRules.length > 0 ? (
         <div className="mb-8 space-y-3">
