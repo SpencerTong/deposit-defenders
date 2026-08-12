@@ -164,6 +164,38 @@ async function report(client, opts) {
     );
   }
 
+  // Inside-the-flow drop-off. `started` to `completed_questions` only says
+  // that someone quit mid-flow, never which question did it.
+  const stepFilter = buildFilter(opts);
+  const stepWhere = stepFilter.where
+    ? `${stepFilter.where} AND event_name = 'question_step'`
+    : `WHERE event_name = 'question_step'`;
+  const steps = await client.query(
+    `SELECT properties->>'id' AS id,
+            MIN((properties->>'step')::int) AS step_no,
+            COUNT(*)::int AS n
+     FROM events ${stepWhere}
+     GROUP BY 1
+     HAVING properties->>'id' IS NOT NULL
+     ORDER BY step_no`,
+    stepFilter.params
+  );
+  console.log("\n== Question steps reached ==");
+  if (steps.rows.length === 0) {
+    console.log("(none: question_step instrumentation shipped 2026-08-12)");
+  } else {
+    let firstStep = null;
+    let previous = null;
+    for (const row of steps.rows) {
+      if (firstStep === null) firstStep = row.n;
+      const ofPrev = previous === null ? "" : ` (${((row.n / previous) * 100).toFixed(1)}% of prev)`;
+      const ofFirst = firstStep ? ` [${((row.n / firstStep) * 100).toFixed(0)}% of step 1]` : "";
+      console.log(`${String(row.step_no).padStart(2)}. ${row.id.padEnd(22)} ${String(row.n).padStart(6)}${ofPrev}${ofFirst}`);
+      previous = row.n;
+    }
+    console.log("Biggest percentage drop between consecutive rows is the question to fix.");
+  }
+
   const orderFilter = buildFilter(opts);
   const orders = await client.query(
     `SELECT status, COUNT(*)::int AS n FROM kit_orders ${orderFilter.where} GROUP BY status`,

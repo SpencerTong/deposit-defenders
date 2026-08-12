@@ -7,7 +7,12 @@ export type FunnelEventName =
   | "viewed_analysis"
   | "submitted_email"
   | "clicked_kit"
-  | "purchased";
+  | "purchased"
+  /** One per question screen reached, so a drop inside the flow is locatable.
+   *  `started` and `completed_questions` alone cannot say which step lost
+   *  someone, which is why the July 2026 ads post-mortem could see that 4 of
+   *  12 starters never reached the analysis but not where they gave up. */
+  | "question_step";
 
 /** Reads ?src= from the given search string, persists first-touch attribution
  * for the rest of this browser session, and returns the resolved src. */
@@ -37,10 +42,13 @@ const FIRED_EVENT_PREFIX = "dd_funnel_fired:";
  */
 export function trackEventOnce(
   name: FunnelEventName,
-  properties?: Record<string, unknown>
+  properties?: Record<string, unknown>,
+  /** Distinguishes repeatable variants of one event, e.g. each question step,
+   *  so they dedupe independently instead of only the first one recording. */
+  dedupeSuffix?: string
 ): void {
   if (typeof window === "undefined") return;
-  const key = `${FIRED_EVENT_PREFIX}${name}`;
+  const key = `${FIRED_EVENT_PREFIX}${name}${dedupeSuffix ? `:${dedupeSuffix}` : ""}`;
   try {
     if (window.sessionStorage.getItem(key)) return;
     window.sessionStorage.setItem(key, "1");

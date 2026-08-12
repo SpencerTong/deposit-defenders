@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { flowSteps } from "./steps";
 import { ProgressBar } from "./ProgressBar";
+import { trackEventOnce } from "@/lib/events";
 import { initialFlowAnswers, type FlowAnswers } from "@/lib/flow/types";
 
 export function QuestionFlow({
@@ -21,6 +22,16 @@ export function QuestionFlow({
   });
 
   const step = flowSteps[stepIndex];
+  const stepId = step?.id;
+
+  // Deduped per step id, so going Back and forward again does not count the
+  // same visitor twice. Counts are therefore "people who reached this step",
+  // which is what makes consecutive steps comparable as a drop-off curve.
+  useEffect(() => {
+    if (!stepId) return;
+    trackEventOnce("question_step", { step: stepIndex + 1, id: stepId }, stepId);
+  }, [stepIndex, stepId]);
+
   if (!step) return null;
 
   const isLastStep = stepIndex === flowSteps.length - 1;

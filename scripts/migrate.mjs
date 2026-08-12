@@ -49,6 +49,16 @@ try {
   `);
   console.log("events table ready.");
 
+  // Additive and nullable, so existing rows and the running deploy are
+  // unaffected. Until 2026-08-12 the client sent `properties` on every event
+  // and both the API route and this table discarded them, which is why no
+  // analysis-size or per-step data exists for anything before that date.
+  await client.query(`
+    ALTER TABLE events
+      ADD COLUMN IF NOT EXISTS properties JSONB
+  `);
+  console.log("events properties column ready.");
+
   await client.query(`
     CREATE TABLE IF NOT EXISTS kit_orders (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
