@@ -389,6 +389,7 @@ export const guideArticles: GuideArticle[] = [
       },
     ],
     related: [
+      "professional-cleaning-charge-security-deposit-massachusetts",
       "massachusetts-security-deposit-law",
       "landlord-didnt-return-security-deposit-30-days-massachusetts",
       "security-deposit-demand-letter-massachusetts",
@@ -396,6 +397,105 @@ export const guideArticles: GuideArticle[] = [
     ctaHeading: "Disputing deductions?",
     ctaBody:
       "Enter your deductions and we'll flag which ones are commonly contestable as wear and tear, then see what your claim may be worth.",
+    ctaHref: "/",
+    ctaLabel: "Check my deductions for free",
+  },
+  {
+    slug: "professional-cleaning-charge-security-deposit-massachusetts",
+    title: "Charged for Professional Cleaning in Massachusetts? What Your Lease Can and Cannot Do",
+    metaDescription:
+      "Your Massachusetts lease says return the unit professionally cleaned, and the landlord took it out of your deposit. In Peebles (2025) the Supreme Judicial Court held that kind of clause is void under M.G.L. c. 186 §15B(8). Here is what that means for your charge, and what it does not mean.",
+    updated: "2026-08-12",
+    intro:
+      "It usually arrives as a line item: \"professional cleaning, $350,\" deducted from your deposit, pointing at a move-out addendum you signed without reading. Massachusetts law has more to say about that line item than most renters and quite a few landlords realize. In August 2025 the Supreme Judicial Court decided exactly this question, and the answer is favorable to tenants but narrower than the version going around online.",
+    sections: [
+      {
+        heading: "What the clause usually looks like",
+        paragraphs: [
+          "The clause is rarely in the lease body. It is usually a separate move-out or cleaning addendum, signed at the same time as everything else, and it tends to combine two things: a requirement that you return the unit in \"professionally cleaned\" condition, and a schedule of charges the landlord will apply if you do not.",
+          "That second half is what matters legally. A charge schedule tied to your deposit is the part the statute reaches.",
+        ],
+      },
+      {
+        heading: "Why the clause is unenforceable",
+        paragraphs: [
+          "Massachusetts limits deposit deductions to three things under §15B(4): unpaid rent, unpaid tax increases you agreed to cover, and the reasonable cost of repairing damage caused by you, expressly not including reasonable wear and tear.",
+          "In Peebles v. JRK Property Holdings, Inc., SJC-13702 (Aug. 1, 2025), the Supreme Judicial Court held that a lease clause requiring professionally cleaned condition, on penalty of deductions for painting, cleaning, or repairs regardless of whether the damage is reasonable wear and tear, conflicts with §15B(4) and is void and unenforceable under §15B(8).",
+          "Section 15B(8) is the reason a signature does not save the clause. It voids any lease provision that tries to contract around §15B. You cannot agree to give up these protections, so the landlord cannot rely on the fact that you signed.",
+          "The same opinion also held that ordinary residential use is expected to cause gradual deterioration that may require painting, carpet cleaning, or other refurbishment, and that deducting for that reasonable wear and tear violates §15B(4)(iii).",
+        ],
+      },
+      {
+        heading: "What this does not mean",
+        paragraphs: [
+          "This is where a lot of online advice overshoots, and getting it wrong can weaken an otherwise good position. Three limits come straight from the opinion:",
+        ],
+        list: [
+          "It is not a rule that all cleaning charges are illegal. The tenants asked the Court for exactly that bright line and it declined. Whether a specific charge is reasonable wear and tear depends on the circumstances, including the nature and cause of the condition, what that lease made reasonable, the condition when you moved in, and how long you lived there.",
+          "It does not decide whether a stand-alone cleaning requirement is a problem. In footnote 8 the Court expressly took no view on a clause that requires cleaning but is not backed by deposit deductions. The holding is about clauses that penalize you through your deposit.",
+          "It does not hold that having such a clause forfeits the deposit. Whether including one triggers the forfeiture provision in §15B(6)(c) was not briefed, and the Court did not decide it. Anyone telling you the clause alone means you get the whole deposit back is going past the case.",
+        ],
+      },
+      {
+        heading: "So what is the clause actually worth to you",
+        paragraphs: [
+          "Honestly, on its own, no money. It is an argument, not a penalty. A void clause means the landlord cannot rely on it to justify the deduction, which throws them back on proving the charge was real damage beyond wear and tear, with the paperwork the statute requires.",
+          "The money comes from the other failures the same situation usually involves, and those are the ones worth checking.",
+        ],
+      },
+      {
+        heading: "The paperwork failure that usually matters more",
+        paragraphs: [
+          "A deduction for damage is only valid if the landlord delivered an itemized list of damages, sworn under the pains and penalties of perjury, with written documentation such as estimates, bills, or receipts, within 30 days of the end of the tenancy (§15B(4)).",
+          "A cleaning charge pulled from an addendum schedule frequently arrives without any of that, because the landlord thought the addendum was authority enough. When the list is missing or defective, §15B(6)(b) forfeits the right to keep any part of the deposit for damages. And if the resulting balance is not returned within 30 days of the tenancy ending, §15B(6)(e) and §15B(7) put treble damages, plus costs and attorney's fees, on the table.",
+          "That is the sequence worth checking in your own paperwork, because it is where the dollars actually are.",
+        ],
+      },
+      {
+        heading: "What to do about your charge",
+        paragraphs: [
+          "A practical order of operations:",
+        ],
+        list: [
+          "Find the addendum and read whether the cleaning requirement is tied to charges against your deposit. That link is what Peebles addresses.",
+          "Check whether you received a sworn, itemized list with documentation within 30 days of moving out, and keep the envelope or email showing when it arrived.",
+          "Separate the charges. Routine cleaning, repainting, and carpet shampooing after ordinary use are commonly contested as wear and tear. A burn, a hole, or pet damage is a different argument.",
+          "Note the date your tenancy ended, since the 30-day clock under §15B(6)(e) runs from there and it is what converts a dispute into statutory exposure.",
+          "Put the demand in writing. A Chapter 93A demand letter starts a 30-day response window, and the statute requires only that it be mailed or delivered, not that the landlord accept it.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: "I signed the cleaning addendum. Doesn't that mean I agreed to it?",
+        answer:
+          "Signing does not rescue a clause that conflicts with the statute. M.G.L. c. 186, §15B(8) makes any lease provision that attempts to contract around §15B void and unenforceable, which is the basis on which the Supreme Judicial Court treated the clause in Peebles v. JRK Property Holdings (SJC-13702, 2025). Your signature is not the issue.",
+      },
+      {
+        question: "Are professional cleaning clauses illegal in Massachusetts?",
+        answer:
+          "That is a common overstatement. Peebles held that a clause requiring professionally cleaned condition on penalty of deposit deductions regardless of reasonable wear and tear is void under §15B(8). In footnote 8 the Court expressly declined to say anything about a stand-alone cleaning requirement that is not tied to deposit deductions. The holding is about using your deposit as the penalty.",
+      },
+      {
+        question: "The unit really was dirty when I left. Does the clause still matter?",
+        answer:
+          "It can still matter, because the question shifts from what the addendum says to whether the condition was damage beyond reasonable wear and tear, and whether the landlord produced the sworn itemized list with documentation within 30 days. Genuine damage beyond ordinary use can be a lawful deduction when it is properly itemized and documented.",
+      },
+      {
+        question: "Does the clause by itself mean I get my whole deposit back?",
+        answer:
+          "No, and it is worth being precise here. The Court did not decide whether including such a clause triggers the forfeiture provision of §15B(6)(c), because that question was not put to it. Forfeiture in these cases usually comes from the failures that are decided, such as a missing or defective sworn itemized list under §15B(6)(b), or a balance not returned within 30 days under §15B(6)(e).",
+      },
+    ],
+    related: [
+      "normal-wear-and-tear-vs-damage-massachusetts",
+      "landlord-didnt-return-security-deposit-30-days-massachusetts",
+      "security-deposit-demand-letter-massachusetts",
+      "how-we-calculate-your-claim",
+    ],
+    ctaHeading: "Charged for cleaning?",
+    ctaBody:
+      "Enter the deductions your landlord took and the dates involved. We'll flag which charges are commonly contested as wear and tear, whether a cleaning clause applies, and what the statute may put on the table.",
     ctaHref: "/",
     ctaLabel: "Check my deductions for free",
   },
