@@ -8,6 +8,7 @@ import { initialFlowAnswers, type FlowAnswers } from "@/lib/flow/types";
 import { summarizeFlowAnswers } from "@/lib/flow/summarize";
 import { FAQ_ITEMS } from "@/lib/faq/content";
 import { FaqAccordion } from "@/components/faq/FaqAccordion";
+import { SITE_NAME } from "@/lib/site";
 import { LetterDetailsForm } from "./LetterDetailsForm";
 import { MailPanel } from "./MailPanel";
 import { AnswersSummaryForm } from "./AnswersSummaryForm";
@@ -148,7 +149,7 @@ export function KitSuccessClient() {
         )}
 
         <Link href="/" className="mt-8 text-sm text-accent underline">
-          Back to Deposit Defenders
+          Back to {SITE_NAME}
         </Link>
       </main>
     );
@@ -339,7 +340,7 @@ export function KitSuccessClient() {
       </section>
 
       <Link href="/" className="inline-block text-sm text-accent underline">
-        Back to Deposit Defenders
+        Back to {SITE_NAME}
       </Link>
     </main>
   );

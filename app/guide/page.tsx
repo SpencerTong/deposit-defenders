@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { guideArticles } from "@/lib/guide/articles";
-import { SITE_URL } from "@/lib/site";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Massachusetts Security Deposit Guides | Deposit Defenders",
+  title: `Massachusetts Security Deposit Guides | ${SITE_NAME}`,
   description:
     "Plain-English guides to Massachusetts security deposit law: deadlines, deductions, interest, demand letters, and small claims court under M.G.L. c. 186 §15B.",
   alternates: { canonical: `${SITE_URL}/guide` },

@@ -1,3 +1,5 @@
+import { SITE_NAME } from "@/lib/site";
+
 export interface FaqItem {
   question: string;
   answer: string;
@@ -76,7 +78,7 @@ export const FAQ_ITEMS: FaqItem[] = [
   {
     question: "Is any of this legal advice?",
     answer:
-      "No. Deposit Defenders is a self-help document preparation tool that provides general " +
+      `No. ${SITE_NAME} is a self-help document preparation tool that provides general ` +
       "legal information. It is not a law firm, and nothing it produces is legal advice or a " +
       "prediction about your case. For advice about your specific situation, consult a " +
       "licensed Massachusetts attorney.",

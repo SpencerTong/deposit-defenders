@@ -2,8 +2,9 @@ import { Resend } from "resend";
 import { buildResultsEmail } from "./results";
 import { buildTrackingEmail, type TrackingEmailInput } from "./tracking";
 import { buildSupportRequestEmail, type SupportRequestInput } from "./support";
+import { SITE_DOMAIN, SITE_NAME } from "../site";
 
-const DEFAULT_FROM = "Deposit Defenders <letters@deposit-defenders.com>";
+const DEFAULT_FROM = `${SITE_NAME} <letters@${SITE_DOMAIN}>`;
 
 let client: Resend | null = null;
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { guideArticles, getGuideArticle } from "@/lib/guide/articles";
-import { SITE_URL } from "@/lib/site";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 
 export function generateStaticParams() {
   return guideArticles.map((article) => ({ slug: article.slug }));
@@ -43,7 +43,7 @@ export default function GuideArticlePage({ params }: { params: { slug: string } 
     description: article.metaDescription,
     dateModified: article.updated,
     mainEntityOfPage: `${SITE_URL}/guide/${article.slug}`,
-    author: { "@type": "Organization", name: "Deposit Defenders" },
+    author: { "@type": "Organization", name: SITE_NAME },
   };
 
   const faqLd = article.faq?.length

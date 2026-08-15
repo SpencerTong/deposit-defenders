@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SITE_NAME } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Terms and Disclaimer",
@@ -21,7 +22,7 @@ export default function TermsPage() {
 
       <Section title="Not a law firm, not legal advice">
         <p>
-          Deposit Defenders is a self-help document preparation tool. It is not a law firm, it
+          {SITE_NAME} is a self-help document preparation tool. It is not a law firm, it
           does not provide legal advice, and using it does not create an attorney-client
           relationship. The information and documents it produces are general legal information
           applied to the answers you provide. For advice about your specific situation, consult

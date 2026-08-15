@@ -1,12 +1,13 @@
 import { ImageResponse } from "next/og";
 import { getGuideArticle } from "@/lib/guide/articles";
+import { SITE_NAME } from "@/lib/site";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default function Image({ params }: { params: { slug: string } }) {
   const article = getGuideArticle(params.slug);
-  const title = article?.title ?? "Deposit Defenders";
+  const title = article?.title ?? SITE_NAME;
 
   return new ImageResponse(
     (
@@ -31,7 +32,7 @@ export default function Image({ params }: { params: { slug: string } }) {
             marginBottom: 28,
           }}
         >
-          Deposit Defenders | MA Renter&apos;s Guide
+          {SITE_NAME} | MA Renter&apos;s Guide
         </div>
         <div style={{ display: "flex", fontSize: 54, fontWeight: 700, lineHeight: 1.25 }}>
           {title}

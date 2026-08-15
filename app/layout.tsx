@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Analytics } from "@vercel/analytics/react";
-import { SITE_URL } from "@/lib/site";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const DEFAULT_DESCRIPTION =
@@ -10,12 +10,12 @@ const DEFAULT_DESCRIPTION =
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Deposit Defenders: Massachusetts Security Deposit Help",
-    template: "%s | Deposit Defenders",
+    default: `${SITE_NAME}: Massachusetts Security Deposit Help`,
+    template: `%s | ${SITE_NAME}`,
   },
   description: DEFAULT_DESCRIPTION,
   openGraph: {
-    siteName: "Deposit Defenders",
+    siteName: SITE_NAME,
     description: DEFAULT_DESCRIPTION,
     type: "website",
     locale: "en_US",
@@ -35,7 +35,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <header className="border-b border-gray-200 bg-white/60">
           <nav className="mx-auto flex max-w-xl items-center justify-between px-6 py-3">
             <a href="/" className="font-serif text-lg font-bold text-gray-900">
-              Deposit Defenders
+              {SITE_NAME}
             </a>
             <a href="/guide" className="text-sm font-medium text-accent hover:underline">
               Guides

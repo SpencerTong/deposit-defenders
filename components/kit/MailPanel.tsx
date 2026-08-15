@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { LetterDetails } from "@/lib/db/kitOrders";
+import { SITE_NAME } from "@/lib/site";
 
 type Status = "idle" | "mailing" | "error" | "bad_address" | "already";
 
@@ -87,7 +88,7 @@ export function MailPanel({ sessionId, details, mailStatus, mailTracking, onMail
         <span>
           I reviewed the letter preview and both addresses above and they are correct. I
           understand this is a self-help document prepared from my answers and sent at my
-          direction, that Deposit Defenders is not a law firm, and that no outcome is
+          direction, that {SITE_NAME} is not a law firm, and that no outcome is
           guaranteed.
         </span>
       </label>

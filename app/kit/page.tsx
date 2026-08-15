@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { BuyKitButton } from "@/components/kit/BuyKitButton";
+import { SITE_NAME } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Dispute Kit | Deposit Defenders",
+  title: `Dispute Kit | ${SITE_NAME}`,
   description:
     "For $49 we write your Massachusetts security deposit demand letter, send it certified mail for you, and prepare your small claims paperwork.",
 };
