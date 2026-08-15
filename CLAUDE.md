@@ -6,6 +6,8 @@ A **live, revenue-generating product** at `https://deposit-defenders.com`. Massa
 
 **Current phase: marketing and validation, not building.** Read `docs/superpowers/HANDOFF.md` for exact status and next steps before doing anything. Prefer conversion iteration over new features.
 
+**A rename is in progress (opened 2026-08-15).** A competitor went live on `depositdefenders.com`, so "Deposit Defenders" is being retired before the September outreach push. The brand name is centralized in `lib/site.ts` as `SITE_NAME` (env: `NEXT_PUBLIC_SITE_NAME`) and the domain is derived, never written down; `lib/site.test.ts` fails if either literal reappears in `app/`, `components/`, or `lib/`. **Never hardcode the product name or domain.** Follow `docs/superpowers/runbooks/rename-runbook.md` when the new name is chosen.
+
 ## Success criteria (what the code must enable measuring)
 
 1. Visitor → completed analysis conversion, by traffic source (`?src=` attribution)
