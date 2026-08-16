@@ -63,4 +63,30 @@ describe("POST /api/support", () => {
     expect(json).toEqual({ ok: true, sent: false });
     expect(sendSupportRequest).not.toHaveBeenCalled();
   });
+
+  // The relay is the only channel a customer has: letters@ has no inbox behind
+  // it. Reporting success on a dropped message leaves someone believing they
+  // have been heard when nothing reached anyone.
+  it("reports failure when the relay could not send", async () => {
+    vi.mocked(sendSupportRequest).mockResolvedValueOnce({ sent: false });
+    const res = await POST(
+      request({ email: "renter@example.com", message: "My letter never arrived." })
+    );
+    expect(res.status).toBe(502);
+    const json = (await res.json()) as { ok: boolean; error: string };
+    expect(json.ok).toBe(false);
+    expect(json.error).toBe("relay_failed");
+  });
+
+  // A bot filling the honeypot must still see success, or the trap announces
+  // itself. That is why the failure signal above is a status code, not `sent`.
+  it("keeps the honeypot indistinguishable from a real success", async () => {
+    const dropped = await POST(
+      request({ email: "renter@example.com", message: "hi", company: "Acme" })
+    );
+    vi.mocked(sendSupportRequest).mockResolvedValueOnce({ sent: true });
+    const real = await POST(request({ email: "renter@example.com", message: "hi" }));
+    expect(dropped.status).toBe(real.status);
+    expect((await dropped.json()).ok).toBe((await real.json()).ok);
+  });
 });

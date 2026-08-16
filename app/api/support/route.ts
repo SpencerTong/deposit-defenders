@@ -37,5 +37,13 @@ export async function POST(req: NextRequest) {
   }
 
   const { sent } = await sendSupportRequest({ fromEmail: email, message: message.trim() });
-  return NextResponse.json({ ok: true, sent });
+  if (!sent) {
+    // The relay is the customer's only channel: letters@ is a sending identity
+    // with no inbox behind it, so a dropped message reaches nobody and is not
+    // recoverable. Say so rather than showing "Message sent" over a silent loss.
+    // The signal is the status code, not `sent`, so the honeypot above can keep
+    // returning a 200 that a bot cannot tell apart from a real success.
+    return NextResponse.json({ ok: false, error: "relay_failed" }, { status: 502 });
+  }
+  return NextResponse.json({ ok: true, sent: true });
 }

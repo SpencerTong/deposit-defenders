@@ -89,7 +89,8 @@ export function SupportForm() {
       </button>
       {status === "error" && (
         <p className="text-sm text-red-600">
-          Something went wrong sending that. Please try again shortly.
+          That did not send, so nobody has seen it yet. Your message is still here, so you
+          can try again in a moment.
         </p>
       )}
     </form>
