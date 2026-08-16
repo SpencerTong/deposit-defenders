@@ -2,11 +2,11 @@
 
 ## What this is
 
-A **live, revenue-generating product** at `https://deposit-defenders.com`. Massachusetts renters answer ~6 questions, see a free ungated analysis of their leverage under M.G.L. c. 186 §15B, and can buy a $49 Dispute Kit: a personalized demand letter combining §15B and Chapter 93A (30-day statutory window), delivered instantly by email plus a post-purchase workspace where they add addresses, preview and download the letter (PDF + editable .docx) and a pre-filled small-claims draft, and have us mail the letter by USPS Certified Mail with return receipt (Lob), with the tracking number shown and emailed.
+A **live, revenue-generating product** at `https://slatebell.com`. Massachusetts renters answer ~6 questions, see a free ungated analysis of their leverage under M.G.L. c. 186 §15B, and can buy a $49 Dispute Kit: a personalized demand letter combining §15B and Chapter 93A (30-day statutory window), delivered instantly by email plus a post-purchase workspace where they add addresses, preview and download the letter (PDF + editable .docx) and a pre-filled small-claims draft, and have us mail the letter by USPS Certified Mail with return receipt (Lob), with the tracking number shown and emailed.
 
 **Current phase: marketing and validation, not building.** Read `docs/superpowers/HANDOFF.md` for exact status and next steps before doing anything. Prefer conversion iteration over new features.
 
-**A rename is in progress (opened 2026-08-15).** A competitor went live on `depositdefenders.com`, so "Deposit Defenders" is being retired before the September outreach push. The brand name is centralized in `lib/site.ts` as `SITE_NAME` (env: `NEXT_PUBLIC_SITE_NAME`) and the domain is derived, never written down; `lib/site.test.ts` fails if either literal reappears in `app/`, `components/`, or `lib/`. **Never hardcode the product name or domain.** Follow `docs/superpowers/runbooks/rename-runbook.md` when the new name is chosen.
+**The product was renamed from "Deposit Defenders" to "Slatebell" on 2026-08-15**, because a competitor went live on `depositdefenders.com` and owned the exact-match domain. The brand name is centralized in `lib/site.ts` as `SITE_NAME` (env: `NEXT_PUBLIC_SITE_NAME`) and the domain is derived from `SITE_URL`, never written down; `lib/site.test.ts` fails if either literal reappears in `app/`, `components/`, or `lib/`. **Never hardcode the product name or domain.** `deposit-defenders.com` is still owned and 308-redirects to `slatebell.com`; keep it registered. See `docs/superpowers/runbooks/rename-runbook.md`.
 
 ## Success criteria (what the code must enable measuring)
 
@@ -18,9 +18,9 @@ A **live, revenue-generating product** at `https://deposit-defenders.com`. Massa
 
 - Next.js 14 (App Router), TypeScript, Tailwind CSS, deployed on Vercel; domain DNS at Squarespace
 - PDF generation: @react-pdf/renderer; editable letters via the `docx` package
-- Email: Resend from the verified domain (`letters@deposit-defenders.com`)
+- Email: Resend from the verified domain (`letters@slatebell.com`)
 - Data: Supabase Postgres (`leads`, `events`, `kit_orders`); no ORM, `pg` directly; the DB is the admin panel
-- Payments: **live** Stripe Checkout ($49 one-time) + `checkout.session.completed` webhook at `deposit-defenders.com/api/webhooks/stripe`
+- Payments: **live** Stripe Checkout ($49 one-time) + `checkout.session.completed` webhook at `slatebell.com/api/webhooks/stripe`
 - Physical mail: **live** Lob Letters API, USPS Certified Mail with electronic return receipt
 - Analytics: Vercel Analytics + custom funnel events (landed, started, completed_questions, viewed_analysis, submitted_email, clicked_kit, purchased) with `?src=` attribution
 

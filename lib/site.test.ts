@@ -28,12 +28,12 @@ async function loadSite(env: Partial<Record<(typeof ENV_KEYS)[number], string>> 
 describe("SITE_NAME", () => {
   it("falls back to the current brand when unset", async () => {
     const { SITE_NAME } = await loadSite();
-    expect(SITE_NAME).toBe("Deposit Defenders");
+    expect(SITE_NAME).toBe("Slatebell");
   });
 
   it("is overridable by NEXT_PUBLIC_SITE_NAME, so a rename needs no code change", async () => {
-    const { SITE_NAME } = await loadSite({ NEXT_PUBLIC_SITE_NAME: "Slatebell" });
-    expect(SITE_NAME).toBe("Slatebell");
+    const { SITE_NAME } = await loadSite({ NEXT_PUBLIC_SITE_NAME: "Brasslark" });
+    expect(SITE_NAME).toBe("Brasslark");
   });
 });
 
@@ -90,12 +90,21 @@ describe("brand literals are centralized", () => {
   });
 
   it("puts the brand name in lib/site.ts and nowhere else", () => {
-    expect(containing("Deposit Defenders")).toEqual([SITE_MODULE]);
+    expect(containing("Slatebell")).toEqual([SITE_MODULE]);
   });
 
   // Stricter than the name: the domain is derived from SITE_URL, so even
   // lib/site.ts should not spell it out.
   it("hardcodes the domain nowhere at all", () => {
-    expect(containing("deposit-defenders.com")).toEqual([]);
+    expect(containing("slatebell.com")).toEqual([]);
   });
+
+  // Regression guard for the 2026-08-15 rename: the retired brand must not
+  // survive anywhere, including in lib/site.ts.
+  it.each(["Deposit Defenders", "deposit-defenders"])(
+    "has fully retired the old brand: %s",
+    (literal) => {
+      expect(containing(literal)).toEqual([]);
+    }
+  );
 });

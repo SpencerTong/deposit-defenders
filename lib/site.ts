@@ -13,7 +13,7 @@ export const SITE_URL = configured ? normalize(configured) : "http://localhost:3
 // The brand name lives here and nowhere else, so renaming the product is an
 // env-var change rather than a source change. lib/site.test.ts fails if a
 // brand literal reappears anywhere under app/, components/, or lib/.
-export const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME ?? "Deposit Defenders";
+export const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME ?? "Slatebell";
 
 // Bare hostname, derived rather than written down so that no source file
 // carries the domain. It backs the default transactional From address, which
