@@ -1,8 +1,8 @@
 # HANDOFF: read this first
 
-**Updated:** 2026-08-04
+**Updated:** 2026-08-18
 
-Orientation for a fresh session picking up Deposit Defenders. Read `CLAUDE.md` first (legal-safety rules are non-negotiable), then this file.
+Orientation for a fresh session picking up Slatebell. Read `CLAUDE.md` first (legal-safety rules are non-negotiable), then this file.
 
 ## Do this first if you do nothing else (as of 2026-08-04)
 
@@ -12,7 +12,11 @@ Orientation for a fresh session picking up Deposit Defenders. Read `CLAUDE.md` f
 
 **The product is now Slatebell, at `https://slatebell.com`.** Executed 2026-08-15 in one sitting. Verified end to end: the site, OG images, sitemap, and robots.txt all carry the new name; Resend sends from `letters@slatebell.com` (DKIM + SPF verified); the live Stripe webhook points at `slatebell.com/api/webhooks/stripe` and returns `400 invalid_signature` to an unsigned POST, so signature checking is live; `deposit-defenders.com` 308-redirects with **paths and query strings preserved**, confirmed specifically for `/kit/success?session_id=...` so the workspace invariant holds. Google Search Console has a new Domain property and the Change of Address was filed.
 
-**Still open from the rename:** a Slatebell icon/wordmark (`app/icon.svg`, `app/apple-icon.png` are still the old mark), the Vercel project name is still `deposit-defenders` (cosmetic), and there is no DMARC record on `slatebell.com` (optional, helps deliverability).
+**Closed since 2026-08-16:** the bell mark shipped (`app/icon.svg`, `app/apple-icon.png`), the Vercel project is renamed `slatebell` (and `.vercel/repo.json` points at it), DMARC is published on `slatebell.com` (`v=DMARC1; p=none;`), and the GitHub repo is renamed `slatebell`. Verified 2026-08-18.
+
+**Still open from the rename:** the Google Ads account is still named Deposit Defenders and its ad/sitelink final URLs still point at the old domain; see the preconditions in `runbooks/ad-restart-spec.md`.
+
+**The one thing that can take the business down: the Vercel account is on the Hobby plan** (confirmed 2026-08-18 via the API). Hobby's Fair Use Guidelines forbid commercial use and name payment processing explicitly; enforcement is pausing the deployment, which breaks the "a paying customer always reaches their workspace" invariant. Upgrade to Pro ($20/mo) before any traffic push, not after.
 
 Original context, kept because the reasoning still matters:
 

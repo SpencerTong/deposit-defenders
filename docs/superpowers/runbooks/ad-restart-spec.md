@@ -51,7 +51,7 @@ inline-question change to have fixed this will lose money again and be surprised
 - [ ] **Google Ads account renamed** to Slatebell.
 - [ ] **Search Console relinked** (Tools > Linked accounts) to the `slatebell.com` property.
 - [ ] **Vercel on Pro, not Hobby.** A paused deployment mid-campaign burns the whole budget for
-      nothing. See the Hobby-plan note in `HANDOFF.md`.
+      nothing. Confirmed still on Hobby 2026-08-18; see the Hobby-plan note near the top of `HANDOFF.md`.
 - [ ] **Start rate measured on free traffic**, ideally ~12%+ over a few hundred landings. If no
       free traffic has materialized by about 2026-09-15, proceed anyway and treat the spend as
       tuition rather than a test.
