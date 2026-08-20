@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { recordEvent } from "@/lib/db/events";
+import { BOT_SRC, isBotUserAgent } from "@/lib/bots";
 
 const MAX_PROPERTY_KEYS = 12;
 const MAX_PROPERTIES_BYTES = 1024;
@@ -48,9 +49,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
 
+  // A crawler's event is stored under a reserved src rather than dropped, so
+  // the volume stays auditable and the funnel report can hide it the same way
+  // it already hides our own smoke tests. Any src the crawler carried is
+  // discarded: a bot must never be able to inflate a campaign's numbers.
+  const isBot = isBotUserAgent(req.headers.get("user-agent"));
+
   await recordEvent({
     eventName: name,
-    src: typeof src === "string" ? src.slice(0, 64) : null,
+    src: isBot ? BOT_SRC : typeof src === "string" ? src.slice(0, 64) : null,
     properties: sanitizeProperties(properties),
   });
 

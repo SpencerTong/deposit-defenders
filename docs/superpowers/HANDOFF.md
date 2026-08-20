@@ -1,8 +1,8 @@
 # HANDOFF: read this first
 
-**Updated:** 2026-08-04
+**Updated:** 2026-08-20
 
-Orientation for a fresh session picking up Deposit Defenders. Read `CLAUDE.md` first (legal-safety rules are non-negotiable), then this file.
+Orientation for a fresh session picking up Slatebell. Read `CLAUDE.md` first (legal-safety rules are non-negotiable), then this file.
 
 ## Do this first if you do nothing else (as of 2026-08-04)
 
@@ -12,7 +12,23 @@ Orientation for a fresh session picking up Deposit Defenders. Read `CLAUDE.md` f
 
 **The product is now Slatebell, at `https://slatebell.com`.** Executed 2026-08-15 in one sitting. Verified end to end: the site, OG images, sitemap, and robots.txt all carry the new name; Resend sends from `letters@slatebell.com` (DKIM + SPF verified); the live Stripe webhook points at `slatebell.com/api/webhooks/stripe` and returns `400 invalid_signature` to an unsigned POST, so signature checking is live; `deposit-defenders.com` 308-redirects with **paths and query strings preserved**, confirmed specifically for `/kit/success?session_id=...` so the workspace invariant holds. Google Search Console has a new Domain property and the Change of Address was filed.
 
-**Still open from the rename:** a Slatebell icon/wordmark (`app/icon.svg`, `app/apple-icon.png` are still the old mark), the Vercel project name is still `deposit-defenders` (cosmetic), and there is no DMARC record on `slatebell.com` (optional, helps deliverability).
+**Closed since 2026-08-16:** the bell mark shipped (`app/icon.svg`, `app/apple-icon.png`), the Vercel project is renamed `slatebell` (and `.vercel/repo.json` points at it), DMARC is published on `slatebell.com` (`v=DMARC1; p=none;`), and the GitHub repo is renamed `slatebell`. Verified 2026-08-18.
+
+**Still open from the rename:** the Google Ads account is still named Deposit Defenders and its ad/sitelink final URLs still point at the old domain; see the preconditions in `runbooks/ad-restart-spec.md`.
+
+**Vercel is on Pro as of 2026-08-20**, verified via the API. This closes the Hobby-plan terms violation that had live Stripe payments running on a plan whose Fair Use Guidelines forbid commercial use, where enforcement is a paused deployment and a broken workspace invariant.
+
+## What changed 2026-08-20: the funnel was measuring robots
+
+**Every conversion rate recorded before 2026-08-20 is unusable.** Between 2026-07-31 and 2026-08-20 the events table held **265 `landed` against 2 `started`**, a 0.8% start rate. Paid search was paused that whole window and no other channel was live, so 265 human visits had no possible source. `landed` fires from a `useEffect` on mount and crawlers that render JavaScript run it exactly like a person does; the 2026-08-15 rename (new domain, resubmitted sitemap, filed Change of Address) is precisely what draws them.
+
+Fixed on branch `fix/bot-filtering-events`: crawler events are recorded under `src = 'bot'` instead of being dropped, which keeps the volume auditable (`select count(*) from events where src = 'bot'`), keeps the decision reversible, and reuses the exclusion the funnel report already applies to smoke tests, so **no schema migration is needed**. The matcher does not treat a bare `bot` substring as a match, because CUBOT is a real Android phone brand and this product's traffic is mostly mobile. See `lib/bots.ts`.
+
+**Note this is the second break in funnel comparability**, after the 2026-07-31 `trackEventOnce` fix. Rates from three separate eras are not comparable to each other.
+
+**Vercel Web Analytics was enabled 2026-08-20 19:43 ET.** The package was in `package.json` and `app/layout.tsx` all along, but the product had never been switched on for the project, so the dashboard showed its Get Started screen. It does its own bot filtering and now serves as an independent cross-check on the events table. **There is no back-fill**, so it says nothing about any period before that timestamp.
+
+**Mary has still not mailed, confirmed 2026-08-20** from `kit_orders`: `mail_status = 'unsent'` with `mailed_at` and `mail_tracking` still holding the values from the wrong letter of 2026-07-27. That is 23 days after the correction and 17 days after the MailPanel copy fix that was the leading theory for why she stalled, so that theory is dead. The stale Lob fields are inert in the UI: `MailPanel` derives `sent` from `mailStatus === "sent"`, so she sees a working mail button, not a false confirmation. The owner decided on 2026-08-20 not to email her a fourth time. **The business still has zero completed customer journeys.**
 
 Original context, kept because the reasoning still matters:
 

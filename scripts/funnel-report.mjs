@@ -24,11 +24,18 @@ const FUNNEL_STEPS = [
 ];
 
 /**
- * Traffic we generated ourselves. Excluded by default: with real customers in
- * single digits, our own smoke tests otherwise dominate every rate in the
- * report and make the funnel look far healthier than it is.
+ * Traffic that is not a prospective customer. Excluded by default: with real
+ * customers in single digits, our own smoke tests otherwise dominate every rate
+ * in the report and make the funnel look far healthier than it is.
+ *
+ * `bot` is written by the events endpoint for any request whose user-agent
+ * belongs to a crawler (see `lib/bots.ts`). It is the largest entry here by
+ * volume: crawlers run the `landed` effect exactly like a person does, and with
+ * paid search paused they produced 265 `landed` against 2 `started` between
+ * 2026-07-31 and 2026-08-20. Pass --include-tests to see how much was filtered.
  */
 const TEST_SRCS = [
+  "bot",
   "test",
   "mytest",
   "manual_test",

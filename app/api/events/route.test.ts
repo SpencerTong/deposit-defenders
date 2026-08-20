@@ -8,10 +8,15 @@ vi.mock("@/lib/db/events", () => ({
 import { POST } from "./route";
 import { recordEvent } from "@/lib/db/events";
 
-function request(body: unknown): NextRequest {
+/** A browser-shaped request. The user-agent matters now that crawler traffic is
+ *  tagged rather than counted as visitors, so the default is a real one. */
+const IPHONE_UA =
+  "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1";
+
+function request(body: unknown, userAgent: string = IPHONE_UA): NextRequest {
   return new NextRequest("http://localhost/api/events", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", "User-Agent": userAgent },
     body: JSON.stringify(body),
   });
 }
@@ -85,6 +90,42 @@ describe("POST /api/events", () => {
     it("truncates an oversized src instead of storing it", async () => {
       await POST(request({ name: "landed", src: "s".repeat(500) }));
       expect((recorded()?.src as string).length).toBe(64);
+    });
+  });
+
+  /**
+   * Crawlers that render JavaScript fire `landed` exactly like a person does.
+   * They are recorded under a reserved `src` instead of being dropped, so the
+   * volume stays auditable and the funnel report can hide them with the same
+   * mechanism that already hides our own smoke tests.
+   */
+  describe("crawler traffic", () => {
+    const GOOGLEBOT = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
+
+    it("tags a crawler's event with the bot src", async () => {
+      const res = await POST(request({ name: "landed" }, GOOGLEBOT));
+      expect(res.status).toBe(200);
+      expect(recorded()).toMatchObject({ eventName: "landed", src: "bot" });
+    });
+
+    it("overrides any src the crawler carried, so bots cannot pollute a campaign", async () => {
+      await POST(request({ name: "landed", src: "gads" }, GOOGLEBOT));
+      expect(recorded()?.src).toBe("bot");
+    });
+
+    it("tags a request that sends no user-agent at all", async () => {
+      await POST(request({ name: "landed", src: "gads" }, ""));
+      expect(recorded()?.src).toBe("bot");
+    });
+
+    it("leaves a real visitor's attribution untouched", async () => {
+      await POST(request({ name: "landed", src: "gads" }));
+      expect(recorded()?.src).toBe("gads");
+    });
+
+    it("still records an unattributed human as unattributed, not as a bot", async () => {
+      await POST(request({ name: "landed" }));
+      expect(recorded()?.src).toBeNull();
     });
   });
 });

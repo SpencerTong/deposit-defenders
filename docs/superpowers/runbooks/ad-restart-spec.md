@@ -50,11 +50,18 @@ inline-question change to have fixed this will lose money again and be surprised
 - [ ] **Sitelink URLs updated** (Assets > Assets, filter to Sitelink). Quite possibly none exist.
 - [ ] **Google Ads account renamed** to Slatebell.
 - [ ] **Search Console relinked** (Tools > Linked accounts) to the `slatebell.com` property.
-- [ ] **Vercel on Pro, not Hobby.** A paused deployment mid-campaign burns the whole budget for
-      nothing. See the Hobby-plan note in `HANDOFF.md`.
+- [x] **Vercel on Pro, not Hobby.** DONE 2026-08-20, verified via the API (`team plan: pro`).
+      A paused deployment mid-campaign would have burned the whole budget for nothing.
+- [x] **The funnel can be trusted at all.** DONE 2026-08-20. It could not be before: crawlers
+      fired `landed` like people do, so 2026-07-31 to 2026-08-20 read 265 `landed` against 2
+      `started` with no channel live. Crawler events are now tagged `src = bot` and hidden by
+      default (`lib/bots.ts`). **Every rate recorded before 2026-08-20 is unusable**, on top of
+      the separate pre-2026-07-31 break. Web Analytics was also enabled 2026-08-20 19:43 ET,
+      giving an independent bot-filtered cross-check from that moment on, with no back-fill.
 - [ ] **Start rate measured on free traffic**, ideally ~12%+ over a few hundred landings. If no
       free traffic has materialized by about 2026-09-15, proceed anyway and treat the spend as
-      tuition rather than a test.
+      tuition rather than a test. Owner reaffirmed 2026-08-20 that September ads run regardless,
+      since paid search is the only channel that has ever produced a customer.
 
 ## Campaign configuration
 
@@ -80,6 +87,20 @@ Add close grievance variants in exact match: `landlord kept my security deposit`
 `form`, `sample`.
 
 **Geo:** Massachusetts only. **Landing page:** `https://slatebell.com/?src=gads`.
+
+**Ready-to-paste assets:** `scripts/gads-assets.mjs`. Fifteen headlines, four descriptions,
+four sitelinks, five callouts, the exact-match keyword list and the negative list. Running it
+validates every string against Google's character limits and against the two copy rules in
+`CLAUDE.md` (no em dashes, no outcome-promising language) and exits non-zero on a violation. All
+five destination URLs were confirmed to return 200 directly on `slatebell.com`, with no redirect.
+
+**Expect the season to work against you.** July's $3.35 CPC was an *off-season* price: the test
+ran in the deadest part of the summer. September and October are when every competitor bidding
+on Boston tenant grievance terms is bidding hardest, so the realistic expectation is a CPC at or
+above July's, not the sub-$2.00 the math needs. The CPC preflight below is therefore likely to
+fire. **That is the rule working, not a reason to override it.** If clicks land at $3.50+ in
+peak season, the honest conclusion is the one already written in the results table: paid search
+at $49 does not work, in-season or out.
 
 **Timing.** Boston lease turnover concentrates on September 1 and §15B gives landlords 30 days,
 so there are two demand waves, not one: **early-to-mid September**, when movers receive itemized
