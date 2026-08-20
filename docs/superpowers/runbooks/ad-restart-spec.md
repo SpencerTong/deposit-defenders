@@ -88,7 +88,7 @@ Add close grievance variants in exact match: `landlord kept my security deposit`
 
 **Geo:** Massachusetts only. **Landing page:** `https://slatebell.com/?src=gads`.
 
-**Ready-to-paste assets:** `scratchpad/gads-assets.js`. Fifteen headlines, four descriptions,
+**Ready-to-paste assets:** `scripts/gads-assets.mjs`. Fifteen headlines, four descriptions,
 four sitelinks, five callouts, the exact-match keyword list and the negative list. Running it
 validates every string against Google's character limits and against the two copy rules in
 `CLAUDE.md` (no em dashes, no outcome-promising language) and exits non-zero on a violation. All

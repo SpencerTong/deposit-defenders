@@ -35,3 +35,6 @@ next-env.d.ts
 
 # personal Claude Code permission overrides
 .claude/settings.local.json
+
+# local scratch work, never committed
+scratchpad/
