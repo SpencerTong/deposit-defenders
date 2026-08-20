@@ -1,6 +1,6 @@
 # HANDOFF: read this first
 
-**Updated:** 2026-08-18
+**Updated:** 2026-08-20
 
 Orientation for a fresh session picking up Slatebell. Read `CLAUDE.md` first (legal-safety rules are non-negotiable), then this file.
 
@@ -16,7 +16,19 @@ Orientation for a fresh session picking up Slatebell. Read `CLAUDE.md` first (le
 
 **Still open from the rename:** the Google Ads account is still named Deposit Defenders and its ad/sitelink final URLs still point at the old domain; see the preconditions in `runbooks/ad-restart-spec.md`.
 
-**The one thing that can take the business down: the Vercel account is on the Hobby plan** (confirmed 2026-08-18 via the API). Hobby's Fair Use Guidelines forbid commercial use and name payment processing explicitly; enforcement is pausing the deployment, which breaks the "a paying customer always reaches their workspace" invariant. Upgrade to Pro ($20/mo) before any traffic push, not after.
+**Vercel is on Pro as of 2026-08-20**, verified via the API. This closes the Hobby-plan terms violation that had live Stripe payments running on a plan whose Fair Use Guidelines forbid commercial use, where enforcement is a paused deployment and a broken workspace invariant.
+
+## What changed 2026-08-20: the funnel was measuring robots
+
+**Every conversion rate recorded before 2026-08-20 is unusable.** Between 2026-07-31 and 2026-08-20 the events table held **265 `landed` against 2 `started`**, a 0.8% start rate. Paid search was paused that whole window and no other channel was live, so 265 human visits had no possible source. `landed` fires from a `useEffect` on mount and crawlers that render JavaScript run it exactly like a person does; the 2026-08-15 rename (new domain, resubmitted sitemap, filed Change of Address) is precisely what draws them.
+
+Fixed on branch `fix/bot-filtering-events`: crawler events are recorded under `src = 'bot'` instead of being dropped, which keeps the volume auditable (`select count(*) from events where src = 'bot'`), keeps the decision reversible, and reuses the exclusion the funnel report already applies to smoke tests, so **no schema migration is needed**. The matcher does not treat a bare `bot` substring as a match, because CUBOT is a real Android phone brand and this product's traffic is mostly mobile. See `lib/bots.ts`.
+
+**Note this is the second break in funnel comparability**, after the 2026-07-31 `trackEventOnce` fix. Rates from three separate eras are not comparable to each other.
+
+**Vercel Web Analytics was enabled 2026-08-20 19:43 ET.** The package was in `package.json` and `app/layout.tsx` all along, but the product had never been switched on for the project, so the dashboard showed its Get Started screen. It does its own bot filtering and now serves as an independent cross-check on the events table. **There is no back-fill**, so it says nothing about any period before that timestamp.
+
+**Mary has still not mailed, confirmed 2026-08-20** from `kit_orders`: `mail_status = 'unsent'` with `mailed_at` and `mail_tracking` still holding the values from the wrong letter of 2026-07-27. That is 23 days after the correction and 17 days after the MailPanel copy fix that was the leading theory for why she stalled, so that theory is dead. The stale Lob fields are inert in the UI: `MailPanel` derives `sent` from `mailStatus === "sent"`, so she sees a working mail button, not a false confirmation. The owner decided on 2026-08-20 not to email her a fourth time. **The business still has zero completed customer journeys.**
 
 Original context, kept because the reasoning still matters:
 
