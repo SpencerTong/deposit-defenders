@@ -4,9 +4,75 @@
 
 Orientation for a fresh session picking up Slatebell. Read `CLAUDE.md` first (legal-safety rules are non-negotiable), then this file.
 
-## Do this first if you do nothing else (as of 2026-08-04)
+## THE PLAN (set 2026-08-20). Read this before proposing anything.
 
-**Mary has still not mailed her corrected letter.** Her order is `mail_status = 'unsent'` with `mailed_at` and `mail_tracking` left over from the original, wrong letter that went to her landlord on 2026-07-27 stating $3,100 instead of $2,000. The correction is applied (`answers.depositAmount = 2000`), her workspace is unlocked, and `kitOrders.ts:230` will overwrite the stale Lob fields on a successful re-send. She has not responded to three emails. **Check `mail_status` before assuming anything about her case.** If she never mails, the business has zero completed customer journeys, not one.
+The business is in a deliberate holding pattern until **2026-10-01**. Everything that had to
+ship has shipped, every blocker is cleared, and the remaining work is a calendar, not a backlog.
+**A session that arrives between now and October and proposes new work is almost certainly
+wrong.** The correct answer to "what should I build" in this window is "nothing, run the plan."
+
+### The calendar
+
+| When | What | Whose job |
+| --- | --- | --- |
+| Ongoing | Answer real security-deposit threads in r/boston, r/massachusetts, r/CambridgeMA, r/Somerville. The only thing that compounds. | Spencer, may ask for drafts |
+| ~2026-09-01 | Run `scratchpad/verify-bot-filter.sql` for the first trustworthy start-rate baseline | Spencer runs, session reads |
+| ~2026-09-25 | Google Ads mechanical prep, ~30 min, all at once (see below) | Together |
+| **2026-10-01** | **Launch the campaign.** $15/day, 10 days, $150 hard cap | Together |
+| ~2026-10-05 | Midpoint check against the kill rules | Together |
+| 2026-10-10 | Hard stop, read the result | Together |
+
+### Why 2026-10-01 and not September
+
+The trigger for these searches is the **§15B 30-day deadline lapsing**, not move-out. Most
+landlords use most of the 30 days, so the anger clusters 30 days after a move-out date. Boston's
+Sept 1 turnover therefore produces its wave on **Oct 1**, and the keyword set is past-tense
+grievance phrasing ("not returning", "kept my deposit") that people search *after* the deadline
+blows. Early September is only the deadline wave for the much smaller Aug 1 mover cohort.
+
+Budget is concentrated rather than spread: $150 over three weeks is two clicks a day and Google
+will barely serve the ads. $15/day for 10 days gets consistent delivery and a readable result.
+
+### The 2026-09-25 prep list
+
+Ad final URLs and sitelinks to `https://slatebell.com/?src=gads` (a cross-domain redirect on an
+ad destination is a destination-mismatch policy violation and gets ads disapproved; the working
+308 does not save it), keywords to **exact match**, delete `massachusetts security deposit law`
+and `security deposit interest massachusetts`, add the negative list, rename the Ads account off
+"Deposit Defenders", relink Search Console to the `slatebell.com` property, set budget to
+$15/day. Every string and URL is in `scripts/gads-assets.mjs`; run it to print them, and it
+fails loudly if any string breaks Google's limits or the `CLAUDE.md` copy rules.
+
+**Set the kill rules in the account before unpausing, not after.** They are in
+`runbooks/ad-restart-spec.md` and they exist because they were decided while nobody was
+emotionally invested. Expect peak-season CPC at or above July's $3.35, not below: July was an
+off-season price. If the CPC preflight fires in the first 20 clicks, **that is the rule working.**
+
+### What Spencer usually logs in for
+
+In rough order of likelihood: help answering a Reddit thread (draft it link-free, the subs police
+comments as well as posts, see the note below), a general question about the business or the
+statute, and from late September, running the campaign. Assume one of those three before
+assuming a coding task.
+
+### Cleared as of 2026-08-20
+
+Google advertiser verification (the last true blocker), Vercel Pro, the crawler-polluted funnel,
+the bell mark, DMARC, the repo and Vercel project renames, Web Analytics actually switched on.
+
+## Also true, and unresolved
+
+**Mary has still not mailed her corrected letter,** confirmed from `kit_orders` on 2026-08-20.
+Her order is `mail_status = 'unsent'` with `mailed_at` and `mail_tracking` left over from the
+original, wrong letter that went to her landlord on 2026-07-27 stating $3,100 instead of $2,000.
+The correction is applied (`answers.depositAmount = 2000`), her workspace is unlocked, and
+`kitOrders.ts:230` will overwrite the stale Lob fields on a successful re-send. The stale fields
+are inert in the UI: `MailPanel` derives `sent` from `mailStatus === "sent"`, so she sees a
+working mail button, not a false confirmation.
+
+**Spencer decided on 2026-08-20 not to email her a fourth time**, after three unanswered. Do not
+propose emailing her again. The business has **zero completed customer journeys**, and whether
+buyers actually finish the mailing step is a question the October cohort will answer, not Mary.
 
 ## What changed 2026-08-15: renamed to Slatebell (COMPLETE)
 
@@ -81,6 +147,10 @@ Original context, kept because the reasoning still matters:
 - **Deliberately deferred by the owner:** attorney review of the combined letter text (accepted risk; plan is to buy a flat-fee review out of early revenue) and forming an LLC (MA fee is $500/yr). The mitigations shipped instead: disclaimers everywhere, `/terms`, hedged language, pre-mail acknowledgment, verified statute citations.
 
 ## Current phase: marketing and validation
+
+**Superseded in part by THE PLAN at the top of this file, which is the operative version.**
+The priority list below is kept because the reasoning behind each item still holds, but the
+dates and sequencing in it are older than the 2026-08-20 calendar.
 
 The engineering is done. Next steps, in priority order:
 

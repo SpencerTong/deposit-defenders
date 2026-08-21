@@ -1,6 +1,7 @@
 # Runbook: restarting the Google Ads campaign
 
-**Written:** 2026-08-16. **Status:** not yet executed. Account paused pending advertiser verification.
+**Written:** 2026-08-16. **Updated:** 2026-08-20. **Status:** scheduled, not yet executed.
+Verification cleared; launch date set to **2026-10-01**. Account still paused until then, deliberately.
 
 Everything needed to restart paid search without rediscovering July's lessons. Read the
 economics section before touching the account: it defines what a *successful* restart looks
@@ -42,8 +43,9 @@ inline-question change to have fixed this will lose money again and be surprised
 
 ## Preconditions, all required before spending a dollar
 
-- [ ] **Advertiser verification cleared.** Submitted 2026-08-16, days to weeks. Ads cannot run
-      until it does.
+- [x] **Advertiser verification cleared.** Submitted 2026-08-16, **confirmed cleared 2026-08-20**.
+      This was the last true blocker. "Spencer Tong, United States" is now publicly linked to
+      slatebell.com in the Ads Transparency Center, as accepted when it was filed.
 - [ ] **Ad final URLs point at `https://slatebell.com/?src=gads`.** A cross-domain redirect on
       an ad destination is a destination-mismatch policy violation and gets ads disapproved;
       the working 301 does not save it. Keep `?src=gads`, since `npm run funnel` segments on it.
